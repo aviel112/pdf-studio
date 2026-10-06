@@ -25,8 +25,8 @@ button,input,textarea{font-family:inherit}
 .top small{color:var(--text3);font-size:.78rem}
 .app{display:grid;grid-template-columns:440px 1fr;min-height:calc(100vh - 62px)}
 .side{border-left:1px solid var(--line);padding:22px;display:flex;flex-direction:column;gap:14px;background:var(--panel)}
-.seg{display:grid;grid-template-columns:1fr 1fr;background:#0a0b12;border:1px solid var(--line);border-radius:14px;padding:4px;gap:4px}
-.seg button{height:46px;border:0;border-radius:10px;background:transparent;color:var(--text2);font-weight:700;font-size:.95rem;cursor:pointer;transition:.2s}
+.seg{display:grid;grid-template-columns:1fr 1fr 1fr;background:#0a0b12;border:1px solid var(--line);border-radius:14px;padding:4px;gap:4px}
+.seg button{height:46px;border:0;border-radius:10px;background:transparent;color:var(--text2);font-weight:700;font-size:.88rem;cursor:pointer;transition:.2s}
 .seg button.on{background:var(--accent);color:#fff;box-shadow:0 6px 20px rgba(255,107,53,.3)}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 label.f{display:flex;flex-direction:column;gap:6px;font-size:.75rem;color:var(--text2);font-weight:600}
@@ -81,6 +81,12 @@ textarea{flex:1;min-height:320px;border-radius:12px;border:1px solid var(--line)
 .day.is-dup .day-h{grid-template-columns:auto;justify-items:start}
 .dup-note{font-size:.82rem;color:#7fe0a8;background:rgba(74,222,128,.08);border:1px dashed rgba(74,222,128,.3);border-radius:10px;padding:10px;text-align:center}
 textarea.small{min-height:80px;flex:none;width:100%}
+.tpls{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:10px;font-size:.72rem;color:var(--text3)}
+.tpls .chip-btn{height:28px;font-size:.74rem}
+#swap{display:flex;flex-direction:column;gap:14px}
+#swap .days-pick{grid-template-columns:1fr 1fr}
+#swRecipe{min-height:220px;flex:none;width:100%}
+#swap select.inp{width:100%;cursor:pointer}
 @media (max-width:900px){
   .app{grid-template-columns:1fr}
   .side{border-left:0;border-bottom:1px solid var(--line);padding:16px}
@@ -196,6 +202,24 @@ textarea.small{min-height:80px;flex:none;width:100%}
 .after b{color:var(--ink);font-weight:700}
 .split .after{display:none}
 
+/* swap */
+.cmp .tile .was{font-size:10px;color:var(--ink3);margin-top:4px;font-weight:600}
+.cmp .tile.k .was{color:rgba(255,255,255,.75)}
+.tag-was{font-size:11px;color:var(--ink3);font-weight:500}
+.was-meal .meal-head{background:#fbfbfc}
+.recipe{border-color:var(--a)}
+.recipe .meal-head{background:var(--a-soft)}
+.recipe .badge{font-size:14px}
+.item .orig{display:block;font-size:10.5px;color:var(--ink3);margin-top:1px}
+.item.boost .iname{font-weight:700}
+.step-row{display:flex;gap:10px;font-size:12.5px;line-height:1.6;padding:4px 0;color:var(--ink2)}
+.step-row b{min-width:20px;height:20px;border-radius:50%;background:var(--a);color:#fff;font-size:10.5px;display:flex;align-items:center;justify-content:center;flex:none;margin-top:2px}
+
+.swap-sep{flex:none;font-size:13px;font-weight:800;color:var(--ink3);display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.swap-sep:after{content:'';flex:1;height:1px;background:var(--rule)}
+
+.pair-wrap{flex:none}
+
 /* notes */
 .notes{flex:none;background:#f8f9fb;border:1px solid var(--rule);border-right:4px solid var(--a);border-radius:10px;padding:14px 18px}
 .notes-title{font-size:14px;font-weight:800;color:var(--ink);margin-bottom:6px}
@@ -218,6 +242,7 @@ textarea.small{min-height:80px;flex:none;width:100%}
     <div class="seg" id="seg">
       <button data-t="menu" class="on">🍽️ תפריט</button>
       <button data-t="workout">🏋️ תוכנית אימון</button>
+      <button data-t="swap">🔄 החלפת ארוחה</button>
     </div>
     <div class="row2">
       <label class="f">שם הלקוח<input class="inp" id="client" placeholder="לדוגמה: אלמוג"></label>
@@ -227,9 +252,15 @@ textarea.small{min-height:80px;flex:none;width:100%}
     <label class="f">שורת הסבר מתחת לכותרת (לא חובה)<input class="inp" id="subtitle" placeholder="לדוגמה: יש להקפיד על יום מנוחה אחד לפחות בין האימונים"></label>
     <div class="seg2" id="wkMode"><button data-m="wizard" class="on">שלב אחר שלב</button><button data-m="free">הדבקה חופשית</button></div>
     <div id="wiz">
-      <div class="step"><div class="step-t"><span>1</span>לכמה ימים לחלק את השבוע?</div><div class="days-pick" id="daysPick"></div></div>
+      <div class="step"><div class="step-t"><span>1</span>לכמה ימים לחלק את השבוע?</div><div class="days-pick" id="daysPick"></div><div class="tpls" id="tpls"></div></div>
       <div class="step"><div class="step-t"><span>2</span>מה עושים בכל יום?</div><div id="dayCards"></div></div>
       <div class="step"><div class="step-t"><span>3</span>דגשים לתוכנית (לא חובה)</div><textarea id="wkNotes" class="small" spellcheck="false" placeholder="להעלות משקל כשמגיעים לטווח העליון&#10;5 דק׳ חימום לפני כל אימון"></textarea></div>
+    </div>
+    <div id="swap">
+      <div class="step"><div class="step-t"><span>1</span>כמה ארוחות המתכון מחליף?</div><div class="days-pick" id="swN"></div><div id="swMeals" style="display:flex;flex-direction:column;gap:10px;margin-top:10px"></div>
+        <div class="row2" style="margin-top:10px"><label class="f">יעד קלוריות ידני (לא חובה)<input class="inp" id="swTk" inputmode="numeric" placeholder="לפי הארוחות"></label><label class="f">יעד חלבון ידני (לא חובה)<input class="inp" id="swTp" inputmode="numeric" placeholder="לפי הארוחות"></label></div></div>
+      <div class="step"><div class="step-t"><span>2</span>המתכון (מטיקטוק / אינסטגרם)</div><input class="inp" id="swRecName" placeholder="שם המנה — למשל: פסטה קרמית עם עוף" style="width:100%;margin-bottom:8px"><textarea id="swRecipe" spellcheck="false" placeholder="מצרכים&#10;250 גרם פסטה&#10;400 גרם חזה עוף&#10;כוס שמנת לבישול&#10;אופן הכנה&#10;מבשלים את הפסטה…"></textarea></div>
+      <div class="step"><div class="step-t"><span>3</span>אם חסר חלבון — במה להשלים?</div><select class="inp" id="swBoost"></select></div>
     </div>
     <textarea id="src" spellcheck="false"></textarea>
     <div class="tools">
@@ -336,9 +367,16 @@ const FOODS = [
  ['ריבה',0.4,60,0,20],
  ['שוקולד מריר|שוקולד',7,46,43,10],
  ['חלווה|חלבה',12,52,30,30],
+ ['שמנת לבישול|שמנת מתוקה|שמנת',2.5,4,15,240],
+ ['פרמזן|פרמז\'ן|גבינה מגורדת|מוצרלה',30,3,25,10],
+ ['בצל|בצלים',1.1,9,.1,110],
+ ['שום|שיני שום|שן שום',6,33,.5,5],
+ ['רסק עגבניות|רוטב עגבניות|עגבניות מרוסקות',1.6,7,.2,100],
+ ['קמח',10,75,1,8],
+ ['סוכר',0,100,0,4],
 ];
 const FOOD_IDX=[];
-FOODS.forEach(([al,p,c,f,u])=>al.split('|').forEach(a=>FOOD_IDX.push({a,p,c,f,u})));
+FOODS.forEach(([al,p,c,f,u])=>al.split('|').forEach(a=>FOOD_IDX.push({a,p,c,f,u,k:al.split('|')[0]})));
 FOOD_IDX.sort((x,y)=>y.a.length-x.a.length);
 function findFood(name){for(const e of FOOD_IDX){if(name.includes(e.a))return e}return null}
 
@@ -369,7 +407,7 @@ function parseQty(line){
   if(!best.unit && best.idx>0) return {amt:'',name:line.trim(),q:null};
   const name=(line.slice(0,best.idx)+' '+line.slice(best.idx+line.slice(best.idx).indexOf(best.text)+best.text.length)).replace(/\s+/g,' ').replace(/^[\s,\-–]+|[\s,\-–]+$/g,'').trim();
   const kind=best.unit?(UNITS.find(u=>u[0]===best.unit)||[])[1]:null;
-  return {amt:best.text,name:name||line.trim(),q:{n:best.num+(best.half?.5:0),kind}};
+  return {amt:best.text,name:name||line.trim(),q:{n:best.num+(best.half?.5:0),kind,u:best.unit}};
 }
 function gramsFor(food,q){
   if(!q) return food.u;
@@ -627,7 +665,7 @@ function paginate(stage,blocks,o){
     if(fits(body)) continue;
     const only=body.children.length===1;
     if(!only&&b.offsetHeight<body.clientHeight-(body.closest('.page').querySelector('.mini-head')?0:60)){b.remove();body=newPage(stage,false,o);queue.unshift(b);continue}
-    const rows=b.classList.contains('pair')?null:b.querySelector('.rows');
+    const rows=(b.classList.contains('pair')||b.classList.contains('pair-wrap'))?null:b.querySelector('.rows');
     if(rows&&rows.children.length>1){
       const cont=b.cloneNode(true);cont.classList.add('cont');const crows=cont.querySelector('.rows');crows.innerHTML='';
       b.classList.add('split');
@@ -714,14 +752,15 @@ workout:`יש להקפיד על יום מנוחה אחד לפחות בין הא�
 הרחקת כתפיים לצדדים בכבל / משקולות 3x12-15 מנוחה 1 דקה
 פריצר בישיבה במכונה 3x10-12 - לשלב סופר סט עם פשיטת מרפק בכבל
 הרמות רגליים במתח או במקבילים 3x15 מנוחה 1 דקה`};
-const DEF_TITLE={menu:'תפריט תזונה',workout:'תוכנית אימון'};
+const DEF_TITLE={menu:'תפריט תזונה',workout:'תוכנית אימון',swap:'החלפת ארוחה'};
 const HELP={
+swap:`מדביקים את הארוחה (או 2 הארוחות) מהתפריט של הלקוח ואת המתכון כמו שהוא. הכמויות במתכון מחושבות מחדש כך שהערכים יהיו זהים לארוחה המקורית. אחרי <code>אופן הכנה</code> — שלבי ההכנה. מאקרו = הערכה.`,
 menu:`כותרת ארוחה: שורה שמתחילה ב<code>ארוחת</code> / <code>בוקר</code> / <code>ביניים</code>… או שורה שמסתיימת ב<code>:</code>. שעה כמו <code>08:00</code> נכנסת לתג. שורה <code>או</code> = חלופה. <code>דגשים</code> = בלוק הערות בסוף.`,
 workout:`כותרת טבלה: <code>אימון A – פלג גוף עליון</code> / <code>יום 1</code>. תרגיל: <code>סקוואט 3x8-10 מנוחה 2 דקות</code>, הערה אחרי <code> - </code>. קבוצת שריר מזוהה לבד — או לכתוב <code>חזה - לחיצת חזה…</code>. <code>+</code> בתחילת שורה = סופר סט. אפשר להדביק טבלה מאקסל. <code>דגשים</code> = הערות בסוף.`};
 const store={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
-const drafts={menu:store.get('pdfs2_menu')??'',workout:store.get('pdfs2_workout')??''};
-const titles={menu:store.get('pdfs2_t_menu')||DEF_TITLE.menu,workout:store.get('pdfs2_t_workout')||DEF_TITLE.workout};
-const subs={menu:store.get('pdfs2_s_menu')||'',workout:store.get('pdfs2_s_workout')||''};
+const drafts={menu:store.get('pdfs2_menu')??'',workout:store.get('pdfs2_workout')??'',swap:''};
+const titles={menu:store.get('pdfs2_t_menu')||DEF_TITLE.menu,workout:store.get('pdfs2_t_workout')||DEF_TITLE.workout,swap:store.get('pdfs2_t_swap')||DEF_TITLE.swap};
+const subs={menu:store.get('pdfs2_s_menu')||'',workout:store.get('pdfs2_s_workout')||'',swap:store.get('pdfs2_s_swap')||''};
 let colorIdx=+(store.get('pdfs2_color')||0)||0;
 const today=()=>{const d=new Date();return `${d.getDate()}.${d.getMonth()+1}.${d.getFullYear()}`};
 $('#date').value=today();
@@ -778,25 +817,238 @@ function loadWizSample(){
   wk.notes='להעלות משקל כשמגיעים לטווח העליון של החזרות\nלרשום משקלים בכל אימון';
   saveWk();drawDaysPick();drawDays();$('#wkNotes').value=wk.notes;
 }
-function setWkMode(m){
-  wk.mode=m;saveWk();
-  document.querySelectorAll('#wkMode button').forEach(b=>b.classList.toggle('on',b.dataset.m===m));
-  const wiz=TYPE==='workout'&&m==='wizard';
-  $('#wiz').style.display=wiz?'':'none';$('#src').style.display=wiz?'none':'';
-  $('#help').innerHTML=wiz?WIZ_HELP:HELP[TYPE];
+function applyPanels(){
+  const t=TYPE,wiz=t==='workout'&&wk.mode==='wizard';
+  $('#wkMode').style.display=t==='workout'?'':'none';
+  document.querySelectorAll('#wkMode button').forEach(b=>b.classList.toggle('on',b.dataset.m===wk.mode));
+  $('#wiz').style.display=wiz?'':'none';$('#swap').style.display=t==='swap'?'':'none';
+  $('#src').style.display=(wiz||t==='swap')?'none':'';
+  $('#help').innerHTML=wiz?WIZ_HELP:HELP[t];
+  $('#macroTog').style.display=t==='menu'?'':'none';$('#musTog').style.display=t==='workout'?'':'none';
 }
+function setWkMode(m){wk.mode=m;saveWk();applyPanels()}
 const WIZ_HELP=`בכל יום — שורה לכל תרגיל: <code>סקוואט 3x8-10 מנוחה 2 דקות</code>. הערה אחרי <code> - </code>. <code>+</code> בתחילת שורה = סופר סט. יום שחוזר על עצמו — בוחרים <code>שכפל את יום…</code> וזהו.`;
 document.querySelectorAll('#wkMode button').forEach(b=>b.onclick=()=>{setWkMode(b.dataset.m);render()});
 $('#wkNotes').value=wk.notes;$('#wkNotes').oninput=e=>{wk.notes=e.target.value;saveWk();later()};
 drawDaysPick();drawDays();
 
+/* ---------- workout templates ---------- */
+const TPL_EX={
+upper:`לחיצת חזה במשקולות 3x8-10 מנוחה 2 דקות
+פולי עליון 3x10-12 מנוחה 1.5 דקות
+לחיצת חזה בשיפוע 3x10-12 מנוחה 1.5 דקות
+חתירה בכבל 3x10-12 מנוחה 1.5 דקות
+לחיצת כתפיים במשקולות 3x10-12 מנוחה 1.5 דקות
+הרחקת כתפיים לצדדים 3x12-15 מנוחה 1 דקה
+כפיפת מרפקים במשקולות 3x10-12 מנוחה 1 דקה
+פשיטת מרפקים בפולי 3x10-12 מנוחה 1 דקה`,
+lower:`סקוואט עם מוט 4x6-8 מנוחה 2-3 דקות
+דדליפט רומני 3x8-10 מנוחה 2 דקות
+לחיצת רגליים 3x10-12 מנוחה 1.5 דקות
+לאנג'ים בהליכה 3x10 מנוחה 1 דקה - לכל רגל
+כפיפת ברכיים במכונה 3x10-12 מנוחה 1 דקה
+פשיטת ברכיים במכונה 3x12-15 מנוחה 1 דקה
+הרמת עקבים בעמידה 4x12-15 מנוחה 1 דקה
+כפיפות בטן בכבל 3x12-15 מנוחה 1 דקה`,
+push:`לחיצת חזה במוט 4x6-8 מנוחה 2 דקות
+לחיצת חזה בשיפוע במשקולות 3x8-10 מנוחה 1.5 דקות
+פרפר במכונה 3x12-15 מנוחה 1 דקה
+לחיצת כתפיים בישיבה 3x8-10 מנוחה 1.5 דקות
+הרחקת כתפיים לצדדים 3x12-15 מנוחה 1 דקה
+פשיטת מרפקים בפולי עם חבל 3x10-12 מנוחה 1 דקה
+פשיטת מרפק מעל הראש 3x10-12 מנוחה 1 דקה`,
+pull:`מתח / פולי עליון 4x8-10 מנוחה 2 דקות
+חתירה במוט 3x8-10 מנוחה 2 דקות
+חתירה בכבל 3x10-12 מנוחה 1.5 דקות
+פולאובר בפולי 3x12-15 מנוחה 1 דקה
+פרפר הפוך במכונה 3x12-15 מנוחה 1 דקה
+כפיפת מרפקים עם מוט W 3x10-12 מנוחה 1 דקה
+כפיפת פטישים 3x10-12 מנוחה 1 דקה`,
+fbA:`סקוואט 3x8-10 מנוחה 2 דקות
+לחיצת חזה במשקולות 3x8-10 מנוחה 1.5 דקות
+פולי עליון 3x10-12 מנוחה 1.5 דקות
+לחיצת כתפיים במשקולות 3x10-12 מנוחה 1.5 דקות
+כפיפת ברכיים במכונה 3x10-12 מנוחה 1 דקה
+כפיפות בטן 3x15 מנוחה 1 דקה`,
+fbB:`דדליפט רומני 3x8-10 מנוחה 2 דקות
+לחיצת חזה בשיפוע 3x10-12 מנוחה 1.5 דקות
+חתירה בכבל 3x10-12 מנוחה 1.5 דקות
+לאנג'ים בהליכה 3x10 מנוחה 1 דקה - לכל רגל
+הרחקת כתפיים לצדדים 3x12-15 מנוחה 1 דקה
+פלאנק 3x40 שניות מנוחה 1 דקה`,
+fbC:`לחיצת רגליים 3x10-12 מנוחה 1.5 דקות
+שכיבות סמיכה 3xכשל מנוחה 1 דקה
+חתירה במוט 3x8-10 מנוחה 2 דקות
+פרפר הפוך במכונה 3x12-15 מנוחה 1 דקה
+כפיפת מרפקים במשקולות 3x10-12
++ פשיטת מרפקים בפולי 3x10-12
+הרמות רגליים 3x12 מנוחה 1 דקה`};
+const TEMPLATES=[
+ {n:'פול באדי ×2',days:[['פול באדי A','fbA'],['פול באדי B','fbB']]},
+ {n:'פול באדי ×3',days:[['פול באדי A','fbA'],['פול באדי B','fbB'],['פול באדי C','fbC']]},
+ {n:'עליון / תחתון ×4',days:[['פלג גוף עליון','upper'],['פלג גוף תחתון','lower'],0,1]},
+ {n:'PPL ×3',days:[['דחיקה — חזה, כתפיים, יד אחורית','push'],['משיכה — גב, יד קדמית','pull'],['רגליים','lower']]},
+ {n:'PPL ×6',days:[['דחיקה — חזה, כתפיים, יד אחורית','push'],['משיכה — גב, יד קדמית','pull'],['רגליים','lower'],0,1,2]},
+];
+function applyTemplate(t){
+  if(wk.days.slice(0,wk.n).some(d=>d&&(d.ex||'').trim())&&!confirm('להחליף את מה שכתבת בתבנית?'))return;
+  wk.n=t.days.length;wk.days=t.days.map(d=>typeof d==='number'?{name:'',ex:'',dup:String(d)}:{name:d[0],ex:TPL_EX[d[1]],dup:''});
+  saveWk();drawDaysPick();drawDays();render();
+}
+$('#tpls').innerHTML='<span>תבנית מוכנה:</span>'+TEMPLATES.map((t,i)=>`<button class="chip-btn" data-i="${i}">${t.n}</button>`).join('');
+$('#tpls').querySelectorAll('button').forEach(b=>b.onclick=()=>applyTemplate(TEMPLATES[+b.dataset.i]));
+
+/* ---------- meal swap ---------- */
+const DRY={'פסטה':[13,72,1.5],'אורז':[7,79,.6],'אורז מלא':[7.5,76,2.7],'קינואה':[14,64,6],'בורגול':[12,76,1.3],'כוסמת':[13,72,3.4],'פתיתים':[13,72,1.5],'קוסקוס':[13,73,.6],'עדשים':[25,60,1]};
+const SPICE_RE=/(^|\s)(מלח|פלפל שחור|תבלין|תבלינים|פפריקה|כמון|כורכום|אורגנו|בזיליקום|פטרוזיליה|כוסברה|שמיר|קינמון|ציפורן|זעתר|לפי הטעם|קורט|מעט|חומץ|רוטב סויה|סויה|לימון|מים|ספריי שמן|תרסיס)/;
+const BOOSTERS=[{k:'chicken',n:'חזה עוף',p:31,c:0,f:3.6},{k:'whey',n:'אבקת חלבון',p:80,c:8,f:5},{k:'white',n:'חלבון ביצה',p:11,c:1,f:0},{k:'yog',n:'יוגורט חלבון',p:10,c:5,f:.5},{k:'tuna',n:'טונה במים',p:26,c:0,f:1},{k:'cottage',n:'קוטג׳ 5%',p:11,c:3.5,f:5},{k:'none',n:'בלי השלמה'}];
+let sw=(()=>{try{return JSON.parse(store.get('pdfs2_swap'))}catch(e){return null}})()||{n:1,meals:[{name:'',text:''},{name:'',text:''}],recipeName:'',recipe:'',boost:'chicken',tk:'',tp:''};
+const saveSw=()=>store.set('pdfs2_swap',JSON.stringify(sw));
+const PL={'כף':'כפות','כפית':'כפיות','כוס':'כוסות','פרוסה':'פרוסות','פרוסת':'פרוסות','יחידה':'יחידות','חופן':'חופנים','סקופ':'סקופים','קופסה':'קופסאות','קופסת':'קופסאות','מנה':'מנות','חתיכה':'חתיכות','קוביה':'קוביות','שקית':'שקיות','גביע':'גביעים'};
+const SG=Object.fromEntries(Object.entries(PL).filter(([s])=>!/ת$/.test(s)||s==='כפית').map(([s,p])=>[p,s]));
+const unitForm=(u,v)=>v>1?(PL[u]||u):(SG[u]||(u==='פרוסת'?'פרוסה':u==='קופסת'?'קופסה':u));
+const roundHalf=x=>Math.max(.5,Math.round(x*2)/2);
+const numTxt=v=>v===.5?'חצי':String(v);
+function macrosOf(food,q,dry){
+  if(!food) return null;
+  let p=food.p,c=food.c,f=food.f;const d=dry&&DRY[food.k];
+  if(d){[p,c,f]=d}
+  let g=gramsFor(food,q);
+  if(d&&q&&q.kind==='cup') g=q.n*185;
+  if(d&&!q) g=80;
+  const k=g/100;return {p:p*k,c:c*k,f:f*k,kcal:(p*4+c*4+f*9)*k};
+}
+function parseIngredient(line,dry){
+  const {amt,name,q}=parseQty(line);
+  const spice=SPICE_RE.test(' '+line)&&!/גרם|כוס|כף|כפית/.test(line)||/^(מלח|פלפל שחור|תבלינים?)/.test(line);
+  const food=spice?null:findFood(name);
+  return {name,amt,q,food,spice,m:macrosOf(food,q,dry)};
+}
+const addM=(a,b,k=1)=>{if(b){a.p+=b.p*k;a.c+=b.c*k;a.f+=b.f*k;a.kcal+=b.kcal*k}return a};
+const Z=()=>({p:0,c:0,f:0,kcal:0});
+function parseRecipe(text){
+  const ings=[],steps=[];let mode='ing';
+  text.split('\n').map(l=>l.trim()).filter(Boolean).forEach(l=>{
+    if(/^(אופן ה?הכנה|הוראות|הכנה|שלבי הכנה|דרך הכנה)\s*:?$/.test(l)){mode='steps';return}
+    if(/^(מצרכים|רכיבים|מרכיבים|חומרים)\s*:?$/.test(l)){mode='ing';return}
+    if(mode==='steps'){steps.push(l.replace(/^\s*(\d+[.)]|[-•*])\s*/,''));return}
+    ings.push(parseIngredient(clean(l),true));
+  });
+  return {ings,steps};
+}
+function swapCompute(){
+  const meals=sw.meals.slice(0,sw.n).map((m,i)=>{
+    const data=parseMenu(m.text);const items=data.sections.flatMap(s=>s.items);
+    const nm=m.name.trim()||(data.sections[0]&&data.sections[0].name!=='התפריט'?data.sections[0].name:`ארוחה ${i+1}`);
+    const tot=Z();const unknown=[];items.forEach(it=>{if(it.or||it.alt)return;if(it.m)addM(tot,it.m);else unknown.push(it.name)});
+    return {name:nm,items,tot,unknown};
+  }).filter(m=>m.items.length);
+  const target=Z();meals.forEach(m=>addM(target,m.tot));
+  const tk=parseFloat(sw.tk),tp=parseFloat(sw.tp);
+  if(tk>0){target.kcal=tk} if(tp>0){target.p=tp}
+  const rec=parseRecipe(sw.recipe);
+  const R=Z();rec.ings.forEach(i=>addM(R,i.m));
+  if(!rec.ings.length||R.kcal<=0||target.kcal<=0) return {meals,target,rec,ready:false};
+  const B=BOOSTERS.find(b=>b.k===sw.boost)||BOOSTERS[0];
+  let f=target.kcal/R.kcal,g=0;
+  if(B.k!=='none'&&target.p-R.p*f>8){
+    const bk=(B.p*4+B.c*4+B.f*9)/100,bp=B.p/100;
+    const ff=(target.kcal*bp-target.p*bk)/(R.kcal*bp-R.p*bk),gg=(target.kcal-ff*R.kcal)/bk;
+    if(ff>.15&&gg>0){f=ff;g=gg}
+  }
+  g=g>=15?Math.round(g/5)*5:0;
+  const A=Z();addM(A,R,f);
+  const bm=g?{p:B.p*g/100,c:B.c*g/100,f:B.f*g/100,kcal:(B.p*4+B.c*4+B.f*9)*g/100}:null;addM(A,bm);
+  return {meals,target,rec,R,f,g,B,bm,A,ready:true};
+}
+function scaledAmt(it,f){
+  if(it.spice) return 'לפי הטעם';
+  const q=it.q;
+  if(!q){if(!it.food) return it.amt||'לפי המתכון';return numTxt(it.food.u<=15?Math.max(1,Math.round(f)):roundHalf(f))}
+  const n=q.n*f;
+  if(q.kind==='g'||q.kind==='kg'){let g=q.kind==='kg'?n*1000:n;g=g>=40?Math.round(g/5)*5:Math.max(1,Math.round(g));return `${g} ${/מ["״]?ל|מיליליטר|ליטר/.test(q.u||'')?'מ״ל':'גרם'}`}
+  let u=q.u,x=n;
+  if(q.kind==='cup'&&x<.75){u='כף';x*=16}
+  if((q.kind==='tbsp'||u==='כף')&&x<.75){u='כפית';x*=3}
+  if(!u){const v=it.food&&it.food.u<=15?Math.max(1,Math.round(x)):roundHalf(x);return numTxt(v)}
+  const v=roundHalf(x);
+  return `${numTxt(v)} ${unitForm(u,v)}`;
+}
+function buildSwapBlocks(c,o){
+  const blocks=[];const mNames=c.meals.map(m=>m.name).join(' + ');
+  const cmp=c.ready?`<div class="tiles cmp">${[['kcal','קלוריות','קק״ל'],['p','חלבון','גר׳'],['c','פחמימה','גר׳'],['f','שומן','גר׳']].map(([k,l,u],i)=>`<div class="tile${i?'':' k'}"><div class="v">${r0(c.A[k]).toLocaleString()}<small>${u}</small></div><div class="l">${l}</div><div class="was">במקור: ${r0(c.target[k]).toLocaleString()}</div></div>`).join('')}</div><div class="est">* הכמויות חושבו כך שהמתכון ייתן את אותם ערכים כמו ${escH(mNames)} · ערכים משוערים</div>`:'';
+  blocks.push(heroBlock(o,[c.meals.length>1?`מחליף ${c.meals.length} ארוחות`:'מחליף ארוחה אחת',escH(mNames)],cmp));
+  // originals
+  const pr=h('div','pair');
+  c.meals.forEach((m,i)=>{
+    const b=h('div','meal was-meal');
+    b.innerHTML=`<div class="meal-head"><div class="badge">${i+1}</div><div class="meal-name">${escH(m.name)}<small class="tag-was"> · הארוחה המקורית</small></div><span class="pill kc">${r0(m.tot.kcal)} קק״ל</span></div><div class="rows"></div>
+      <div class="after"><span>חלבון <b>${r0(m.tot.p)}</b> גר׳</span><span>פחמימה <b>${r0(m.tot.c)}</b> גר׳</span><span>שומן <b>${r0(m.tot.f)}</b> גר׳</span></div>`;
+    m.items.forEach(it=>b.querySelector('.rows').appendChild(it.or?h('div','orsep','או'):h('div','item'+(it.alt?' alt':''),`<span class="dot"></span><span class="iname">${escH(it.name)}</span>${it.amt?`<span class="iamt">${ltr(escH(it.amt))}</span>`:''}`)));
+    pr.appendChild(b);
+  });
+  if(!c.ready){if(c.meals.length) blocks.push(pr);return {blocks}}
+  // adapted recipe
+  const r=h('div','meal recipe');
+  r.innerHTML=`<div class="meal-head"><div class="badge">★</div><div class="meal-name">${escH(sw.recipeName.trim()||'המתכון המותאם')}<span class="cont-tag"> · המשך</span></div>
+    <span class="pill a">מותאם לערכים שלך</span><span class="pill">${r0(c.f*100)}% מהמתכון המקורי</span></div><div class="rows"></div>`;
+  const rows=r.querySelector('.rows');
+  c.rec.ings.forEach(it=>rows.appendChild(h('div','item',`<span class="dot"></span><span class="iname">${escH(it.name)}${it.amt&&!it.spice?`<small class="orig">במקור: ${ltr(escH(it.amt))}</small>`:''}</span><span class="iamt">${ltr(escH(scaledAmt(it,c.f)))}</span>`)));
+  if(c.g) rows.appendChild(h('div','item boost',`<span class="dot"></span><span class="iname">${escH(c.B.n)}<span class="ss-tag">תוספת חלבון</span>${c.B.k==='whey'?`<small class="orig">כ-${numTxt(roundHalf(c.g/30))} סקופ</small>`:''}</span><span class="iamt">${c.g} גרם</span>`));
+  blocks.push(r);
+  if(c.rec.steps.length){
+    const st=h('div','notes steps');st.innerHTML=`<div class="notes-title">אופן הכנה<span class="cont-tag"> · המשך</span></div><div class="rows"></div>`;
+    c.rec.steps.forEach((s,i)=>st.querySelector('.rows').appendChild(h('div','step-row',`<b>${i+1}</b><span>${escH(s)}</span>`)));
+    if(c.g) st.querySelector('.rows').appendChild(h('div','step-row',`<b>+</b><span>${escH(c.B.n)} (${c.g} גרם) — מוסיפים בסוף או מגישים לצד המנה.</span>`));
+    blocks.push(st);
+  }
+  if(c.meals.length){const w=h('div','pair-wrap');w.appendChild(h('div','swap-sep','מה המתכון מחליף'));w.appendChild(pr);blocks.push(w)}
+  return {blocks};
+}
+function drawSwap(){
+  $('#swN').innerHTML=[1,2].map(n=>`<button data-n="${n}" class="${sw.n===n?'on':''}">${n}<small>${n===1?'ארוחה':'ארוחות'}</small></button>`).join('');
+  $('#swN').querySelectorAll('button').forEach(b=>b.onclick=()=>{sw.n=+b.dataset.n;saveSw();drawSwap();render()});
+  const box=$('#swMeals');box.innerHTML='';
+  for(let i=0;i<sw.n;i++){
+    const m=sw.meals[i]=sw.meals[i]||{name:'',text:''};
+    const c=h('div','day');
+    c.innerHTML=`<div class="day-h"><b>ארוחה ${i+1}</b><input class="inp" placeholder="שם (לא חובה) — למשל: ארוחת ערב"></div><textarea spellcheck="false" placeholder="2 פרוסות לחם מלא&#10;גבינה לבנה 5% 250 גרם&#10;ירקות"></textarea>`;
+    const [inp,ta]=[c.querySelector('input'),c.querySelector('textarea')];inp.value=m.name;ta.value=m.text;
+    inp.oninput=e=>{m.name=e.target.value;saveSw();later()};ta.oninput=e=>{m.text=e.target.value;saveSw();later()};
+    box.appendChild(c);
+  }
+  $('#swRecName').value=sw.recipeName;$('#swRecipe').value=sw.recipe;$('#swBoost').value=sw.boost;$('#swTk').value=sw.tk;$('#swTp').value=sw.tp;
+}
+$('#swBoost').innerHTML=BOOSTERS.map(b=>`<option value="${b.k}">${b.k==='none'?'בלי השלמת חלבון':'השלמת חלבון עם: '+b.n}</option>`).join('');
+[['#swRecName','recipeName'],['#swRecipe','recipe'],['#swTk','tk'],['#swTp','tp']].forEach(([s,k])=>$(s).addEventListener('input',e=>{sw[k]=e.target.value;saveSw();later()}));
+$('#swBoost').onchange=e=>{sw.boost=e.target.value;saveSw();render()};
+function loadSwapSample(){
+  sw={n:1,meals:[{name:'ארוחת ערב',text:'2 פרוסות לחם מלא\nגבינה לבנה 5% 250 גרם\n2 ביצים\nירקות'},{name:'',text:''}],recipeName:'פסטה קרמית עם עוף ופטריות',
+  recipe:`מצרכים
+250 גרם פסטה
+400 גרם חזה עוף
+250 גרם פטריות
+1 בצל
+2 שיני שום
+כף שמן זית
+כוס שמנת לבישול
+50 גרם פרמזן
+מלח ופלפל שחור
+אופן הכנה
+מבשלים את הפסטה לפי ההוראות על האריזה
+חותכים את העוף לקוביות וצולים במחבת עם שמן הזית
+מוסיפים בצל, שום ופטריות ומטגנים 5 דקות
+מוסיפים שמנת ופרמזן, מערבבים עם הפסטה ומגישים`,boost:'chicken',tk:'',tp:''};
+  saveSw();drawSwap();
+}
+drawSwap();
+
 function setType(t,init){
   if(!init){drafts[TYPE]=$('#src').value;titles[TYPE]=$('#title').value;subs[TYPE]=$('#subtitle').value}
   TYPE=t;document.querySelectorAll('#seg button').forEach(b=>b.classList.toggle('on',b.dataset.t===t));
   $('#src').value=drafts[t];$('#title').value=titles[t];$('#subtitle').value=subs[t];
-  $('#src').placeholder=SAMPLES[t].split('\n').slice(0,8).join('\n')+'\n…';
-  $('#wkMode').style.display=t==='workout'?'':'none';setWkMode(t==='workout'?wk.mode:'free');
-  $('#help').innerHTML=(t==='workout'&&wk.mode==='wizard')?WIZ_HELP:HELP[t];$('#macroTog').style.display=t==='menu'?'':'none';$('#musTog').style.display=t==='workout'?'':'none';
+  if(SAMPLES[t])$('#src').placeholder=SAMPLES[t].split('\n').slice(0,8).join('\n')+'\n…';
+  applyPanels();
   render();
 }
 let pages=[],timer;
@@ -806,6 +1058,14 @@ async function render(){
   const o=opts(),src=$('#src').value;
   store.set('pdfs2_'+TYPE,src);store.set('pdfs2_t_'+TYPE,$('#title').value);store.set('pdfs2_s_'+TYPE,$('#subtitle').value);store.set('pdfs2_client',o.client);
   const pv=$('#preview');
+  if(TYPE==='swap'){
+    const c=swapCompute();
+    if(!c.meals.length&&!sw.recipe.trim()){pv.innerHTML=`<div class="empty">הדבק את הארוחה מהתפריט ואת המתכון,<br>והכמויות יחושבו מחדש לפי הערכים שלה.<br><br>רוצה לראות איך זה נראה? לחץ <b>טען דוגמה</b>.</div>`;$('#stats').innerHTML='מחכה לארוחה ולמתכון…';pages=[];return}
+    const unk=[...c.meals.flatMap(m=>m.unknown),...c.rec.ings.filter(i=>!i.food&&!i.spice).map(i=>i.name)];
+    $('#stats').innerHTML=(c.meals.length?`יעד: <b>${r0(c.target.kcal)}</b> קק״ל · <b>${r0(c.target.p)}</b> גר׳ חלבון`:'<span class="warn">חסרה הארוחה המקורית</span>')+(c.ready?`<br>מתכון מקורי: ${r0(c.R.kcal)} קק״ל → מותאם: <b>${r0(c.A.kcal)}</b> קק״ל · <b>${r0(c.A.p)}</b> גר׳ חלבון`+(c.g?` (כולל ${c.g} גר׳ ${escH(c.B.n)})`:''):(sw.recipe.trim()?'':'<br><span class="warn">חסר מתכון</span>'))+(unk.length?`<br><span class="warn">לא זוהו (לא נספרו): ${unk.map(escH).join(', ')}</span>`:'');
+    const res=buildSwapBlocks(c,o);
+    pages=paginate($('#stage'),res.blocks,o);drawPreview(pv);return;
+  }
   const wiz=TYPE==='workout'&&wk.mode==='wizard';const wdata=wiz?buildWizardData():null;
   if(wiz?!wdata.sections.length:!src.trim()){pv.innerHTML=wiz?`<div class="empty">בחר לכמה ימים לחלק את השבוע,<br>וכתוב את התרגילים של כל יום.<br><br>רוצה לראות איך זה נראה? לחץ <b>טען דוגמה</b>.</div>`:`<div class="empty">הדבק כאן ${TYPE==='menu'?'תפריט':'תוכנית אימון'} כרשימה פשוטה<br>והוא יהפוך ל-PDF מעוצב.<br><br>לא בטוח בפורמט? לחץ <b>טען דוגמה</b>.</div>`;$('#stats').innerHTML='מחכה לטקסט…';pages=[];return}
   let res;
@@ -813,7 +1073,9 @@ async function render(){
     $('#stats').innerHTML=`זוהו <b>${s.count}</b> ארוחות · <b>${s.items}</b> פריטים`+(o.macros?` · <b>~${r0(s.tot.kcal)}</b> קק״ל`:'')+(o.macros&&s.unknown.length?`<br><span class="warn">לא נכנסו למאקרו: ${s.unknown.map(escH).join(', ')}</span>`:'');}
   else{res=buildWorkoutBlocks(wiz?wdata:parseWorkout(src),o);const s=res.stats;
     $('#stats').innerHTML=`זוהו <b>${s.count}</b> טבלאות · <b>${s.items}</b> תרגילים`+(o.muscles&&s.noMus.length?`<br><span class="warn">בלי קבוצת שריר: ${s.noMus.map(escH).join(', ')} — אפשר לכתוב "חזה - …" בתחילת השורה</span>`:'');}
-  pages=paginate($('#stage'),res.blocks,o);
+  pages=paginate($('#stage'),res.blocks,o);drawPreview(pv);
+}
+function drawPreview(pv){
   const w=Math.min(pv.clientWidth-(innerWidth<900?32:56),680),sc=w/794;
   pv.innerHTML='';
   pages.forEach((p,i)=>{const wrap=h('div','pv-wrap');wrap.style.width=794*sc+'px';wrap.style.height=1123*sc+'px';const c=p.cloneNode(true);c.style.transform=`scale(${sc})`;wrap.appendChild(c);pv.appendChild(wrap);pv.appendChild(h('div','pv-label',`עמוד ${i+1}`))});
@@ -822,8 +1084,8 @@ const later=()=>{clearTimeout(timer);timer=setTimeout(render,250)};
 ['#src','#client','#date','#title','#subtitle'].forEach(s=>$(s).addEventListener('input',later));
 $('#macros').addEventListener('change',render);$('#muscles').addEventListener('change',render);
 document.querySelectorAll('#seg button').forEach(b=>b.onclick=()=>setType(b.dataset.t));
-$('#sample').onclick=()=>{if(TYPE==='workout'&&wk.mode==='wizard')loadWizSample();else $('#src').value=SAMPLES[TYPE];render()};
-$('#clear').onclick=()=>{if(TYPE==='workout'&&wk.mode==='wizard'){if(!confirm('לנקות את כל הימים?'))return;wk.days=[];wk.notes='';$('#wkNotes').value='';saveWk();drawDays()}else $('#src').value='';render()};
+$('#sample').onclick=()=>{if(TYPE==='swap')loadSwapSample();else if(TYPE==='workout'&&wk.mode==='wizard')loadWizSample();else $('#src').value=SAMPLES[TYPE];render()};
+$('#clear').onclick=()=>{if(TYPE==='swap'){sw.meals=[{name:'',text:''},{name:'',text:''}];sw.recipe='';sw.recipeName='';sw.tk='';sw.tp='';saveSw();drawSwap()}else if(TYPE==='workout'&&wk.mode==='wizard'){if(!confirm('לנקות את כל הימים?'))return;wk.days=[];wk.notes='';$('#wkNotes').value='';saveWk();drawDays()}else $('#src').value='';render()};
 addEventListener('resize',later);
 
 async function makePdf(){
