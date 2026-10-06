@@ -90,6 +90,9 @@ html,body{overflow-x:hidden}
 .unk.pick{border-style:solid;color:#fff}
 .ai .step-t small{font-size:.7rem;font-weight:600;margin-right:6px}.ai .step-t small.ok{color:#7fe0a8}.ai .step-t small.warn{color:var(--text3)}
 #aiSettings{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px;margin-bottom:10px}
+.gem-box{border:1px solid rgba(255,107,53,.3);background:rgba(255,107,53,.06);border-radius:10px;padding:10px;margin-bottom:12px;font-size:.84rem}
+.gem-row{display:grid;grid-template-columns:78px auto 1fr;gap:6px;align-items:center;margin-top:6px;font-size:.78rem}
+.gem-row .inp{height:32px;font-size:.74rem}
 .unk:hover{background:rgba(255,107,53,.2)}
 .chip-btn.hot{border-color:var(--accent);color:var(--accent)}
 .dr-dup{background:none;border:0;cursor:pointer;font-size:.95rem;opacity:.6;color:var(--text)}.dr-dup:hover{opacity:1}
@@ -306,6 +309,14 @@ textarea.small{min-height:80px;flex:none;width:100%}
     <div class="step ai" id="aiBox">
       <div class="step-t"><span>🤖</span>Gemini — תגיד במילים מה אתה רוצה<small id="aiKeyState"></small><button class="chip-btn" id="aiSet" style="margin-right:auto;height:30px">⚙️</button></div>
       <div id="aiSettings" hidden>
+        <div class="gem-box">
+          <b>💎 יש לך Gemini Pro? צור Gem — פעם אחת וזהו</b>
+          <div class="help" style="margin:4px 0 8px">1. לוחצים "העתק הוראות" &nbsp;2. ב-Gemini: Gems ← Gem חדש ← מדביקים בהוראות ושומרים &nbsp;3. מעתיקים את הקישור של ה-Gem ומדביקים כאן. מאז האתר שולח לו רק את הבקשה הקצרה.</div>
+          <div class="gem-row"><span>🍽️ תפריטים</span><button class="chip-btn" data-gem="menu">העתק הוראות</button><input class="inp" data-gemurl="menu" placeholder="קישור ל-Gem (https://gemini.google.com/gem/…)"></div>
+          <div class="gem-row"><span>🏋️ אימונים</span><button class="chip-btn" data-gem="workout">העתק הוראות</button><input class="inp" data-gemurl="workout" placeholder="קישור ל-Gem"></div>
+          <div class="gem-row"><span>🔄 מתכונים</span><button class="chip-btn" data-gem="swap">העתק הוראות</button><input class="inp" data-gemurl="swap" placeholder="קישור ל-Gem"></div>
+          <a class="help" href="https://gemini.google.com/gems/create" target="_blank" rel="noopener" style="color:var(--accent);display:inline-block;margin-top:4px">← פתח יצירת Gem חדש</a>
+        </div>
         <div class="help" style="margin-bottom:8px">לא חובה! בלי מפתח — האתר מעתיק לך הנחיה מוכנה ופותח את Gemini, ואתה מדביק בחזרה את התשובה. עם מפתח (חינמי) — הכל קורה לבד בלחיצה.</div>
         <label class="f">מפתח API של Gemini (לא חובה)<input class="inp" id="aiKey" type="password" autocomplete="off" placeholder="AIza…"></label>
         <div class="row2" style="margin-top:8px"><select class="inp" id="aiModel"></select><button class="btn main" id="aiSave" style="height:42px">שמור</button></div>
@@ -354,6 +365,7 @@ textarea.small{min-height:80px;flex:none;width:100%}
       <button class="chip-btn" id="sample">טען דוגמה</button>
       <button class="chip-btn" id="clear">נקה</button>
       <button class="chip-btn" id="fitBtn">🎯 התאם כמויות ליעד</button>
+      <button class="chip-btn" id="balBtn">⚖️ אזן החלפות</button>
       <button class="chip-btn" id="undoFit" hidden>↩ בטל התאמה</button>
       <button class="chip-btn" id="foodsBtn">🥫 המזונות שלי</button>
       <label class="tog" id="macroTog"><input type="checkbox" id="macros" checked>מאקרו (הערכה)</label>
@@ -1048,7 +1060,7 @@ function applyPanels(){
   $('#help').innerHTML=wiz?WIZ_HELP:HELP[t];
   $('#macroTog').style.display=t==='menu'?'':'none';$('#musTog').style.display=t==='workout'?'':'none';
   $('#mtBox').style.display=t==='menu'?'':'none';
-  ['#fitBtn','#menuTpls'].forEach(x=>$(x).style.display=t==='menu'?'':'none');$('#foodsBtn').style.display=t==='workout'?'none':'';if(t!=='menu')$('#undoFit').hidden=true;
+  ['#fitBtn','#balBtn','#menuTpls'].forEach(x=>$(x).style.display=t==='menu'?'':'none');$('#foodsBtn').style.display=t==='workout'?'none':'';if(t!=='menu')$('#undoFit').hidden=true;
 }
 function setWkMode(m){wk.mode=m;saveWk();applyPanels()}
 const WIZ_HELP=`בכל יום — שורה לכל תרגיל: <code>סקוואט 3x8-10 מנוחה 2 דקות</code>. הערה אחרי <code> - </code>. <code>+</code> בתחילת שורה = סופר סט. יום שחוזר על עצמו — בוחרים <code>שכפל את יום…</code> וזהו.`;
@@ -1297,7 +1309,7 @@ async function render(){
   if(wiz?!wdata.sections.length:!src.trim()){pv.innerHTML=wiz?`<div class="empty">בחר לכמה ימים לחלק את השבוע,<br>וכתוב את התרגילים של כל יום.<br><br>רוצה לראות איך זה נראה? לחץ <b>טען דוגמה</b>.</div>`:`<div class="empty">הדבק כאן ${TYPE==='menu'?'תפריט':'תוכנית אימון'} כרשימה פשוטה<br>והוא יהפוך ל-PDF מעוצב.<br><br>לא בטוח בפורמט? לחץ <b>טען דוגמה</b>.</div>`;$('#stats').innerHTML='מחכה לטקסט…';pages=[];return}
   let res;
   if(TYPE==='menu'){res=buildMenuBlocks(parseMenu(src),o);const s=res.stats;
-    $('#stats').innerHTML=`זוהו <b>${s.count}</b> ארוחות · <b>${s.items}</b> פריטים`+(o.macros?` · <b>~${r0(s.tot.kcal)}</b> קק״ל`:'')+(o.macros&&s.unknown.length?`<br><span class="warn">לא נכנסו למאקרו — לחץ כדי להוסיף:</span><br>${unkBtns(s.unknown)}`:'')+targetLine(s.tot)+(s.warn&&s.warn.length?`<br><span class="warn">⚠️ החלפות לא שקולות (מעל 25%):</span><br>${s.warn.map(x=>'• '+escH(x)).join('<br>')}`:'');}
+    $('#stats').innerHTML=`זוהו <b>${s.count}</b> ארוחות · <b>${s.items}</b> פריטים`+(o.macros?` · <b>~${r0(s.tot.kcal)}</b> קק״ל`:'')+(o.macros&&s.unknown.length?`<br><span class="warn">לא נכנסו למאקרו — לחץ כדי להוסיף:</span><br>${unkBtns(s.unknown)}`:'')+targetLine(s.tot)+(s.warn&&s.warn.length?`<br><span class="warn">⚠️ החלפות לא שקולות (מעל 25%):</span> <button class="unk pick bal">⚖️ אזן אוטומטית</button><br>${s.warn.map(x=>'• '+escH(x)).join('<br>')}`:'');}
   else{res=buildWorkoutBlocks(wiz?wdata:parseWorkout(src),o);const s=res.stats;
     $('#stats').innerHTML=`זוהו <b>${s.count}</b> טבלאות · <b>${s.items}</b> תרגילים`+(o.muscles&&s.noMus.length?`<br><span class="warn">בלי קבוצת שריר: ${s.noMus.map(escH).join(', ')} — אפשר לכתוב "חזה - …" בתחילת השורה</span>`:'');}
   pages=paginate($('#stage'),res.blocks,o);drawPreview(pv);
@@ -1513,7 +1525,7 @@ $('#fdAdd').onclick=()=>{
   store.set('pdfs2_foods',JSON.stringify(L));rebuildFoods();drawFoods();render();
   ['fd_name','fd_p','fd_c','fd_f','fd_u'].forEach(k=>$('#'+k).value='');toast(`${names[0]} נוסף ✓`);
 };
-$('#stats').addEventListener('click',e=>{const b=e.target.closest('.unk');if(!b)return;if(b.dataset.pick)pickAmbig(b.dataset.w,b.dataset.pick);else openFoods(b.dataset.n)});
+$('#stats').addEventListener('click',e=>{const b=e.target.closest('.unk');if(!b)return;if(b.classList.contains('bal')){doBalance();return}if(b.dataset.pick)pickAmbig(b.dataset.w,b.dataset.pick);else openFoods(b.dataset.n)});
 rebuildFoods();
 
 /* ================= FIT MENU TO TARGET ================= */
@@ -1530,6 +1542,38 @@ function scalePart(part,k){
   const i=part.indexOf(pq.amt);return i>-1?part.slice(0,i)+amt+part.slice(i+pq.amt.length):`${amt} ${pq.name}`;
 }
 const scaleOpt=(t,k)=>splitTop(t,PLUS_SEP).map(p=>scalePart(p,k)).join(' + ');
+/* ⚖️ make every option in an exchange line worth the same as the first option */
+function balanceText(text){
+  const data=parseMenu(text);const lines=text.split('\n');let n=0;
+  data.sections.flatMap(s=>s.items).filter(i=>i.kind==='group'&&i.li>=0).forEach(g=>{
+    const base=g.opts.find(o=>o.m);if(!base)return;const B=base.m.kcal;if(!B)return;
+    const orig=lines[g.li];const lead=(orig.match(/^\s*(?:[-•*·▪●]+|\d+[.)](?!\d))?\s*/)||[''])[0];
+    let body=orig.slice(lead.length);const orP=/^או\s+/.test(body)?'או ':'';if(orP)body=body.replace(/^או\s+/,'');
+    let catP='';const cm=body.match(CAT_RE);if(cm){catP=cm[0];body=body.slice(cm[0].length)}
+    const opts=splitTop(body,OPT_SEP);if(opts.length!==g.opts.length)return;
+    let out=body,pos=0;
+    opts.forEach((op,j)=>{
+      const o=g.opts[j];let nw=op;
+      if(o!==base&&o.m&&o.m.kcal>0&&Math.abs(o.m.kcal-B)/B>.15){
+        // try a few factors, keep the closest result — never accept something worse than the original
+        const err=t=>{const m2=optMacros(t);return m2?Math.abs(m2.kcal-B):1e9};
+        let best=op,be=err(op),k=B/o.m.kcal;
+        for(let t=0;t<4;t++){const cand=scaleOpt(op,k);const e=err(cand);if(e<be){best=cand;be=e}const m2=optMacros(cand);if(!m2||cand===op)break;k*=B/m2.kcal}
+        nw=best;if(nw!==op)n++;
+      }
+      const at=out.indexOf(op,pos);if(at>-1){out=out.slice(0,at)+nw+out.slice(at+op.length);pos=at+nw.length}
+    });
+    lines[g.li]=lead+orP+catP+out;
+  });
+  return {text:lines.join('\n'),n};
+}
+function doBalance(){
+  const src=$('#src').value;if(!src.trim())return;
+  const b=balanceText(src);if(!b.n){toast('כל ההחלפות כבר שקולות ✓');return}
+  fitUndo=src;$('#src').value=b.text;$('#undoFit').hidden=false;render();
+  const left=menuWarnings(parseMenu(b.text)).length;
+  toast(`⚖️ אוזנו ${b.n} אפשרויות`+(left?` · ${left} נשארו (פריטים בלי כמות)`:''));
+}
 function fitMenuText(text,T){
   const data=parseMenu(text);const lines=text.split('\n');
   const items=data.sections.flatMap(s=>s.items).filter(i=>(i.kind==='item'||i.kind==='group')&&i.m&&i.li>=0);
@@ -1569,6 +1613,7 @@ function doFit(T,silent){
   if(!silent)toast(`הותאם: ${r0(tot.kcal).toLocaleString()} קק״ל · ${r0(tot.p)} חלבון (יעד ${T.kcal.toLocaleString()} · ${T.p})`);
   return true;
 }
+$('#balBtn').onclick=doBalance;
 $('#fitBtn').onclick=()=>{const T=calcTarget().t;if(!T){toast('קודם ממלאים יעד ללקוח 🎯');$('#mtBox').scrollIntoView({behavior:'smooth'});return}doFit(T)};
 $('#undoFit').onclick=()=>{if(fitUndo==null)return;$('#src').value=fitUndo;fitUndo=null;$('#undoFit').hidden=true;render();toast('בוטל ↩')};
 
@@ -1771,15 +1816,19 @@ async function loadModels(){
   const j=await r.json();if(!r.ok) throw new Error((j.error&&j.error.message)||r.status);
   return (j.models||[]).filter(m=>(m.supportedGenerationMethods||[]).includes('generateContent')&&/gemini/.test(m.name)&&!/embed|image|tts|audio|live|vision/.test(m.name)).map(m=>m.name.replace('models/',''));
 }
-function foodsTable(){
-  const seen=new Set();const rows=[];
-  [...FOODS.map(([al,p,c,f,u])=>({names:al.split('|'),p,c,f,u})),...myFoods()].forEach(x=>{const k=x.names[0];if(seen.has(k))return;seen.add(k);rows.push(`${x.names.slice(0,3).join(' / ')}: ${Math.round(x.p*4+x.c*4+x.f*9)} קק״ל ל-100 גר׳ (חלבון ${x.p}, פחמימה ${x.c}, שומן ${x.f}), יחידה/פרוסה ≈ ${x.u} גר׳`)});
+const STAPLES=['חזה עוף','אורז','בורגול','תפוח אדמה','בטטה','לחם','לחם קל','פריכית','ביצה','חלבון ביצה',"קוטג' 3%","קוטג' 5%",'טונה במים','צהובה 9%','מעדן חלבון','יוגורט יווני 0%','טחינה גולמית','שמן זית','אבוקדו','שקדים','בננה','תפוח','ירקות','אמנון','סלמון','שייטל','כתף בקר','פסטה','שיבולת שועל','חמאת בוטנים','פרגית','חזה הודו','פירות יער','פקאן'];
+function foodsTable(full,rel){
+  const seen=new Set();const rows=[];rel=rel||'';
+  [...FOODS.map(([al,p,c,f,u])=>({names:al.split('|'),p,c,f,u})),...myFoods()].forEach(x=>{const k=x.names[0];if(seen.has(k))return;
+    if(!full&&!STAPLES.includes(k)&&!x.names.some(n=>n.length>2&&rel.includes(n))&&!myFoods().some(m=>m.names[0]===k))return;
+    seen.add(k);rows.push(`${x.names.slice(0,3).join(' / ')}: ${Math.round(x.p*4+x.c*4+x.f*9)} קק״ל ל-100 גר׳ (חלבון ${x.p}, פחמימה ${x.c}, שומן ${x.f}), יחידה/פרוסה ≈ ${x.u} גר׳`)});
   return rows.join('\n');
 }
 const AI_RULES=`אתה העוזר של אביאל עמירה — מאמן כושר "אחד על אחד". אתה כותב חומר שאביאל מדביק לכלי שלו, ולכן:
 - מחזירים רק את הטקסט עצמו, בעברית, בלי הקדמות, בלי הסברים, בלי markdown, בלי כוכביות, בלי טבלאות.
-- כותבים בגובה העיניים, ענייני וקצר.`;
-function aiSystem(){
+- כותבים בגובה העיניים, ענייני וקצר.
+- את כל התשובה מחזירים בתוך בלוק קוד אחד (\`\`\`) — בלי שום מילה מחוץ לבלוק — כדי שאפשר יהיה להעתיק בלחיצה.`;
+function aiSystem(full,rel){
   if(TYPE==='menu') return `${AI_RULES}
 המשימה: לכתוב/לערוך תפריט תזונה.
 כללי ערכים (חובה):
@@ -1797,8 +1846,8 @@ function aiSystem(){
 דוגמה לסגנון של אביאל:
 ${COACH_TPLS[0].t}
 
-טבלת ערכים מאושרים:
-${foodsTable()}`;
+טבלת ערכים מאושרים${full?'':' (המזונות הרלוונטיים)'}:
+${foodsTable(full,rel)}`;
   if(TYPE==='workout') return `${AI_RULES}
 המשימה: לכתוב/לערוך תוכנית אימון.
 פורמט (חובה):
@@ -1816,7 +1865,7 @@ ${foodsTable()}`;
 - שורה "אופן הכנה" ומתחתיה שלב בכל שורה.
 - רק מזונות מהטבלה, כשאפשר.
 טבלת ערכים מאושרים:
-${foodsTable()}`;
+${foodsTable(full,rel)}`;
 }
 function aiContext(){
   const parts=[];
@@ -1829,32 +1878,34 @@ function aiContext(){
 }
 function snapshotAI(){return {type:TYPE,src:$('#src').value,wk:JSON.parse(JSON.stringify(wk)),sw:JSON.parse(JSON.stringify(sw))}}
 function restoreAI(u){if(u.type==='swap'){sw=u.sw;saveSw();drawSwap()}else if(u.type==='workout'){wk=u.wk;saveWk();drawDaysPick();drawDays();applyPanels();$('#src').value=u.src}else $('#src').value=u.src;render()}
-const cleanAI=t=>t.trim().replace(/^```[a-z]*\s*/i,'').replace(/\s*```\s*$/,'').replace(/\*\*/g,'').replace(/^#+\s*/gm,'');
+const cleanAI=t=>{t=t.trim();const m=t.match(/```[a-z]*\s*\n?([\s\S]*?)```/i);if(m)t=m[1];return t.trim().replace(/^```[a-z]*\s*/i,'').replace(/\s*```\s*$/,'').replace(/\*\*/g,'').replace(/^#+\s*/gm,'')};
 async function applyAI(out){
   out=cleanAI(out);aiUndo=snapshotAI();
-  if(TYPE==='menu'){$('#src').value=out}
+  let balanced=0;
+  if(TYPE==='menu'){const b=balanceText(out);balanced=b.n;out=b.text;$('#src').value=out}
   else if(TYPE==='workout'){wk.mode='free';saveWk();applyPanels();$('#src').value=out}
   else{const ls=out.split('\n');sw.recipeName=ls[0].replace(/^(שם המנה|מתכון)\s*:\s*/,'').trim();sw.recipe=ls.slice(1).join('\n').trim();saveSw();drawSwap()}
   $('#aiUndo').hidden=false;await render();
   const warn=TYPE==='menu'?menuWarnings(parseMenu(out)).length:0;
-  $('#aiStatus').innerHTML=`✓ נכנס${TYPE==='menu'?` · ${r0(menuTotals(out).kcal).toLocaleString()} קק״ל לפי הערכים שלך`+(warn?` · <span class="warn">${warn} החלפות לא שקולות — מסומנות למטה</span>`:''):''}`;
+  $('#aiStatus').innerHTML=`✓ נכנס${TYPE==='menu'?` · ${r0(menuTotals(out).kcal).toLocaleString()} קק״ל לפי הערכים שלך`+(balanced?` · ⚖️ אוזנו ${balanced} אפשרויות`:'')+(warn?` · <span class="warn">${warn} עדיין לא שקולות — מסומנות למטה</span>`:''):''}`;
   if(TYPE==='swap')$('#swRecipe').scrollIntoView({behavior:'smooth',block:'center'});
 }
 async function runAI(){
   const ask=$('#aiAsk').value.trim();
   if(!ask){toast('כתוב מה אתה רוצה');$('#aiAsk').focus();return}
   if(!GM.key){ // free mode: copy a ready prompt → paste into the Gemini app → paste the answer back
-    const ctx=aiContext();
-    const prompt=`${aiSystem()}\n\n${ctx?ctx+'\n\n':''}הבקשה של אביאל: ${ask}`;
-    try{await navigator.clipboard.writeText(prompt)}catch(e){}
-    window.open('https://gemini.google.com/app','_blank','noopener');
-    $('#aiPasteBox').hidden=false;$('#aiStatus').innerHTML='📋 ההנחיה הועתקה — הדבק אותה ב-Gemini, ואת התשובה שלו הדבק כאן למטה 👇';
+    const ctx=aiContext();const gem=gemUrl();
+    const prompt=gem?`${ctx?ctx+'\n\n':''}הבקשה: ${ask}\n(לפי ההוראות שלך — הכל בתוך בלוק קוד אחד)`:`${aiSystem(false,ask+'\n'+ctx)}\n\n${ctx?ctx+'\n\n':''}הבקשה של אביאל: ${ask}`;
+    let copied=true;try{await navigator.clipboard.writeText(prompt)}catch(e){copied=false}
+    window.open(gem||'https://gemini.google.com/app','_blank','noopener');
+    $('#aiPasteBox').hidden=false;
+    $('#aiStatus').innerHTML=copied?`📋 הועתק${gem?' (רק הבקשה — ה-Gem כבר יודע את הכללים)':''} — הדבק ב-Gemini, לחץ על כפתור ההעתקה של בלוק הקוד בתשובה, והדבק כאן למטה 👇`:`<span class="warn">ההעתקה האוטומטית נחסמה — העתק ידנית מהתיבה:</span><textarea class="small" readonly style="margin-top:6px">${escH(prompt)}</textarea>`;
     return;
   }
   const btn=$('#aiGo');btn.disabled=true;btn.textContent='Gemini חושב…';$('#aiStatus').textContent='';
   try{
     const ctx=aiContext();
-    const out=await gemini(aiSystem(),(ctx?ctx+'\n\n':'')+`הבקשה של אביאל: ${ask}`);
+    const out=await gemini(aiSystem(false,ask+'\n'+ctx),(ctx?ctx+'\n\n':'')+`הבקשה של אביאל: ${ask}`);
     await applyAI(out);
   }catch(e){$('#aiStatus').innerHTML=`<span class="warn">${escH(e.message)}</span>`}
   finally{btn.disabled=false;drawAI()}
@@ -1868,9 +1919,16 @@ function drawAI(){
   $('#aiChips').innerHTML=AI_CHIPS[TYPE].map(c=>`<button class="chip-btn">${c}</button>`).join('');
   $('#aiChips').querySelectorAll('button').forEach(b=>b.onclick=()=>{$('#aiAsk').value=b.textContent;$('#aiAsk').focus()});
   $('#aiKeyState').textContent=GM.key?'✓ מחובר אוטומטית':'מצב העתק-הדבק (חינם)';$('#aiKeyState').className=GM.key?'ok':'warn';
-  $('#aiGo').textContent=GM.key?'🤖 שלח ל-Gemini':'🤖 העתק ופתח את Gemini';
+  $('#aiGo').textContent=GM.key?'🤖 שלח ל-Gemini':gemUrl()?'💎 העתק ופתח את ה-Gem':'🤖 העתק ופתח את Gemini';
+  if(!GM.key&&gemUrl()){$('#aiKeyState').textContent='💎 Gem מחובר';$('#aiKeyState').className='ok'}
 }
 $('#aiGo').onclick=runAI;
+const gemUrl=()=>{const u=(store.get('pdfs2_gem_'+TYPE)||'').trim();return /^https:\/\/(gemini\.google\.com|g\.co)\//.test(u)?u:''};
+document.querySelectorAll('[data-gemurl]').forEach(el=>{el.value=store.get('pdfs2_gem_'+el.dataset.gemurl)||'';el.oninput=()=>{store.set('pdfs2_gem_'+el.dataset.gemurl,el.value.trim());drawAI()}});
+document.querySelectorAll('[data-gem]').forEach(b=>b.onclick=async()=>{
+  const was=TYPE;TYPE=b.dataset.gem;const txt=aiSystem(true)+`\n\nבכל הודעה אביאל ישלח: הקשר (יעד, מבנה ארוחות, התוכן הנוכחי אם יש) + הבקשה. תענה רק בטקסט בפורמט — בתוך בלוק קוד אחד.`;TYPE=was;
+  try{await navigator.clipboard.writeText(txt);toast('ההוראות הועתקו ✓ — הדבק ב-Gem החדש')}catch(e){toast('ההעתקה נחסמה — נסה שוב')}
+});
 $('#aiPasteGo').onclick=async()=>{const t=$('#aiPaste').value.trim();if(!t){toast('הדבק קודם את התשובה של Gemini');return}await applyAI(t);$('#aiPaste').value='';$('#aiPasteBox').hidden=true};
 $('#aiAsk').addEventListener('keydown',e=>{if(e.key==='Enter'&&(e.metaKey||e.ctrlKey))runAI()});
 $('#aiUndo').onclick=()=>{if(!aiUndo)return;restoreAI(aiUndo);aiUndo=null;$('#aiUndo').hidden=true;$('#aiStatus').textContent='בוטל ↩'};
