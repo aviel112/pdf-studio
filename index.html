@@ -118,6 +118,9 @@ html,body{overflow-x:hidden}
 .day.is-dup .day-h{grid-template-columns:auto;justify-items:start}
 .dup-note{font-size:.82rem;color:#7fe0a8;background:rgba(74,222,128,.08);border:1px dashed rgba(74,222,128,.3);border-radius:10px;padding:10px;text-align:center}
 textarea.small{min-height:80px;flex:none;width:100%}
+.mn-pick{grid-template-columns:repeat(6,1fr)}
+.mn-h{grid-template-columns:auto 1fr 72px}
+#mnMeas{grid-template-columns:repeat(4,1fr);row-gap:8px}
 .tpls{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:10px;font-size:.72rem;color:var(--text3)}
 .tpls .chip-btn{height:28px;font-size:.74rem}
 #swap{display:flex;flex-direction:column;gap:14px}
@@ -331,6 +334,13 @@ textarea.small{min-height:80px;flex:none;width:100%}
         <div class="row2" style="margin-top:10px"><label class="f">יעד קלוריות ידני (לא חובה)<input class="inp" id="swTk" inputmode="numeric" placeholder="לפי הארוחות"></label><label class="f">יעד חלבון ידני (לא חובה)<input class="inp" id="swTp" inputmode="numeric" placeholder="לפי הארוחות"></label></div></div>
       <div class="step"><div class="step-t"><span>2</span>המתכון (מטיקטוק / אינסטגרם)</div><input class="inp" id="swRecName" placeholder="שם המנה — למשל: פסטה קרמית עם עוף" style="width:100%;margin-bottom:8px"><textarea id="swRecipe" spellcheck="false" placeholder="מצרכים&#10;250 גרם פסטה&#10;400 גרם חזה עוף&#10;כוס שמנת לבישול&#10;אופן הכנה&#10;מבשלים את הפסטה…"></textarea></div>
       <div class="step"><div class="step-t"><span>3</span>אם חסר חלבון — במה להשלים?</div><select class="inp" id="swBoost"></select></div>
+    </div>
+    <div class="seg2" id="mnMode"><button data-m="wizard" class="on">שלב אחר שלב</button><button data-m="free">הדבקה חופשית</button></div>
+    <div id="mnWiz" style="display:flex;flex-direction:column;gap:14px">
+      <div class="step"><div class="step-t"><span>1</span>כמה ארוחות ביום?</div><div class="days-pick mn-pick" id="mnPick"></div></div>
+      <div class="step"><div class="step-t"><span>2</span>מה בכל ארוחה?</div><div id="mnMeals" style="display:flex;flex-direction:column;gap:10px"></div></div>
+      <div class="step"><div class="step-t"><span>3</span>מדדים (לא חובה)</div><div class="g4" id="mnMeas"></div></div>
+      <div class="step"><div class="step-t"><span>4</span>דרישות יומיות (לא חובה)</div><textarea id="mnNotes" class="small" spellcheck="false" placeholder="9 אלף צעדים כל יום&#10;שקילה: ראשון, שלישי וחמישי&#10;3 ליטר מים"></textarea></div>
     </div>
     <textarea id="src" spellcheck="false"></textarea>
     <div class="step" id="mtBox"><div class="step-t"><span>🎯</span>יעד ללקוח (לא חובה)</div>
@@ -599,13 +609,14 @@ const counted=it=>(it.kind==='item'||it.kind==='group')&&!it.alt&&!(it.optN>1);
 
 function parseMenu(text){
   const sections=[];let cur=null,notes=null,mode='meal',nextAlt=false;const meas=[],intro=[];
-  const ensure=()=>{if(!cur){cur={name:'התפריט',time:'',items:[],optN:0};sections.push(cur)}return cur};
+  let notesLi=-1;
+  const ensure=()=>{if(!cur){cur={name:'התפריט',time:'',items:[],optN:0,hli:-1};sections.push(cur)}return cur};
   text.split('\n').forEach((raw,li)=>{
     let line=raw.trim();if(!line||/^[+\s]+$/.test(line))return;
     // measurements block before the first meal
     if(!sections.length){const mm=line.replace(/[‪-‮​]/g,'').match(MEAS_RE);if(mm){const v=mm[2].replace(/[.,]$/,'');if(v)meas.push({k:mm[1],v});return}}
-    if(line.startsWith('#')){line=line.replace(/^#+\s*/,'');if(NOTES_RE.test(line)){mode='notes';notes=notes||[];return}}
-    else if(NOTES_RE.test(line)){mode='notes';notes=notes||[];return}
+    if(line.startsWith('#')){line=line.replace(/^#+\s*/,'');if(NOTES_RE.test(line)){mode='notes';notes=notes||[];if(notesLi<0)notesLi=li;return}}
+    else if(NOTES_RE.test(line)){mode='notes';notes=notes||[];if(notesLi<0)notesLi=li;return}
     else if(/^(הערה|דגש)\s*:/.test(line)){(notes=notes||[]).push(line.replace(/^(הערה|דגש)\s*:\s*/,''));return}
     if(/^אופציה\s*\d+/.test(clean(line))&&mode!=='notes'){addItem(line,li);return}
     const tm=line.match(TIME_RE);const noTime=line.replace(TIME_RE,'').replace(/\s+/g,' ').trim();
@@ -615,7 +626,7 @@ function parseMenu(text){
       mode='meal';
       let name=noTime,inline='';
       if(colon>-1){name=noTime.slice(0,colon).trim();inline=noTime.slice(colon+1).trim()}
-      cur={name:name||'ארוחה',time:tm?tm[1]:'',items:[],optN:0};sections.push(cur);nextAlt=false;
+      cur={name:name||'ארוחה',time:tm?tm[1]:'',items:[],optN:0,hli:li,inline};sections.push(cur);nextAlt=false;
       if(inline) inline.split(/\s*,\s*/).filter(Boolean).forEach(x=>addItem(x,-1));
       return;
     }
@@ -648,7 +659,7 @@ function parseMenu(text){
     if(!m&&!q&&line.split(/\s+/).length>=3&&!findFood(stripParen(name))){s.items.push({...base,kind:'note',name:line});return}
     s.items.push({...base,kind:'item',name,amt,m});
   }
-  return {sections:sections.filter(s=>s.items.some(i=>i.kind!=='or')),notes:notes&&notes.filter(Boolean),meas,intro};
+  return {sections:sections.filter(s=>s.items.some(i=>i.kind!=='or')),all:sections,notesLi,notes:notes&&notes.filter(Boolean),meas,intro};
 }
 function menuTotals(text){const T=mz();parseMenu(text).sections.forEach(s=>s.items.forEach(it=>{if(counted(it))madd(T,it.m)}));return T}
 function menuWarnings(data){
@@ -1030,7 +1041,10 @@ function applyPanels(){
   $('#wkMode').style.display=t==='workout'?'':'none';
   document.querySelectorAll('#wkMode button').forEach(b=>b.classList.toggle('on',b.dataset.m===wk.mode));
   $('#wiz').style.display=wiz?'':'none';$('#swap').style.display=t==='swap'?'':'none';
-  $('#src').style.display=(wiz||t==='swap')?'none':'';
+  const mwiz=t==='menu'&&mnMode==='wizard';
+  $('#mnMode').style.display=t==='menu'?'':'none';document.querySelectorAll('#mnMode button').forEach(b=>b.classList.toggle('on',b.dataset.m===mnMode));
+  $('#mnWiz').style.display=mwiz?'flex':'none';
+  $('#src').style.display=(wiz||mwiz||t==='swap')?'none':'';
   $('#help').innerHTML=wiz?WIZ_HELP:HELP[t];
   $('#macroTog').style.display=t==='menu'?'':'none';$('#musTog').style.display=t==='workout'?'':'none';
   $('#mtBox').style.display=t==='menu'?'':'none';
@@ -1277,6 +1291,8 @@ async function render(){
     const res=buildSwapBlocks(c,o);
     pages=paginate($('#stage'),res.blocks,o);drawPreview(pv);return;
   }
+  if(TYPE==='menu'&&mnMode==='wizard')mnSync();
+  if(TYPE==='menu'&&src.trim()&&!parseMenu(src).sections.length){pv.innerHTML=`<div class="empty">${mnMode==='wizard'?'כתוב מה אוכלים בכל ארוחה —<br>והתפריט יופיע פה.':'לא זיהיתי פריטים בתפריט.'}<br><br>רוצה להתחיל מהר? בחר <b>תבנית</b> למטה.</div>`;$('#stats').innerHTML='מחכה לפריטים בארוחות…';pages=[];return}
   const wiz=TYPE==='workout'&&wk.mode==='wizard';const wdata=wiz?buildWizardData():null;
   if(wiz?!wdata.sections.length:!src.trim()){pv.innerHTML=wiz?`<div class="empty">בחר לכמה ימים לחלק את השבוע,<br>וכתוב את התרגילים של כל יום.<br><br>רוצה לראות איך זה נראה? לחץ <b>טען דוגמה</b>.</div>`:`<div class="empty">הדבק כאן ${TYPE==='menu'?'תפריט':'תוכנית אימון'} כרשימה פשוטה<br>והוא יהפוך ל-PDF מעוצב.<br><br>לא בטוח בפורמט? לחץ <b>טען דוגמה</b>.</div>`;$('#stats').innerHTML='מחכה לטקסט…';pages=[];return}
   let res;
@@ -1805,6 +1821,7 @@ ${foodsTable()}`;
 function aiContext(){
   const parts=[];
   if(TYPE==='menu'){const T=calcTarget().t;if(T)parts.push(`יעד הלקוח: ${T.kcal} קק״ל, ${T.p} גר׳ חלבון, ${T.c} גר׳ פחמימה, ${T.f} גר׳ שומן.`);
+    if(mnMode==='wizard'&&mnState.meals.length)parts.push(`מבנה התפריט: ${mnState.meals.length} ארוחות ביום — ${mnState.meals.map(m=>m.name).join(', ')}. לשמור בדיוק על המבנה הזה (אותן ארוחות, אותו סדר, אותם שמות) אלא אם אביאל ביקש אחרת. כל ארוחה בשורת כותרת שמסתיימת בנקודתיים.`);
     const cur=$('#src').value.trim();if(cur)parts.push(`התפריט הנוכחי (אם הבקשה היא שינוי — תחזיר את כל התפריט המעודכן):\n${cur}`)}
   if(TYPE==='workout'){const cur=wk.mode==='wizard'?wk.days.slice(0,wk.n).map((d,i)=>d.dup!==''?`יום ${i+1}: כמו יום ${+d.dup+1}`:`יום ${i+1}${d.name?' – '+d.name:''}:\n${d.ex}`).join('\n\n'):$('#src').value;if(cur.trim())parts.push(`התוכנית הנוכחית (אם הבקשה היא שינוי — תחזיר את כל התוכנית המעודכנת):\n${cur}`)}
   if(TYPE==='swap'){if(sw.recipe.trim())parts.push(`המתכון הנוכחי:\n${sw.recipeName}\n${sw.recipe}`);const meals=sw.meals.slice(0,sw.n).map(m=>m.text).filter(Boolean);if(meals.length)parts.push(`הארוחה שהמתכון יחליף:\n${meals.join('\n---\n')}`)}
@@ -1872,6 +1889,72 @@ $('#aiSave').onclick=async()=>{
 };
 $('#aiModel').onchange=e=>{GM.model=e.target.value;store.set('pdfs2_gmodel',GM.model)};
 drawAI();
+
+/* ================= MENU WIZARD (number of meals → meals → measurements → requirements) ================= */
+const MEAL_DEF={2:['ארוחת צהריים','ארוחת ערב'],3:['ארוחת בוקר','ארוחת צהריים','ארוחת ערב'],4:['ארוחת בוקר','ארוחת צהריים','ארוחת ביניים','ארוחת ערב'],
+ 5:['ארוחת בוקר',"ארוחת ביניים א'",'ארוחת צהריים',"ארוחת ביניים ב'",'ארוחת ערב'],6:['ארוחת בוקר',"ארוחת ביניים א'",'ארוחת צהריים',"ארוחת ביניים ב'",'ארוחת ערב','לפני השינה'],
+ 7:['ארוחת בוקר',"ארוחת ביניים א'",'ארוחת צהריים',"ארוחת ביניים ב'",'לפני אימון','ארוחת ערב','לפני השינה']};
+const MEAS_KEYS=['משקל','ישבן','פופיק','חזה','ידיים','ירכיים','צוואר'];
+const MEAL_PH='חלבון: 150 גרם חזה עוף או 200 גרם אמנון או קופסת טונה במים + ביצה&#10;פחמימה: 160 גרם אורז או 200 גרם בורגול&#10;שומן: 12 גרם טחינה או 50 גרם אבוקדו&#10;3 ירקות לבחירה';
+let mnMode=store.get('pdfs2_mnmode')||'wizard',mnLast=null,mnState={meals:[],meas:[],notes:'',intro:[]};
+function mealsFromText(text){
+  const d=parseMenu(text);const L=text.split('\n');
+  const heads=d.all.filter(s=>s.hli>=0);
+  let meals=heads.map((s,i)=>{
+    const end=i+1<heads.length?heads[i+1].hli:(d.notesLi>s.hli?d.notesLi:L.length);
+    const body=L.slice(s.hli+1,end).join('\n').replace(/^\s*\n|\n\s*$/g,'').trim();
+    return {name:s.name,time:s.time,text:[s.inline?s.inline.split(/\s*,\s*/).join('\n'):'',body].filter(Boolean).join('\n')};
+  });
+  if(!heads.length&&text.trim()){const stop=d.notesLi>=0?d.notesLi:L.length;const body=L.slice(0,stop).filter(l=>!MEAS_RE.test(l.trim())&&!d.intro.includes(l.trim())).join('\n').trim();if(body)meals=[{name:'ארוחה 1',time:'',text:body}]}
+  return {meals,meas:d.meas.map(x=>({k:x.k==='ידים'?'ידיים':x.k,v:x.v})),notes:(d.notes||[]).join('\n'),intro:d.intro||[]};
+}
+function composeMenu(st){
+  const out=[];
+  if(st.intro.length)out.push(...st.intro,'');
+  const ms=st.meas.filter(x=>String(x.v).trim());if(ms.length){ms.forEach(x=>out.push(`${x.k}: ${x.v}`));out.push('')}
+  st.meals.forEach((m,i)=>{out.push(`${(m.name||'').trim()||'ארוחה '+(i+1)}${m.time?' '+m.time.trim():''}:`);if(m.text.trim())out.push(m.text.replace(/\s+$/,''));out.push('')});
+  if(st.notes.trim())out.push('דרישות יומיות:',st.notes.trim());
+  return out.join('\n').replace(/\n{3,}/g,'\n\n').trim();
+}
+function mnWrite(){const t=composeMenu(mnState);mnLast=t;$('#src').value=t;later()}
+function mnSync(){ // text → wizard (after templates / fit / Gemini / open doc)
+  const v=$('#src').value;if(v===mnLast)return;
+  mnState=mealsFromText(v);mnLast=v;drawMn();
+}
+function setMealCount(n){
+  const old=mnState.meals,D=MEAL_DEF[n];
+  let full=old.map((m,i)=>({...m,oi:i})).filter(m=>m.text.trim());
+  if(full.length>n){const gone=full.slice(n).map(m=>m.name).join(', ');if(!confirm(`למחוק את ${gone} ואת מה שכתוב בהן?`))return;full=full.slice(0,n)}
+  // start from the default names for n meals; keep every meal that has content, as close as possible to its old relative position
+  const res=D.map(name=>({name,time:'',text:''}));let last=-1;
+  full.forEach((c,k)=>{
+    const hi=n-(full.length-k); // leave room for the meals still to place → order is always kept
+    const ok=j=>j>last&&j<=hi;
+    let i=res.findIndex((r,j)=>ok(j)&&r.name===c.name);
+    if(i<0){const want=Math.round(c.oi*(n-1)/Math.max(1,old.length-1));let bd=1e9;
+      res.forEach((r,j)=>{if(ok(j)&&Math.abs(j-want)<bd){bd=Math.abs(j-want);i=j}})}
+    res[i]={name:c.name,time:c.time||'',text:c.text};last=i;
+  });
+  mnState.meals=res;drawMn();mnWrite();
+}
+function drawMn(){
+  const n=mnState.meals.length;
+  $('#mnPick').innerHTML=[2,3,4,5,6,7].map(k=>`<button data-n="${k}" class="${n===k?'on':''}">${k}<small>ארוחות</small></button>`).join('');
+  $('#mnPick').querySelectorAll('button').forEach(b=>b.onclick=()=>setMealCount(+b.dataset.n));
+  const box=$('#mnMeals');box.innerHTML=n?'':'<div class="help" style="text-align:center;padding:8px">בחר למעלה כמה ארוחות ביום 👆</div>';
+  mnState.meals.forEach((m,i)=>{
+    const c=h('div','day');
+    c.innerHTML=`<div class="day-h mn-h"><b>${i+1}</b><input class="inp" data-k="name" placeholder="שם הארוחה"><input class="inp mn-time" data-k="time" placeholder="שעה" inputmode="numeric"></div><textarea data-k="text" spellcheck="false" placeholder="${/ביניים|לפני|אחרי|השינה|נשנוש/.test(m.name)?'פרי: בננה קטנה או תפוח בינוני או כוס ענבים&#10;או: מעדן חלבון':/בוקר|ערב/.test(m.name)?'חלבון: 1 ביצה + 2 חלבונים או מעדן חלבון או 1/2 גביע קוטג׳ 5%&#10;פחמימה: 2 פרוסות לחם רגיל או 5 פריכיות&#10;2 ירקות לבחירה':MEAL_PH}"></textarea>`;
+    c.querySelectorAll('[data-k]').forEach(el=>{el.value=m[el.dataset.k]||'';el.oninput=()=>{m[el.dataset.k]=el.value;mnWrite()}});
+    box.appendChild(c);
+  });
+  $('#mnMeas').innerHTML=MEAS_KEYS.map(k=>{const x=mnState.meas.find(y=>y.k===k);return `<label class="f">${k}<input class="inp" data-m="${k}" inputmode="decimal" value="${x?escH(x.v):''}"></label>`}).join('');
+  $('#mnMeas').querySelectorAll('[data-m]').forEach(el=>el.oninput=()=>{const k=el.dataset.m;const x=mnState.meas.find(y=>y.k===k);if(x)x.v=el.value;else mnState.meas.push({k,v:el.value});mnState.meas.sort((a,b)=>MEAS_KEYS.indexOf(a.k)-MEAS_KEYS.indexOf(b.k));mnWrite()});
+  $('#mnNotes').value=mnState.notes;
+}
+$('#mnNotes').oninput=e=>{mnState.notes=e.target.value;mnWrite()};
+function setMnMode(m){mnMode=m;store.set('pdfs2_mnmode',m);if(m==='wizard'){mnLast=null;mnSync()}applyPanels();render()}
+document.querySelectorAll('#mnMode button').forEach(b=>b.onclick=()=>setMnMode(b.dataset.m));
 
 setType('workout',true);
 </script>
