@@ -58,6 +58,29 @@ textarea{flex:1;min-height:320px;border-radius:12px;border:1px solid var(--line)
 .pv-label{font-size:.72rem;color:var(--text3);margin-top:-14px}
 .empty{color:var(--text3);margin-top:120px;text-align:center;line-height:1.8}
 #stage{position:absolute;left:-20000px;top:0}
+.seg2{display:grid;grid-template-columns:1fr 1fr;gap:4px;background:#0a0b12;border:1px solid var(--line);border-radius:12px;padding:3px}
+.seg2 button{height:34px;border:0;border-radius:9px;background:transparent;color:var(--text2);font-weight:700;font-size:.82rem;cursor:pointer}
+.seg2 button.on{background:rgba(255,107,53,.15);color:var(--accent)}
+#wiz{display:flex;flex-direction:column;gap:14px}
+.step{background:#0a0b12;border:1px solid var(--line);border-radius:14px;padding:14px}
+.step-t{display:flex;align-items:center;gap:10px;font-size:.88rem;font-weight:800;margin-bottom:12px}
+.step-t span{width:24px;height:24px;border-radius:50%;background:var(--accent);color:#fff;font-size:.78rem;display:flex;align-items:center;justify-content:center;flex:none}
+.days-pick{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.days-pick button{height:46px;border-radius:11px;border:1px solid var(--line);background:transparent;color:var(--text);font-weight:900;font-size:1.1rem;cursor:pointer;transition:.15s}
+.days-pick button small{display:block;font-size:.6rem;font-weight:600;color:var(--text3)}
+.days-pick button.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.days-pick button.on small{color:rgba(255,255,255,.8)}
+#dayCards{display:flex;flex-direction:column;gap:10px}
+.day{border:1px solid var(--line);border-radius:12px;padding:10px;background:var(--panel)}
+.day-h{display:grid;grid-template-columns:auto 1fr;gap:8px;align-items:center;margin-bottom:8px}
+.day-h b{background:rgba(255,107,53,.15);color:var(--accent);border-radius:8px;padding:6px 10px;font-size:.8rem;white-space:nowrap}
+.day-h .inp{height:36px;font-size:.85rem}
+.day select.inp{height:36px;font-size:.82rem;width:100%;margin-bottom:8px;cursor:pointer}
+.day textarea{min-height:120px;flex:none;width:100%;font-size:.85rem;padding:10px}
+.day.is-dup .day-h .inp{display:none}
+.day.is-dup .day-h{grid-template-columns:auto;justify-items:start}
+.dup-note{font-size:.82rem;color:#7fe0a8;background:rgba(74,222,128,.08);border:1px dashed rgba(74,222,128,.3);border-radius:10px;padding:10px;text-align:center}
+textarea.small{min-height:80px;flex:none;width:100%}
 @media (max-width:900px){
   .app{grid-template-columns:1fr}
   .side{border-left:0;border-bottom:1px solid var(--line);padding:16px}
@@ -98,6 +121,11 @@ textarea{flex:1;min-height:320px;border-radius:12px;border:1px solid var(--line)
 .tile .v small{font-size:11px;font-weight:600;color:var(--ink3);margin-right:2px}
 .tile .l{font-size:10.5px;color:var(--ink3);margin-top:3px;font-weight:600}
 .tile.k .v,.tile.k .v small,.tile.k .l{color:#fff}
+.sched{display:flex;justify-content:center;gap:8px;margin-top:18px}
+.sd{min-width:62px;border:1px solid var(--rule);border-radius:10px;padding:7px 10px;text-align:center}
+.sd small{display:block;font-size:10px;color:var(--ink3);font-weight:600}
+.sd b{display:block;font-size:20px;font-weight:900;color:var(--a);line-height:1.2;direction:ltr}
+.sd.off b{color:var(--ink3)}
 .est{font-size:9.5px;color:var(--ink3);margin-top:7px;text-align:center}
 
 /* section (shared by workout + menu) */
@@ -105,7 +133,8 @@ textarea{flex:1;min-height:320px;border-radius:12px;border:1px solid var(--line)
 .sec-head{display:flex;align-items:center;gap:10px;margin-bottom:9px}
 .badge{min-width:30px;height:30px;padding:0 8px;border-radius:8px;background:var(--a);color:#fff;font-weight:900;font-size:15px;display:flex;align-items:center;justify-content:center;direction:ltr;flex:none}
 .sec-title{font-size:18px;font-weight:800;color:var(--ink);line-height:1.25}
-.sec-title .paren{color:var(--ink3);font-weight:500;font-size:14px}
+.sec-title .paren{display:block;color:var(--ink3);font-weight:500;font-size:12px;margin-top:1px}
+.sec-side .pill{white-space:nowrap}
 .cont-tag{display:none;font-size:12px;color:var(--ink3);font-weight:500}
 .cont .cont-tag{display:inline}
 .sec-side{margin-right:auto;display:flex;gap:6px;align-items:center}
@@ -196,6 +225,12 @@ textarea{flex:1;min-height:320px;border-radius:12px;border:1px solid var(--line)
     </div>
     <label class="f">כותרת<input class="inp" id="title"></label>
     <label class="f">שורת הסבר מתחת לכותרת (לא חובה)<input class="inp" id="subtitle" placeholder="לדוגמה: יש להקפיד על יום מנוחה אחד לפחות בין האימונים"></label>
+    <div class="seg2" id="wkMode"><button data-m="wizard" class="on">שלב אחר שלב</button><button data-m="free">הדבקה חופשית</button></div>
+    <div id="wiz">
+      <div class="step"><div class="step-t"><span>1</span>לכמה ימים לחלק את השבוע?</div><div class="days-pick" id="daysPick"></div></div>
+      <div class="step"><div class="step-t"><span>2</span>מה עושים בכל יום?</div><div id="dayCards"></div></div>
+      <div class="step"><div class="step-t"><span>3</span>דגשים לתוכנית (לא חובה)</div><textarea id="wkNotes" class="small" spellcheck="false" placeholder="להעלות משקל כשמגיעים לטווח העליון&#10;5 דק׳ חימום לפני כל אימון"></textarea></div>
+    </div>
     <textarea id="src" spellcheck="false"></textarea>
     <div class="tools">
       <button class="chip-btn" id="sample">טען דוגמה</button>
@@ -414,7 +449,7 @@ const MUS_RULES=[
 function inferMuscle(name){for(const[re,m]of MUS_RULES)if(re.test(name))return m;return ''}
 
 const WK_HEAD_RE=/^(אימון|יום|day|workout|תוכנית|סשן|session|שבוע)(\s|$|[:\-–])/i;
-function parseWorkout(text){
+function parseWorkout(text,flat){
   const sections=[];let cur=null,notes=null,mode='ex',colMap=null;const intro=[];
   const ensure=()=>{if(!cur){cur={title:'אימון',ex:[]};sections.push(cur)}return cur};
   for(let raw of text.split('\n')){
@@ -441,7 +476,7 @@ function parseWorkout(text){
     }
     if(mode==='notes'){notes.push(clean(line));continue}
     // free text before the first table (no numbers) → subtitle
-    if(!sections.length&&!/\d/.test(line)){intro.push(line);continue}
+    if(!flat&&!sections.length&&!/\d/.test(line)){intro.push(line);continue}
     let ss=false;
     if(/^\s*(\+|&|ס"ס|ס״ס|סופר ?סט)\s*/.test(line)){ss=true;line=line.replace(/^\s*(\+|&|ס"ס|ס״ס|סופר ?סט)\s*:?\s*/,'')}
     const ex=parseExercise(clean(line));ex.ss=ss;ensure().ex.push(ex);
@@ -545,17 +580,22 @@ function letterOf(title,i){const m=title.match(/(?:^|[^A-Za-z])([A-Ha-h])(?:[^A-
 function buildWorkoutBlocks(data,o){
   const blocks=[];
   const total=data.sections.reduce((a,s)=>a+s.ex.length,0);
-  o.subs=[...o.subs,...data.intro];
-  blocks.push(heroBlock(o,[`${data.sections.length} אימונים`,`${total} תרגילים`]));
+  o.subs=[...o.subs,...(data.intro||[])];
+  let sched='';const pills=[`${data.sections.length} אימונים`,`${total} תרגילים`];
+  if(data.schedule){
+    pills.splice(0,1,`${data.schedule.length} ימי אימון בשבוע`,`${data.sections.length} אימונים שונים`);
+    sched=`<div class="sched">${data.schedule.map(d=>`<div class="sd${d.letter?'':' off'}"><small>יום ${d.day}</small><b>${d.letter||'—'}</b></div>`).join('')}</div>`;
+  }
+  blocks.push(heroBlock(o,pills,sched));
   data.sections.forEach((s,i)=>{
     const showMus=o.muscles&&s.ex.some(e=>e.muscle);
     const hasNotes=s.ex.some(e=>e.rest||e.notes||e.ss);
     const cols=[];if(showMus)cols.push('96px');cols.push('1fr','54px','78px');if(hasNotes)cols.push('178px');
     const b=h('div','sec');b.style.setProperty('--cols',cols.join(' '));
     let paren='';
-    if(!/\(/.test(s.title)){const ms=[...new Set(s.ex.map(e=>e.muscle).filter(Boolean))];if(ms.length&&o.muscles)paren=` <span class="paren">(${ms.join(', ')})</span>`}
-    b.innerHTML=`<div class="sec-head"><div class="badge">${letterOf(s.title,i)}</div><div class="sec-title">${escH(s.title)}${paren}<span class="cont-tag"> · המשך</span></div>
-      <div class="sec-side"><span class="pill">${s.ex.length} תרגילים</span></div></div>
+    if(!/\(/.test(s.title)){const ms=[...new Set(s.ex.map(e=>e.muscle).filter(Boolean))];if(ms.length&&o.muscles)paren=`<span class="paren">${ms.join(' · ')}</span>`}
+    b.innerHTML=`<div class="sec-head"><div class="badge">${s.letter||letterOf(s.title,i)}</div><div class="sec-title">${escH(s.title)}<span class="cont-tag"> · המשך</span>${paren}</div>
+      <div class="sec-side">${s.days?`<span class="pill a">${s.days.length>1?s.days.map(d=>'יום '+d).join(' · '):`יום ${s.days[0]}`}</span>`:''}<span class="pill">${s.ex.length} תרגילים</span></div></div>
       <div class="tbl"><div class="th grid">${showMus?'<span class="r">קבוצת שריר</span>':''}<span class="r">שם התרגיל</span><span>סטים</span><span>טווח חזרות</span>${hasNotes?'<span>הערות / מנוחה</span>':''}</div><div class="rows"></div></div>`;
     const rows=b.querySelector('.rows');
     s.ex.forEach((e,j)=>{
@@ -688,12 +728,75 @@ $('#date').value=today();
 $('#client').value=store.get('pdfs2_client')||'';
 COLORS.forEach((c,i)=>{const s=h('button','sw'+(i===colorIdx?' on':''));s.style.background=c.a;s.title=c.n;s.onclick=()=>{colorIdx=i;store.set('pdfs2_color',i);document.querySelectorAll('.sw').forEach((x,j)=>x.classList.toggle('on',j===i));render()};$('#colors').appendChild(s)});
 
+/* ---------- workout wizard ---------- */
+let wk=(()=>{try{return JSON.parse(store.get('pdfs2_wk'))}catch(e){return null}})()||{mode:'wizard',n:3,days:[],notes:''};
+const saveWk=()=>store.set('pdfs2_wk',JSON.stringify(wk));
+const dayAt=i=>(wk.days[i]=wk.days[i]||{name:'',ex:'',dup:''});
+const DAY_PH='לחיצת חזה 3x8-10 מנוחה 2 דקות\nפולי עליון 3x10-12\nפרפר במכונה 3x12 - דגש על כווץ\n+ שכיבות סמיכה 3xכשל';
+function drawDaysPick(){
+  $('#daysPick').innerHTML=[2,3,4,5,6].map(n=>`<button data-n="${n}" class="${wk.n===n?'on':''}">${n}<small>ימים</small></button>`).join('');
+  $('#daysPick').querySelectorAll('button').forEach(b=>b.onclick=()=>{wk.n=+b.dataset.n;saveWk();drawDaysPick();drawDays();render()});
+}
+function drawDays(){
+  const box=$('#dayCards');box.innerHTML='';
+  for(let i=0;i<wk.n;i++){
+    const d=dayAt(i);
+    if(d.dup!==''&&(+d.dup>=i||dayAt(+d.dup).dup!=='')) d.dup='';
+    const srcs=[];for(let j=0;j<i;j++) if(dayAt(j).dup==='') srcs.push(j);
+    const c=h('div','day'+(d.dup!==''?' is-dup':''));
+    c.innerHTML=`<div class="day-h"><b>יום ${i+1}</b><input class="inp" data-k="name" placeholder="שם האימון (לא חובה) — למשל: פלג גוף עליון"></div>
+      ${srcs.length?`<select class="inp" data-k="dup"><option value="">✏️ תרגילים חדשים</option>${srcs.map(j=>`<option value="${j}">⧉ שכפל את יום ${j+1}${dayAt(j).name?' — '+escH(dayAt(j).name):''}</option>`).join('')}</select>`:''}
+      ${d.dup===''?`<textarea data-k="ex" spellcheck="false" placeholder="${DAY_PH.replace(/\n/g,'&#10;')}"></textarea>`:`<div class="dup-note">✓ אותו אימון כמו יום ${+d.dup+1} — לא צריך לכתוב שוב</div>`}`;
+    c.querySelector('[data-k=name]').value=d.name;
+    const ta=c.querySelector('[data-k=ex]');if(ta)ta.value=d.ex;
+    const sel=c.querySelector('[data-k=dup]');if(sel)sel.value=d.dup;
+    c.querySelector('[data-k=name]').oninput=e=>{d.name=e.target.value;saveWk();later()};
+    if(ta) ta.oninput=e=>{d.ex=e.target.value;saveWk();later()};
+    if(sel) sel.onchange=e=>{d.dup=e.target.value;saveWk();drawDays();render()};
+    box.appendChild(c);
+  }
+}
+function buildWizardData(){
+  const uniq=[],schedule=[];
+  for(let i=0;i<wk.n;i++){
+    const d=dayAt(i);
+    if(d.dup!==''){const sec=uniq.find(u=>u.src===+d.dup);if(sec){sec.days.push(i+1);schedule.push({day:i+1,letter:sec.letter})}else schedule.push({day:i+1,letter:null});continue}
+    const ex=parseWorkout(d.ex,true).sections.flatMap(s=>s.ex);
+    if(!ex.length){schedule.push({day:i+1,letter:null});continue}
+    const letter=String.fromCharCode(65+uniq.length);
+    const nm=d.name.trim();
+    uniq.push({src:i,letter,title:nm?(/אימון/.test(nm)?nm:`אימון ${letter} – ${nm}`):`אימון ${letter}`,ex,days:[i+1]});
+    schedule.push({day:i+1,letter});
+  }
+  const notes=wk.notes.split('\n').map(x=>clean(x)).filter(Boolean);
+  return {sections:uniq,notes,intro:[],schedule};
+}
+function loadWizSample(){
+  const blocks=SAMPLES.workout.split(/\n\s*\n/).filter(b=>/\d/.test(b));
+  const toDay=b=>{const ls=b.trim().split('\n');return {name:ls[0].replace(/^אימון\s*[A-H]\s*[–-]\s*/,''),ex:ls.slice(1).join('\n'),dup:''}};
+  wk.n=4;wk.days=[toDay(blocks[0]),toDay(blocks[1]),{name:'',ex:'',dup:'0'},{name:'',ex:'',dup:'1'}];
+  wk.notes='להעלות משקל כשמגיעים לטווח העליון של החזרות\nלרשום משקלים בכל אימון';
+  saveWk();drawDaysPick();drawDays();$('#wkNotes').value=wk.notes;
+}
+function setWkMode(m){
+  wk.mode=m;saveWk();
+  document.querySelectorAll('#wkMode button').forEach(b=>b.classList.toggle('on',b.dataset.m===m));
+  const wiz=TYPE==='workout'&&m==='wizard';
+  $('#wiz').style.display=wiz?'':'none';$('#src').style.display=wiz?'none':'';
+  $('#help').innerHTML=wiz?WIZ_HELP:HELP[TYPE];
+}
+const WIZ_HELP=`בכל יום — שורה לכל תרגיל: <code>סקוואט 3x8-10 מנוחה 2 דקות</code>. הערה אחרי <code> - </code>. <code>+</code> בתחילת שורה = סופר סט. יום שחוזר על עצמו — בוחרים <code>שכפל את יום…</code> וזהו.`;
+document.querySelectorAll('#wkMode button').forEach(b=>b.onclick=()=>{setWkMode(b.dataset.m);render()});
+$('#wkNotes').value=wk.notes;$('#wkNotes').oninput=e=>{wk.notes=e.target.value;saveWk();later()};
+drawDaysPick();drawDays();
+
 function setType(t,init){
   if(!init){drafts[TYPE]=$('#src').value;titles[TYPE]=$('#title').value;subs[TYPE]=$('#subtitle').value}
   TYPE=t;document.querySelectorAll('#seg button').forEach(b=>b.classList.toggle('on',b.dataset.t===t));
   $('#src').value=drafts[t];$('#title').value=titles[t];$('#subtitle').value=subs[t];
   $('#src').placeholder=SAMPLES[t].split('\n').slice(0,8).join('\n')+'\n…';
-  $('#help').innerHTML=HELP[t];$('#macroTog').style.display=t==='menu'?'':'none';$('#musTog').style.display=t==='workout'?'':'none';
+  $('#wkMode').style.display=t==='workout'?'':'none';setWkMode(t==='workout'?wk.mode:'free');
+  $('#help').innerHTML=(t==='workout'&&wk.mode==='wizard')?WIZ_HELP:HELP[t];$('#macroTog').style.display=t==='menu'?'':'none';$('#musTog').style.display=t==='workout'?'':'none';
   render();
 }
 let pages=[],timer;
@@ -703,11 +806,12 @@ async function render(){
   const o=opts(),src=$('#src').value;
   store.set('pdfs2_'+TYPE,src);store.set('pdfs2_t_'+TYPE,$('#title').value);store.set('pdfs2_s_'+TYPE,$('#subtitle').value);store.set('pdfs2_client',o.client);
   const pv=$('#preview');
-  if(!src.trim()){pv.innerHTML=`<div class="empty">הדבק כאן ${TYPE==='menu'?'תפריט':'תוכנית אימון'} כרשימה פשוטה<br>והוא יהפוך ל-PDF מעוצב.<br><br>לא בטוח בפורמט? לחץ <b>טען דוגמה</b>.</div>`;$('#stats').innerHTML='מחכה לטקסט…';pages=[];return}
+  const wiz=TYPE==='workout'&&wk.mode==='wizard';const wdata=wiz?buildWizardData():null;
+  if(wiz?!wdata.sections.length:!src.trim()){pv.innerHTML=wiz?`<div class="empty">בחר לכמה ימים לחלק את השבוע,<br>וכתוב את התרגילים של כל יום.<br><br>רוצה לראות איך זה נראה? לחץ <b>טען דוגמה</b>.</div>`:`<div class="empty">הדבק כאן ${TYPE==='menu'?'תפריט':'תוכנית אימון'} כרשימה פשוטה<br>והוא יהפוך ל-PDF מעוצב.<br><br>לא בטוח בפורמט? לחץ <b>טען דוגמה</b>.</div>`;$('#stats').innerHTML='מחכה לטקסט…';pages=[];return}
   let res;
   if(TYPE==='menu'){res=buildMenuBlocks(parseMenu(src),o);const s=res.stats;
     $('#stats').innerHTML=`זוהו <b>${s.count}</b> ארוחות · <b>${s.items}</b> פריטים`+(o.macros?` · <b>~${r0(s.tot.kcal)}</b> קק״ל`:'')+(o.macros&&s.unknown.length?`<br><span class="warn">לא נכנסו למאקרו: ${s.unknown.map(escH).join(', ')}</span>`:'');}
-  else{res=buildWorkoutBlocks(parseWorkout(src),o);const s=res.stats;
+  else{res=buildWorkoutBlocks(wiz?wdata:parseWorkout(src),o);const s=res.stats;
     $('#stats').innerHTML=`זוהו <b>${s.count}</b> טבלאות · <b>${s.items}</b> תרגילים`+(o.muscles&&s.noMus.length?`<br><span class="warn">בלי קבוצת שריר: ${s.noMus.map(escH).join(', ')} — אפשר לכתוב "חזה - …" בתחילת השורה</span>`:'');}
   pages=paginate($('#stage'),res.blocks,o);
   const w=Math.min(pv.clientWidth-(innerWidth<900?32:56),680),sc=w/794;
@@ -718,8 +822,8 @@ const later=()=>{clearTimeout(timer);timer=setTimeout(render,250)};
 ['#src','#client','#date','#title','#subtitle'].forEach(s=>$(s).addEventListener('input',later));
 $('#macros').addEventListener('change',render);$('#muscles').addEventListener('change',render);
 document.querySelectorAll('#seg button').forEach(b=>b.onclick=()=>setType(b.dataset.t));
-$('#sample').onclick=()=>{$('#src').value=SAMPLES[TYPE];render()};
-$('#clear').onclick=()=>{$('#src').value='';render()};
+$('#sample').onclick=()=>{if(TYPE==='workout'&&wk.mode==='wizard')loadWizSample();else $('#src').value=SAMPLES[TYPE];render()};
+$('#clear').onclick=()=>{if(TYPE==='workout'&&wk.mode==='wizard'){if(!confirm('לנקות את כל הימים?'))return;wk.days=[];wk.notes='';$('#wkNotes').value='';saveWk();drawDays()}else $('#src').value='';render()};
 addEventListener('resize',later);
 
 async function makePdf(){
