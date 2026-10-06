@@ -86,6 +86,8 @@ html,body{overflow-x:hidden}
 .dr-foot{display:flex;gap:8px;flex-wrap:wrap}
 .empty-s{color:var(--text3);font-size:.85rem;text-align:center;line-height:1.8;margin-top:30px}
 .unk{border:1px dashed rgba(255,179,143,.6);background:rgba(255,107,53,.08);color:#ffb38f;border-radius:7px;padding:2px 8px;font-size:.74rem;cursor:pointer;margin:2px 0;font-family:inherit}
+.amb{font-size:.78rem;color:var(--text)}
+.unk.pick{border-style:solid;color:#fff}
 .unk:hover{background:rgba(255,107,53,.2)}
 .chip-btn.hot{border-color:var(--accent);color:var(--accent)}
 .dr-dup{background:none;border:0;cursor:pointer;font-size:.95rem;opacity:.6;color:var(--text)}.dr-dup:hover{opacity:1}
@@ -351,15 +353,22 @@ textarea.small{min-height:80px;flex:none;width:100%}
 <script>
 /* ================= FOOD DB (per 100g: protein, carbs, fat; u = grams per unit) ================= */
 const FOODS = [
- ['חזה עוף|חזה של עוף|עוף|פילה עוף|שניצל אפוי',31,0,3.6,150],
- ['פרגית|פרגיות|שוקיים',18,0,10,120],
- ['חזה הודו|הודו|פסטרמה',29,1,2,150],
+ ['חזה עוף|חזה של עוף|עוף|פילה עוף|שניצל אפוי',31,0,4.5,150], // אחרי בישול: 165 קק״ל (אושר ע״י אביאל)
+ ['פרגית|פרגיות',25,0,10,120], // 190 קק״ל (אושר ע״י אביאל)
+ ['שוקיים|שוקיות|כרעיים|כרעי עוף|ירכיים עוף',24,0,10.2,150], // ~188 קק״ל (אושר ע״י אביאל)
+ ['חזה הודו|הודו',30,0,4.4,150], // 160 קק״ל (אושר ע״י אביאל)
+ ['פסטרמה',29,1,2,30],
  ['שניצל|שניצלים',18,12,12,120],
- ['בשר טחון|בקר טחון|טחון|קציצות|קציצה|המבורגר',20,2,15,120],
- ['סטייק|אנטריקוט|בקר|בשר אדום|פילה בקר',25,0,15,200],
- ['סלמון|סלומון',20,0,13,150],
+ ['בשר טחון|בקר טחון|טחון|קציצות|קציצה|המבורגר',20,2,15,120], // 223 קק״ל (אושר ע״י אביאל)
+ ['אנטריקוט|סטייק',26,0,16.2,200], // 250 קק״ל (אושר ע״י אביאל) — סטייק = אנטריקוט
+ ['סינטה',28,0,11.1,200], // 212 קק״ל (אושר ע״י אביאל)
+ ['כתף בקר|כתף|נתח 5|מספר 5|בקר 5|בקר|בשר אדום|פילה בקר',28,0,7.6,200], // 180 קק״ל — כתף = נתח מספר 5 (אושר ע״י אביאל)
+ ['שייטל',30,0,5.2,200], // 167 קק״ל (אושר ע״י אביאל)
+ ['סלמון|סלומון',22,0,13.5,150], // 210 קק״ל (אושר ע״י אביאל)
  ['טונה',26,0,1,112],
- ['דג|דניס|לברק|אמנון|מוסר|בקלה|פילה דג',20,0,3,150],
+ ['אמנון|פילה אמנון',26,0,2.4,150], // 126 קק״ל (אושר ע״י אביאל)
+ ['דניס',22,0,10.2,150], // 180 קק״ל (אושר ע״י אביאל) — דג שומני יותר
+ ['דג|דג לבן|לברק|מוסר|בקלה|פילה דג',26,0,2.6,150], // ~128 קק״ל (אושר ע״י אביאל)
  ['ביצה|ביצים|חביתה|חביתות|ביצה קשה|ביצים קשות',13,1,10,55],
  ['חלבון ביצה|חלבוני ביצה|חלבונים',11,1,0,33],
  ['קוטג|קוטג\'|קוטג׳',11,3.5,5,250],
@@ -378,20 +387,21 @@ const FOODS = [
  ['פריכית|פריכיות|פריכיות אורז',8,80,3,9],
  ['קרקר|קרקרים',10,68,10,8],
  ['אורז מלא',2.6,23,0.9,160],
- ['אורז|אורז לבן|סושי',2.7,28,0.3,160],
- ['פסטה|ספגטי|פנה|מקרוני',5.5,30,1,160],
- ['קינואה|קינואה',4.4,21,1.9,160],
- ['בורגול',3,19,0.2,160],
- ['כוסמת',3.4,20,0.6,160],
- ['פתיתים',4,24,1,160],
- ['קוסקוס',3.8,23,0.2,160],
- ['תפוח אדמה|תפוחי אדמה|תפו"א|תפ"א',2,17,0.1,170],
- ['בטטה|בטטות',1.6,20,0.1,150],
+ ['אורז|אורז לבן|סושי',2.7,29,0.3,160], // אחרי בישול: 130 קק״ל (אושר ע״י אביאל)
+ ['פסטה|ספגטי|פנה|מקרוני',6.5,34.5,1.2,160], // 175 קק״ל (אושר ע״י אביאל)
+ ['קינואה',4.4,21,1.9,160], // 119 קק״ל (אושר ע״י אביאל)
+ ['בורגול',3,17.3,0.2,160], // 83 קק״ל (אושר ע״י אביאל)
+ ['כוסמת',3.4,20,0.6,160], // 103 קק״ל (אושר ע״י אביאל)
+ ['פתיתים',5.5,31.8,1.2,160], // 160 קק״ל (אושר ע״י אביאל)
+ ['קוסקוס קנוי|קוסקוס אינסטנט',5,30.7,.8,160], // 150 קק״ל (אושר ע״י אביאל)
+ ['קוסקוס אמיתי|קוסקוס ביתי',4,25,.4,160], // 120 קק״ל (אושר ע״י אביאל)
+ ['תפוח אדמה|תפוחי אדמה|תפו"א|תפ"א',2,19.3,0.1,170], // 86 קק״ל (אושר ע״י אביאל)
+ ['בטטה|בטטות',1.6,19.7,0.1,150], // 86 קק״ל (אושר ע״י אביאל)
  ['תירס',3.3,19,1.4,100],
  ['שיבולת שועל|קוואקר|דייסה|שיבולת',13,60,7,40],
  ['גרנולה',10,64,15,40],
  ['קורנפלקס|דגני בוקר|כריות',7,84,1,30],
- ['עדשים',9,20,0.4,160],
+ ['עדשים',9,20,0.4,160], // 120 קק״ל (אושר ע״י אביאל)
  ['גרגירי חומוס|חומוס גרגירים',8.9,27,2.6,160],
  ['חומוס',8,14,18,30],
  ['שעועית לבנה|שעועית|ממש|לוביה',8,21,0.5,160],
@@ -445,7 +455,9 @@ const FOODS = [
 const FOOD_IDX=[];
 FOODS.forEach(([al,p,c,f,u])=>al.split('|').forEach(a=>FOOD_IDX.push({a,p,c,f,u,k:al.split('|')[0]})));
 FOOD_IDX.sort((x,y)=>y.a.length-x.a.length);
-function findFood(name){for(const e of FOOD_IDX){if(name.includes(e.a))return e}return null}
+const AMBIG=[{re:/קוסקוס(?!\s*(קנוי|אמיתי|אינסטנט|ביתי))/,word:'קוסקוס',opts:['קוסקוס קנוי','קוסקוס אמיתי']}];
+const ambigOf=name=>AMBIG.find(a=>a.re.test(name));
+function findFood(name){if(ambigOf(name))return null;for(const e of FOOD_IDX){if(name.includes(e.a))return e}return null}
 
 /* ================= QUANTITY PARSING ================= */
 const NUMW={'חצי':.5,'רבע':.25,'אחד':1,'אחת':1,'שני':2,'שתי':2,'שתיים':2,'שניים':2,'זוג':2,'שלוש':3,'שלושה':3,'ארבע':4,'ארבעה':4,'חמש':5,'חמישה':5,'שש':6,'שישה':6};
@@ -1003,7 +1015,7 @@ function parseRecipe(text){
     if(/^(אופן ה?הכנה|הוראות|הכנה|שלבי הכנה|דרך הכנה)\s*:?$/.test(l)){mode='steps';return}
     if(/^(מצרכים|רכיבים|מרכיבים|חומרים)\s*:?$/.test(l)){mode='ing';return}
     if(mode==='steps'){steps.push(l.replace(/^\s*(\d+[.)]|[-•*])\s*/,''));return}
-    ings.push(parseIngredient(clean(l),true));
+    ings.push(parseIngredient(clean(l),false)); // כל המשקלים = אחרי בישול
   });
   return {ings,steps};
 }
@@ -1327,7 +1339,14 @@ function rebuildFoods(){
   myFoods().forEach(f=>f.names.forEach(a=>FOOD_IDX.push({a,p:f.p,c:f.c,f:f.f,u:f.u,k:f.names[0],mine:1})));
   FOOD_IDX.sort((x,y)=>y.a.length-x.a.length||(y.mine?1:0)-(x.mine?1:0));
 }
-const unkBtns=list=>[...new Set(list)].map(n=>`<button class="unk" data-n="${escH(n)}">+ ${escH(n)}</button>`).join(' ');
+const unkBtns=list=>{const L=[...new Set(list)];const amb=[...new Set(L.map(ambigOf).filter(Boolean))];
+  return amb.map(a=>`<span class="amb">${a.word} — איזה? ${a.opts.map(o=>{const f=findFood(o);return `<button class="unk pick" data-pick="${escH(o)}" data-w="${escH(a.word)}">${escH(o.replace(a.word,'').trim())}${f?` (${Math.round(f.p*4+f.c*4+f.f*9)})`:''}</button>`}).join(' ')}</span>`).join('<br>')+(amb.length&&L.some(n=>!ambigOf(n))?'<br>':'')+L.filter(n=>!ambigOf(n)).map(n=>`<button class="unk" data-n="${escH(n)}">+ ${escH(n)}</button>`).join(' ')};
+function pickAmbig(word,opt){
+  const a=AMBIG.find(x=>x.word===word);const re=new RegExp(a.re.source,'g');
+  if(TYPE==='swap'){sw.meals.forEach(m=>m.text=m.text.replace(re,opt));sw.recipe=sw.recipe.replace(re,opt);saveSw();drawSwap()}
+  else $('#src').value=$('#src').value.replace(re,opt);
+  render();toast(`${opt} ✓`);
+}
 function drawFoods(){
   const L=myFoods();
   $('#fdList').innerHTML=L.length?L.map((f,i)=>`<div class="dr-row"><span class="dr-t">${escH(f.names.join(' / '))}<small>ל-100 גר׳: חלבון ${f.p} · פחמימה ${f.c} · שומן ${f.f} · ${Math.round(f.p*4+f.c*4+f.f*9)} קק״ל · יחידה ${f.u} גר׳</small></span><button class="dr-del" data-i="${i}">🗑</button></div>`).join(''):'<div class="empty-s">עוד אין מזונות משלך.<br>מזון שהבוט לא מזהה — מוסיפים פה פעם אחת וזהו.</div>';
@@ -1350,7 +1369,7 @@ $('#fdAdd').onclick=()=>{
   store.set('pdfs2_foods',JSON.stringify(L));rebuildFoods();drawFoods();render();
   ['fd_name','fd_p','fd_c','fd_f','fd_u'].forEach(k=>$('#'+k).value='');toast(`${names[0]} נוסף ✓`);
 };
-$('#stats').addEventListener('click',e=>{const b=e.target.closest('.unk');if(b)openFoods(b.dataset.n)});
+$('#stats').addEventListener('click',e=>{const b=e.target.closest('.unk');if(!b)return;if(b.dataset.pick)pickAmbig(b.dataset.w,b.dataset.pick);else openFoods(b.dataset.n)});
 rebuildFoods();
 
 /* ================= FIT MENU TO TARGET ================= */
