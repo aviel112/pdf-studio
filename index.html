@@ -360,6 +360,36 @@ textarea.small{min-height:80px;flex:none;width:100%}
 .item:not(.grp) .iname{flex:0 1 auto;order:1}
 .item:not(.grp)::after{content:'';flex:1;order:2;min-width:24px;border-bottom:1.5px dotted #c9ced8;margin:0 2px;align-self:flex-end;transform:translateY(-6px)}
 .item:not(.grp) .iamt{order:3}
+
+/* ---------- side panel sections ---------- */
+.sect{border:1px solid var(--line);border-radius:14px;background:#0b0c13;flex:none}
+.sect>summary{list-style:none;display:flex;align-items:center;gap:10px;padding:13px 14px;cursor:pointer;font-weight:800;font-size:.93rem;user-select:none}
+.sect>summary::-webkit-details-marker{display:none}
+.sect[open]>summary{border-bottom:1px solid var(--line)}
+.s-sum{margin-right:auto;font-size:.74rem;color:var(--text3);font-weight:600;max-width:48%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.s-chev{color:var(--text3);transition:transform .2s;font-size:.9rem}
+.sect[open] .s-chev{transform:rotate(180deg)}
+.s-body{padding:12px 14px 14px;display:flex;flex-direction:column;gap:12px}
+.s-info{font-size:.76rem;color:var(--text2);line-height:1.6;border-right:2px solid var(--accent);padding:2px 10px 2px 0}
+.s-info:empty{display:none}
+.sect #mtBox,.sect #aiBox{border:0;padding:0;background:none}
+.sect #mtBox>.step-t{display:none}
+.sect #aiBox>.step-t{margin-bottom:6px}
+.sect #aiBox>.step-t>span{display:none}
+.sect .tools{gap:8px}
+.first-tip{font-size:.8rem;line-height:1.7;background:rgba(255,107,53,.1);border:1px solid rgba(255,107,53,.35);border-radius:12px;padding:10px 12px;color:var(--text)}
+.first-tip .chip-btn{height:26px;margin-right:6px}
+.actions{position:sticky;bottom:0;z-index:6;background:linear-gradient(rgba(15,17,26,0),var(--panel) 28%);padding:16px 0 6px;margin-top:auto}
+.btn.mob{display:none}
+.help-btn{height:36px}
+.help-btn.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+body.helpmode .side button,body.helpmode .side input,body.helpmode .side textarea,body.helpmode .side select,body.helpmode .side .tog,body.helpmode #stats,body.helpmode .top .chip-btn{outline:1.5px dashed rgba(255,179,143,.75);outline-offset:2px;cursor:help}
+.help-bar{position:fixed;top:0;left:0;right:0;z-index:70;background:var(--accent);color:#fff;font-weight:700;font-size:.85rem;padding:10px 14px;display:flex;align-items:center;justify-content:center;gap:12px}
+.help-bar .chip-btn{color:#fff;border-color:rgba(255,255,255,.6);height:28px}
+.help-bar[hidden],.help-pop[hidden]{display:none!important}
+.help-pop{position:fixed;z-index:80;background:#fff;color:#14171f;border-radius:12px;padding:12px 14px;box-shadow:0 14px 40px rgba(0,0,0,.45);font-size:.88rem;line-height:1.65}
+.help-pop .chip-btn{margin-top:8px;color:#14171f;border-color:#d5d9e2;height:28px}
+@media (max-width:900px){.btn.mob{display:block}.top small{display:none}.top{gap:8px}.top-btn,.help-btn{height:32px;font-size:.72rem;padding:0 9px}}
 </style>
 </head>
 <body>
@@ -367,6 +397,7 @@ textarea.small{min-height:80px;flex:none;width:100%}
   <div class="logo">PDF <b>STUDIO</b></div>
   <small>תפריטים ותוכניות אימון — מטקסט ל-PDF מעוצב</small>
   <button class="chip-btn top-btn" id="clientsBtn">👥 הלקוחות שלי</button>
+  <button class="chip-btn help-btn" id="helpBtn">❓ הסבר</button>
 </header>
 
 <div class="app">
@@ -448,6 +479,7 @@ textarea.small{min-height:80px;flex:none;width:100%}
     <div class="actions">
       <button class="btn sec" id="save">💾 שמור</button>
       <button class="btn main" id="dl">⬇ הורד PDF</button>
+      <button class="btn sec mob" id="pvBtn">👁 תצוגה</button>
       <button class="btn sec" id="share" hidden>שתף</button>
     </div>
   </aside>
@@ -463,6 +495,8 @@ textarea.small{min-height:80px;flex:none;width:100%}
   <div class="help">הכל נשמר על המכשיר הזה בלבד. להעביר בין המחשב לטלפון: גיבוי במכשיר אחד ← שחזור בשני.</div>
 </div></div>
 <div class="toast" id="toast"></div>
+<div class="help-bar" id="helpBar" hidden>❓ מצב הסבר — לחץ על כל כפתור או שדה כדי לראות מה הוא עושה <button class="chip-btn">יציאה</button></div>
+<div class="help-pop" id="helpPop" hidden><div class="hp-t"></div><button class="chip-btn">הבנתי</button></div>
 <div class="drawer" id="foods" hidden><div class="dr-bg"></div><div class="dr-panel">
   <div class="dr-head"><b>🥫 המזונות שלי</b><button class="chip-btn" id="fdClose">✕</button></div>
   <div class="step" style="padding:12px">
@@ -1131,6 +1165,7 @@ function applyPanels(){
   $('#help').innerHTML=wiz?WIZ_HELP:HELP[t];
   $('#macroTog').style.display=t==='menu'?'':'none';$('#musTog').style.display=t==='workout'?'':'none';
   $('#mtBox').style.display=t==='menu'?'':'none';
+  if(typeof updSect==='function'&&$('#sBuild'))updSect();
   ['#fitBtn','#balBtn','#menuTpls'].forEach(x=>$(x).style.display=t==='menu'?'':'none');$('#foodsBtn').style.display=t==='workout'?'none':'';if(t!=='menu')$('#undoFit').hidden=true;
 }
 function setWkMode(m){wk.mode=m;saveWk();applyPanels()}
@@ -1363,6 +1398,7 @@ let pages=[],timer;
 function opts(){return{client:$('#client').value.trim(),date:$('#date').value.trim(),title:$('#title').value.trim()||DEF_TITLE[TYPE],subs:[$('#subtitle').value.trim()],macros:$('#macros').checked,muscles:$('#muscles').checked,color:COLORS[colorIdx],target:(TYPE==='menu'&&mt.show)?calcTarget().t:null}}
 async function render(){
   await document.fonts.ready;
+  if($('#sBuild'))updSect();
   const o=opts(),src=$('#src').value;
   store.set('pdfs2_'+TYPE,src);store.set('pdfs2_t_'+TYPE,$('#title').value);store.set('pdfs2_s_'+TYPE,$('#subtitle').value);store.set('pdfs2_client',o.client);
   const pv=$('#preview');
@@ -2087,6 +2123,129 @@ function drawMn(){
 $('#mnNotes').oninput=e=>{mnState.notes=e.target.value;mnWrite()};
 function setMnMode(m){mnMode=m;store.set('pdfs2_mnmode',m);if(m==='wizard'){mnLast=null;mnSync()}applyPanels();render()}
 document.querySelectorAll('#mnMode button').forEach(b=>b.onclick=()=>setMnMode(b.dataset.m));
+
+/* ================= UX: collapsible sections + help mode ================= */
+const SECT=[
+ {id:'sClient',ic:'👤',t:'פרטי הלקוח',info:'מי הלקוח ומה הכותרת — מופיע בראש ה-PDF.',nodes:()=>[$('#client').closest('.row2'),$('#title').closest('label'),$('#subtitle').closest('label')],open:true},
+ {id:'sTarget',ic:'🎯',t:'יעד ללקוח',info:'מכניסים מין, גיל, משקל, גובה ומטרה — ומקבלים יעד קלוריות וחלבון. אחר כך "🎯 התאם כמויות ליעד" בכלים.',nodes:()=>[$('#mtBox')],only:'menu'},
+ {id:'sBuild',ic:'🍽️',t:'בניית התפריט',info:'',nodes:()=>[$('#menuTpls'),$('#mnMode'),$('#mnWiz'),$('#wkMode'),$('#wiz'),$('#swap'),$('#src')],open:true},
+ {id:'sTools',ic:'🛠',t:'כלים',info:'פעולות חכמות על מה שכתבת — לחץ ❓ למעלה ואז על כפתור כדי לראות מה הוא עושה.',nodes:()=>[document.querySelector('.side .tools')]},
+ {id:'sAI',ic:'🤖',t:'Gemini',info:'מבקשים במילים — Gemini כותב, והאתר בודק ומאזן את המספרים לפי הערכים שלך.',nodes:()=>[$('#aiBox')]},
+ {id:'sDesign',ic:'🎨',t:'עיצוב',info:'צבע ההדגשות ב-PDF.',nodes:()=>[$('#colors')]},
+];
+const BUILD_T={menu:['🍽️','בניית התפריט','בוחרים כמה ארוחות ביום וכותבים כל ארוחה — או טוענים אחד מהפורמטים שלך ומתאימים.'],
+ workout:['🏋️','בניית התוכנית','בוחרים כמה ימי אימון בשבוע וכותבים תרגילים לכל יום — או טוענים תבנית. יום שחוזר — "שכפל".'],
+ swap:['🔄','ההחלפה','מדביקים את הארוחה מהתפריט ואת המתכון — והאתר משנה את כמויות המתכון שייצא בדיוק בערכים של הארוחה.']};
+const openState=(()=>{try{return JSON.parse(store.get('pdfs2_sects'))||{}}catch(e){return {}}})();
+(function buildSections(){
+  const side=$('.side');const anchor=$('#stats');
+  SECT.forEach(S=>{
+    const d=h('details','sect');d.id=S.id;
+    d.open=openState[S.id]!=null?openState[S.id]:!!S.open;
+    d.innerHTML=`<summary><span class="s-ic">${S.ic}</span><span class="s-t">${S.t}</span><span class="s-sum"></span><span class="s-chev">⌄</span></summary><div class="s-body"><div class="s-info">${S.info}</div></div>`;
+    const body=d.querySelector('.s-body');S.nodes().forEach(n=>n&&body.appendChild(n));
+    d.addEventListener('toggle',()=>{openState[S.id]=d.open;store.set('pdfs2_sects',JSON.stringify(openState))});
+    side.insertBefore(d,anchor);
+  });
+  $('#help').style.display='none';
+  // first-visit tip
+  if(!store.get('pdfs2_helpseen')){const tip=h('div','first-tip',`👋 <b>חדש כאן?</b> לחץ על <b>❓ הסבר</b> למעלה, ואז על כל כפתור או שדה — ותראה מה הוא עושה. <button class="chip-btn">הבנתי</button>`);tip.querySelector('button').onclick=()=>{tip.remove();store.set('pdfs2_helpseen','1')};side.insertBefore(tip,$('#sClient'))}
+})();
+function updSect(){
+  const t=TYPE,[ic,tt,info]=BUILD_T[t];const b=$('#sBuild');
+  b.querySelector('.s-ic').textContent=ic;b.querySelector('.s-t').textContent=tt;b.querySelector('.s-info').textContent=info;
+  $('#sTarget').style.display=t==='menu'?'':'none';
+  const sum=(id,txt)=>{const el=$('#'+id+' .s-sum');if(el)el.textContent=txt||''};
+  sum('sClient',$('#client').value.trim()||'לא הוזן שם');
+  if(t==='menu'){const T=calcTarget().t;sum('sTarget',T?`${T.kcal.toLocaleString()} קק״ל · ${T.p} חלבון`:'לא חובה')}
+  sum('sBuild',t==='menu'?(mnMode==='wizard'?(mnState.meals.length?`${mnState.meals.length} ארוחות`:'בחר מספר ארוחות'):'הדבקה חופשית'):t==='workout'?(wk.mode==='wizard'?`${wk.n} ימים`:'הדבקה חופשית'):(sw.recipeName||'מתכון'));
+  sum('sAI',gemUrl()?'💎 Gem מחובר':GM.key?'מחובר':'העתק-הדבק');
+  sum('sDesign',COLORS[colorIdx].n);
+}
+
+/* ---------- help mode: tap anything → explanation ---------- */
+const HELP_TX=[
+ ['#helpBtn','מפעיל / מכבה את מצב ההסבר.'],
+ ['#seg [data-t=menu]','🍽️ תפריט — בונים תפריט תזונה ללקוח (ארוחות, החלפות, מדדים, יעד) ומורידים PDF.'],
+ ['#seg [data-t=workout]','🏋️ תוכנית אימון — בוחרים כמה ימים בשבוע, כותבים תרגילים לכל יום (או משכפלים יום), ומקבלים טבלאות מעוצבות.'],
+ ['#seg [data-t=swap]','🔄 החלפת ארוחה — מדביקים ארוחה מהתפריט + מתכון (למשל מטיקטוק), והאתר משנה את כמויות המתכון כך שייצא בערכים של הארוחה.'],
+ ['#clientsBtn','👥 כל הלקוחות ששמרת. לוחצים על מסמך כדי לפתוח ולערוך, ⧉ לשכפל ללקוח אחר, 🗑 למחוק. יש גם גיבוי ושחזור כדי להעביר בין הטלפון למחשב.'],
+ ['#client','שם הלקוח — מופיע בכותרת ה-PDF ובשם הקובץ, והמסמך נשמר תחתיו ב"הלקוחות שלי".'],
+ ['#date','התאריך שיופיע ב-PDF. אפשר גם טווח, למשל 6.10 – 20.10.'],
+ ['#title','הכותרת הגדולה ב-PDF (למשל "תפריט תזונה"). שם הלקוח מתווסף אחריה לבד.'],
+ ['#subtitle','שורה קטנה מתחת לכותרת — הערה כללית ללקוח. לא חובה.'],
+ ['#mt_kcal, #mt_p','יעד ידני — אם אתה כבר יודע כמה קלוריות/חלבון. גובר על החישוב.'],
+ ['#mt_show','מסומן = ב-PDF יופיע "יעד" מתחת לכל ערך.'],
+ ['#mtRes','היעד שחושב ליום: קלוריות, חלבון, פחמימה ושומן.'],
+ ['#mtBox','נתוני הלקוח לחישוב היעד (נוסחת Mifflin). חיטוב = 20% מתחת לתחזוקה, מסה = 10% מעל.'],
+ ['#mnMode, #wkMode','"שלב אחר שלב" — האתר מוביל אותך. "הדבקה חופשית" — מדביקים טקסט שלם בבת אחת (למשל תפריט קיים).'],
+ ['#mnPick','כמה ארוחות ביום — נפתח כרטיס לכל ארוחה עם שם מוכן. אפשר לשנות גם באמצע; מה שכתבת נשמר.'],
+ ['#mnMeals .mn-time','שעה (לא חובה), למשל 08:00 — תופיע ליד שם הארוחה.'],
+ ['#mnMeals input','שם הארוחה כמו שיופיע ב-PDF.'],
+ ['#mnMeals textarea','מה אוכלים בארוחה. שורה לכל קטגוריה: "חלבון: 150 גרם חזה עוף או 200 גרם אמנון". "או" = אפשרויות להחלפה, "+" = שילוב. הקלוריות מחושבות לבד.'],
+ ['#mnMeas','מדדים נוכחיים של הלקוח — יופיעו בראש ה-PDF. רק מה שממלאים מופיע.'],
+ ['#mnNotes','דרישות יומיות (צעדים, מים, שקילות) — יופיעו בסוף ה-PDF. שורה לכל דרישה.'],
+ ['#menuTpls [data-c]','טוען אחד מהפורמטים שלך (מהתפריטים ששלחת) — ואז רק מתאימים ללקוח.'],
+ ['#menuTpls button','טוען תפריט מוכן בקלוריות האלה. "לפי היעד" — בונה לפי היעד שחישבת.'],
+ ['#src','הדבקה חופשית: כותרת ארוחה בשורה שמסתיימת ב-":", ומתחתיה שורות האוכל.'],
+ ['#daysPick','כמה ימי אימון בשבוע — נפתח כרטיס לכל יום.'],
+ ['#tpls button','טוען תוכנית מוכנה (תרגילים, סטים, מנוחה) — ואז רק מתאימים ללקוח.'],
+ ['#dayCards select','"שכפל את יום X" — כשאימון חוזר (למשל A ביום 1 וביום 3). לא כותבים שוב.'],
+ ['#dayCards input','שם האימון, למשל "פלג גוף עליון". האות (A/B/C) נקבעת לבד.'],
+ ['#dayCards textarea','שורה לכל תרגיל: "סקוואט 3x8-10 מנוחה 2 דקות - הערה". "+" בתחילת שורה = סופר סט. מתחילים להקליד והאתר מציע תרגילים.'],
+ ['#wkNotes','דגשים לכל התוכנית — יופיעו בסוף ה-PDF.'],
+ ['#swN','כמה ארוחות מהתפריט המתכון מחליף — הערכים שלהן מתחברים ליעד אחד.'],
+ ['#swMeals','מדביקים את הארוחה מהתפריט של הלקוח, כמו שהיא כתובה שם.'],
+ ['#swTk, #swTp','יעד ידני — אם רוצים שהמתכון יגיע לערכים אחרים מהארוחה.'],
+ ['#swRecName','שם המנה כמו שיופיע ב-PDF.'],
+ ['#swRecipe','המתכון כמו שהוא: "מצרכים" ושורה לכל מצרך עם כמות, ואז "אופן הכנה" והשלבים.'],
+ ['#swBoost','אם המתכון יוצא דל בחלבון — במה להשלים כדי להגיע לחלבון של הארוחה.'],
+ ['#sample','טוען דוגמה מלאה כדי לראות איך זה עובד. ⚠️ מחליף את מה שכתוב.'],
+ ['#clear','מנקה את כל מה שכתוב בסקשן הזה.'],
+ ['#fitBtn','משנה את כל הכמויות בתפריט כך שהסכום יגיע ליעד הקלוריות והחלבון של הלקוח.'],
+ ['#balBtn','מתקן כל שורת "או" כך שכל האפשרויות יהיו שוות בקלוריות לאפשרות הראשונה.'],
+ ['#undoFit','מחזיר את התפריט למה שהיה לפני ההתאמה / האיזון.'],
+ ['#foodsBtn','מזונות שהוספת בעצמך עם ערכים מהתווית. מזון שלא מזוהה — מוסיפים פה פעם אחת וזהו.'],
+ ['#macroTog','מסומן = ב-PDF יופיעו קלוריות, חלבון, פחמימה ושומן.'],
+ ['#musTog','מסומן = בטבלאות תופיע עמודת קבוצת שריר (מזוהה לבד לפי התרגיל).'],
+ ['#aiAsk','כותבים במילים מה רוצים, למשל "תפריט 1,800 לאישה צמחונית".'],
+ ['#aiChips button','בקשה מוכנה — לוחצים והיא נכנסת לתיבה.'],
+ ['#aiGo','מעתיק את הבקשה ופותח את ה-Gem שלך ב-Gemini. שם מדביקים (Cmd+V), מעתיקים את התשובה (כפתור ההעתקה של הבלוק), וחוזרים להדביק כאן.'],
+ ['#aiPasteGo','מכניס את התשובה של Gemini לאתר — מחולקת לארוחות ומאוזנת לבד.'],
+ ['#aiPaste','מדביקים כאן את התשובה של Gemini.'],
+ ['#aiUndo','מחזיר את מה שהיה לפני התשובה של Gemini.'],
+ ['#aiSet','הגדרות Gemini — קישורים ל-Gems ומפתח (לא חובה).'],
+ ['#colors','צבע ההדגשות ב-PDF.'],
+ ['#stats','סיכום חי: מה זוהה, כמה קלוריות, ואזהרות. מזון בכתום = לא זוהה — לוחצים עליו כדי להוסיף ערכים, 🔍 כדי לחפש ב-FoodsDictionary.'],
+ ['#save','שומר את המסמך תחת שם הלקוח ב"הלקוחות שלי". גם הורדת PDF שומרת לבד.'],
+ ['#dl','מוריד את ה-PDF המוכן — ושומר אותו ב"הלקוחות שלי".'],
+ ['#share','שולח את ה-PDF ישר מהטלפון (למשל לווטסאפ של הלקוח).'],
+ ['#pvBtn','קופץ לתצוגה המקדימה — ככה בדיוק ייראה ה-PDF.'],
+ ['#preview','תצוגה מקדימה — ככה בדיוק ייראה ה-PDF.'],
+];
+let helpMode=false;
+function setHelp(on){helpMode=on;document.body.classList.toggle('helpmode',on);$('#helpBtn').classList.toggle('on',on);$('#helpBar').hidden=!on;if(!on)$('#helpPop').hidden=true;if(on)store.set('pdfs2_helpseen','1')}
+function showHelp(el,txt){
+  const p=$('#helpPop');p.querySelector('.hp-t').textContent=txt;p.hidden=false;
+  const r=el.getBoundingClientRect(),w=Math.min(320,innerWidth-24);p.style.width=w+'px';
+  let left=Math.min(Math.max(12,r.left+r.width/2-w/2),innerWidth-w-12);let top=r.bottom+8;
+  p.style.left=left+'px';p.style.top=top+'px';
+  const ph=p.offsetHeight;if(top+ph>innerHeight-10)p.style.top=Math.max(10,r.top-ph-8)+'px';
+}
+function helpFor(target){for(const [sel,txt] of HELP_TX){const el=target.closest(sel);if(el)return [el,txt]}return null}
+['pointerdown','click'].forEach(ev=>document.addEventListener(ev,e=>{
+  if(!helpMode)return;
+  if(e.target.closest('#helpBtn,#helpPop,#helpBar,summary'))return;
+  const hit=helpFor(e.target);
+  if(!hit)return;
+  e.preventDefault();e.stopPropagation();
+  if(ev==='click')showHelp(hit[0],hit[1]);
+},true));
+$('#helpBtn').onclick=()=>setHelp(!helpMode);
+$('#helpPop .chip-btn').onclick=()=>$('#helpPop').hidden=true;
+$('#helpBar button').onclick=()=>setHelp(false);
+addEventListener('keydown',e=>{if(e.key==='Escape'&&helpMode)setHelp(false)});
+$('#pvBtn').onclick=()=>$('#preview').scrollIntoView({behavior:'smooth'});
 
 setType('workout',true);
 </script>
