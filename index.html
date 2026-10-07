@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>PDF Studio</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&family=Frank+Ruhl+Libre:wght@500;700;900&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
@@ -93,6 +93,7 @@ html,body{overflow-x:hidden}
 .gem-box{border:1px solid rgba(255,107,53,.3);background:rgba(255,107,53,.06);border-radius:10px;padding:10px;margin-bottom:12px;font-size:.84rem}
 .gem-row{display:grid;grid-template-columns:78px auto 1fr;gap:6px;align-items:center;margin-top:6px;font-size:.78rem}
 .gem-row .inp{height:32px;font-size:.74rem}
+.unk.fd{text-decoration:none;padding:2px 6px;margin-right:-2px}
 .unk:hover{background:rgba(255,107,53,.2)}
 .chip-btn.hot{border-color:var(--accent);color:var(--accent)}
 .dr-dup{background:none;border:0;cursor:pointer;font-size:.95rem;opacity:.6;color:var(--text)}.dr-dup:hover{opacity:1}
@@ -290,6 +291,75 @@ textarea.small{min-height:80px;flex:none;width:100%}
 .closing .q{font-size:15px;font-weight:800;color:var(--ink)}
 .closing .q span{color:var(--a)}
 .closing .s{font-size:11px;color:var(--ink3);margin-top:3px}
+
+/* ================= EDITORIAL PDF LOOK — lines & type instead of boxes ================= */
+.page{--serif:'Frank Ruhl Libre',serif}
+.page .topbar{height:3px}
+.hero h1,.meal-name,.sec-title,.notes-title,.closing .q{font-family:var(--serif)}
+.hero h1{font-weight:900;font-size:42px;letter-spacing:0}
+.hero .meta{gap:0}
+.pill,.pill.a,.pill.kc{background:none!important;border:0!important;border-radius:0;padding:0;font-size:12px;color:var(--ink3);font-weight:500}
+.pill.a{color:var(--a);font-weight:700}
+.hero .meta .pill+.pill:before,.sec-side .pill+.pill:before,.meal-head .pill+.pill:before{content:'·';margin:0 8px;color:var(--ink3)}
+.hero-rule{width:100%;height:1px;background:var(--rule);margin:18px 0 0}
+.tiles{display:flex;justify-content:center;gap:0;margin-top:0;border-bottom:1px solid var(--rule);padding:14px 0}
+.tile,.tile.k{border:0;border-radius:0;background:none!important;padding:0 26px;text-align:center}
+.tile+.tile{border-right:1px solid var(--rule)}
+.tile .v,.tile.k .v{color:var(--ink);font-family:var(--serif);font-size:26px}
+.tile.k .v{color:var(--a)}
+.tile.k .v small,.tile.k .l,.tile.k .was{color:var(--ink3)}
+.meas-t{margin-top:14px}
+.meas{gap:0}
+.ms{border:0;border-radius:0;padding:0 14px}
+.ms+.ms{border-right:1px solid var(--rule)}
+.ms b{font-family:var(--serif)}
+.sched{gap:0}
+.sd{border:0;border-radius:0;padding:0 16px}
+.sd+.sd{border-right:1px solid var(--rule)}
+.sd b{font-family:var(--serif)}
+/* meals */
+.meal,.meal.recipe,.was-meal{border:0;border-radius:0;overflow:visible;background:none}
+.meal-head,.recipe .meal-head,.was-meal .meal-head,.pair .meal-head{background:none;border:0;border-bottom:1.5px solid var(--ink);padding:0 0 6px;gap:10px}
+.badge,.meal-head .badge,.pair .meal-head .badge,.recipe .badge{background:none;color:var(--a);border-radius:0;min-width:0;width:auto;height:auto;padding:0;font-family:var(--serif);font-weight:900;font-size:20px}
+.meal-name{font-weight:700;font-size:19px}
+.pair .meal-name{font-size:17px}
+.meal .rows,.pair .meal .rows{padding:2px 0}
+.item,.pair .item{border-bottom:1px solid var(--rule);padding:8px 0}
+.item .dot{display:none}
+.item .iamt{background:none;border-radius:0;padding:0;color:var(--ink);font-weight:700;font-size:13px}
+.item.alt .iname{color:var(--ink2);font-style:italic}
+.after,.pair .after{border-top:0;padding:6px 0 0;font-size:11px}
+.pair{gap:28px}
+.orsep:before,.orsep:after{background:var(--rule)}
+.cat{background:none;border-radius:0;padding:0;margin-left:6px;font-size:12.5px;color:var(--a)}
+.cat:after{content:':'}
+.ors{color:var(--ink3);font-weight:400;font-style:italic}
+.opthead{border-bottom:0;padding:12px 0 2px;font-family:var(--serif);color:var(--a)}
+.mnote{font-style:italic}
+.tag-was{font-family:'Heebo',sans-serif}
+.ss-tag{background:none;padding:0;color:var(--a);font-weight:600}
+.item .orig{font-style:italic}
+.swap-sep{font-family:var(--serif)}
+/* workout tables */
+.sec-head{border-bottom:1.5px solid var(--ink);padding-bottom:6px;margin-bottom:0}
+.sec-title{font-weight:700;font-size:20px}
+.tbl{border:0;border-radius:0;overflow:visible}
+.th{background:none;color:var(--ink3);font-size:11px;font-weight:700;border-bottom:1px solid var(--rule)}
+.th>span+span,.tr>span+span{border-right:0}
+.rows .tr:nth-child(even){background:none}
+.tr{border-top:1px solid var(--rule)}
+.tr .num{font-family:var(--serif);font-size:14px}
+.tr.ss>span:first-child{box-shadow:inset -2px 0 0 var(--a)}
+.tfoot{background:none;border-top:1.5px solid var(--ink)}
+.tfoot>span+span{border-right:0}
+/* notes */
+.notes{background:none;border:0;border-top:1.5px solid var(--ink);border-radius:0;padding:10px 0 0}
+.note:before{content:'—';font-weight:400}
+.step-row b{background:none;color:var(--a);font-family:var(--serif);font-size:15px;min-width:18px}
+.closing{border-top:1px solid var(--rule)}
+.item:not(.grp) .iname{flex:0 1 auto;order:1}
+.item:not(.grp)::after{content:'';flex:1;order:2;min-width:24px;border-bottom:1.5px dotted #c9ced8;margin:0 2px;align-self:flex-end;transform:translateY(-6px)}
+.item:not(.grp) .iamt{order:3}
 </style>
 </head>
 <body>
@@ -399,6 +469,7 @@ textarea.small{min-height:80px;flex:none;width:100%}
     <label class="f">שם המזון (אפשר כמה שמות עם פסיק)<input class="inp" id="fd_name" placeholder="למשל: גבינת גאודה לייט, גאודה"></label>
     <div class="help" style="margin:8px 0 6px">ערכים ל-100 גרם — מהתווית:</div>
     <div class="g4"><label class="f">חלבון<input class="inp" id="fd_p" inputmode="decimal"></label><label class="f">פחמימה<input class="inp" id="fd_c" inputmode="decimal"></label><label class="f">שומן<input class="inp" id="fd_f" inputmode="decimal"></label><label class="f">יחידה (גר׳)<input class="inp" id="fd_u" inputmode="decimal" placeholder="100"></label></div>
+    <a class="chip-btn" id="fdSearch" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;margin-top:8px;text-decoration:none">🔍 בדוק ערכים ב-FoodsDictionary</a>
     <button class="btn main" id="fdAdd" style="height:44px;width:100%;margin-top:10px">+ הוסף מזון</button>
   </div>
   <div id="fdList" style="display:flex;flex-direction:column"></div>
@@ -1496,7 +1567,8 @@ function rebuildFoods(){
   FOOD_IDX.sort((x,y)=>y.a.length-x.a.length||(y.mine?1:0)-(x.mine?1:0));
 }
 const unkBtns=list=>{const L=[...new Set(list)];const amb=[...new Set(L.map(ambigOf).filter(Boolean))];
-  return amb.map(a=>`<span class="amb">${a.word} — איזה? ${a.opts.map(o=>{const f=findFood(o);return `<button class="unk pick" data-pick="${escH(o)}" data-w="${escH(a.word)}">${escH(o.replace(a.word,'').trim())}${f?` (${Math.round(f.p*4+f.c*4+f.f*9)})`:''}</button>`}).join(' ')}</span>`).join('<br>')+(amb.length&&L.some(n=>!ambigOf(n))?'<br>':'')+L.filter(n=>!ambigOf(n)).map(n=>`<button class="unk" data-n="${escH(n)}">+ ${escH(n)}</button>`).join(' ')};
+  return amb.map(a=>`<span class="amb">${a.word} — איזה? ${a.opts.map(o=>{const f=findFood(o);return `<button class="unk pick" data-pick="${escH(o)}" data-w="${escH(a.word)}">${escH(o.replace(a.word,'').trim())}${f?` (${Math.round(f.p*4+f.c*4+f.f*9)})`:''}</button>`}).join(' ')}</span>`).join('<br>')+(amb.length&&L.some(n=>!ambigOf(n))?'<br>':'')+L.filter(n=>!ambigOf(n)).map(n=>`<button class="unk" data-n="${escH(n)}">+ ${escH(n)}</button><a class="unk fd" href="${fdUrl(n)}" target="_blank" rel="noopener" title="חפש ב-FoodsDictionary">🔍</a>`).join(' ')};
+function fdUrl(n){return 'https://www.foodsdictionary.co.il/allsearch.php?q='+encodeURIComponent(stripParen(n).replace(/\d+(\.\d+)?%?/g,'').trim())}
 function pickAmbig(word,opt){
   const a=AMBIG.find(x=>x.word===word);const re=new RegExp(a.re.source,'g');
   if(TYPE==='swap'){sw.meals.forEach(m=>m.text=m.text.replace(re,opt));sw.recipe=sw.recipe.replace(re,opt);saveSw();drawSwap()}
@@ -1511,9 +1583,11 @@ function drawFoods(){
 function openFoods(name){
   $('#foods').hidden=false;['fd_name','fd_p','fd_c','fd_f','fd_u'].forEach(k=>$('#'+k).value='');
   if(name){$('#fd_name').value=name;setTimeout(()=>$('#fd_p').focus(),50)}
-  drawFoods();
+  drawFoods();fdSync();
 }
 $('#foodsBtn').onclick=()=>openFoods('');
+const fdSync=()=>{$('#fdSearch').href=$('#fd_name').value.trim()?fdUrl($('#fd_name').value.split(',')[0]):'https://www.foodsdictionary.co.il/'};
+$('#fd_name').addEventListener('input',fdSync);
 $('#fdClose').onclick=()=>$('#foods').hidden=true;$('#foods .dr-bg').onclick=()=>$('#foods').hidden=true;
 $('#fdAdd').onclick=()=>{
   const names=$('#fd_name').value.split(/[,/]/).map(x=>x.trim()).filter(Boolean);
