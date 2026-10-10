@@ -400,6 +400,51 @@ body.helpmode .side button,body.helpmode .side input,body.helpmode .side textare
 .help-pop{position:fixed;z-index:80;background:#fff;color:#14171f;border-radius:12px;padding:12px 14px;box-shadow:0 14px 40px rgba(0,0,0,.45);font-size:.88rem;line-height:1.65}
 .help-pop .chip-btn{margin-top:8px;color:#14171f;border-color:#d5d9e2;height:28px}
 @media (max-width:900px){.top-btn2{height:32px;font-size:.72rem;padding:0 9px}.btn.mob{display:block}.top small{display:none}.top{gap:8px}.top-btn,.help-btn{height:32px;font-size:.72rem;padding:0 9px}}
+
+/* ================= APP POLISH (UI only — the PDF pages are styled separately) ================= */
+:root{--bg:#0c0d12;--panel:#121319;--surface:#181a22;--line:rgba(255,255,255,.07);--text:#ececf1;--text2:#a3a6b5;--text3:#6b6f80}
+html,body{background:var(--bg)}
+.top{position:sticky;top:0;z-index:20;background:rgba(12,13,18,.88);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);padding:12px 20px}
+.logo{font-size:.95rem;letter-spacing:5px}
+.side{background:var(--panel);gap:12px;padding:18px}
+.seg{background:var(--bg);border-radius:12px;padding:4px}
+.seg button{height:42px;border-radius:9px;font-size:.86rem}
+.seg button.on{background:var(--accent);box-shadow:none}
+.seg2{background:var(--bg);border-radius:10px}
+.seg2 button.on{background:var(--surface);color:var(--text);box-shadow:inset 0 0 0 1px rgba(255,107,53,.45)}
+.sect{background:var(--surface);border-color:var(--line);border-radius:12px;transition:border-color .2s}
+.sect[open]{border-color:rgba(255,255,255,.1)}
+.sect>summary{padding:12px 14px}
+.sect>summary:hover{background:rgba(255,255,255,.02)}
+.s-ic{width:28px;height:28px;border-radius:8px;background:rgba(255,107,53,.12);display:inline-flex;align-items:center;justify-content:center;font-size:.85rem;flex:none}
+.s-t{font-size:.9rem}
+.s-info{color:var(--text3);border-right-color:rgba(255,107,53,.6)}
+.inp,textarea{background:var(--bg);border-color:rgba(255,255,255,.09);border-radius:9px}
+.inp:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(255,107,53,.14)}
+label.f{font-size:.72rem;color:var(--text3);font-weight:700}
+.step{background:var(--bg);border-color:var(--line);border-radius:12px}
+.step-t{font-size:.84rem}
+.step-t span{background:rgba(255,107,53,.15);color:var(--accent)}
+.day{background:var(--surface);border-color:var(--line)}
+.days-pick button{background:var(--surface);border-color:rgba(255,255,255,.08)}
+.days-pick button.on{box-shadow:0 4px 14px rgba(255,107,53,.25)}
+.chip-btn{border-color:rgba(255,255,255,.1);background:rgba(255,255,255,.02);color:var(--text2);transition:.15s}
+.chip-btn:hover{background:rgba(255,107,53,.08);border-color:rgba(255,107,53,.5);color:var(--text)}
+.tools{gap:7px}
+.stats{background:var(--surface);border-color:var(--line);border-radius:12px;font-size:.8rem}
+.btn{border-radius:12px;height:50px}
+.btn.main{background:var(--accent);box-shadow:0 6px 18px rgba(255,107,53,.25)}
+.btn.main:hover{filter:brightness(1.05)}
+.btn.sec{background:var(--surface);border-color:rgba(255,255,255,.09)}
+.actions{background:linear-gradient(rgba(18,19,25,0),var(--panel) 30%)}
+.preview{background:#23252d;gap:26px}
+.pv-wrap{border-radius:2px;box-shadow:0 1px 2px rgba(0,0,0,.35),0 20px 45px rgba(0,0,0,.4)}
+.pv-label{color:#858a9c;font-size:.7rem;letter-spacing:.3px}
+.empty{color:#8a8ea0}
+.dr-panel{background:var(--panel)}
+.dr-row{background:var(--surface)}
+.first-tip{background:rgba(255,107,53,.08)}
+.mt-res{background:rgba(255,107,53,.07)}
 </style>
 </head>
 <body>
