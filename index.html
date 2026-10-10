@@ -514,6 +514,29 @@ body.helpmode .side button,body.helpmode .side input,body.helpmode .side textare
 .imp-btn:hover{background:rgba(91,107,47,.1)}
 .imp-btn small{font-weight:500;color:var(--text3);font-size:.72rem}
 .side.drop{outline:3px dashed var(--accent);outline-offset:-8px}
+
+.cl-h{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.cl-h .chip-btn{height:26px;font-size:.72rem}
+.wait-h{font-weight:800;font-size:.88rem;margin:4px 0 6px;color:#b0561c}.wait-h small{font-weight:500;color:var(--text3)}
+.dr-row.wait{border-color:rgba(176,86,28,.35);background:#fff8f1}
+.dr-row.wait .chip-btn{height:26px;padding:0 8px}
+.wait-n{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;border-radius:9px;background:#b0561c;color:#fff;font-size:.66rem;font-weight:800;margin-right:5px;padding:0 4px}
+.wait-n[hidden]{display:none}
+.cd-h{font-weight:800;font-size:.86rem;margin-top:6px}
+.wchart{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:8px 10px}
+.wsum{font-size:.78rem;color:var(--text2);text-align:center;margin-top:2px}
+.chg-box{margin-top:6px;background:#f7f4ea;border:1px solid var(--line);border-radius:10px;padding:6px 10px}
+.chg-box summary{cursor:pointer;font-weight:700;color:var(--text)}
+.chg{font-size:.76rem;line-height:1.5;padding:4px 0;border-top:1px dashed var(--line)}
+.chg.c{color:#6b5a12}.chg.a{color:#3f6b2f}.chg.d{color:#9a3d26;text-decoration:line-through}
+.chg-ok{color:#3f6b2f}
+.snips{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+.snip{display:inline-flex;align-items:stretch;border:1px solid rgba(70,64,40,.16);border-radius:99px;overflow:hidden;background:var(--surface)}
+.snip-t{border:0;background:none;padding:4px 10px;font-size:.72rem;color:var(--text2);cursor:pointer;font-family:inherit}
+.snip-t:hover{color:var(--accent)}
+.snip-x{border:0;border-right:1px solid var(--line);background:none;color:var(--text3);cursor:pointer;padding:0 7px;font-size:.8rem}
+.snip-x:hover{color:#b0561c}
+.snips .snip-add{height:26px;font-size:.72rem}
 </style>
 </head>
 <body>
@@ -565,7 +588,7 @@ body.helpmode .side button,body.helpmode .side input,body.helpmode .side textare
     <div id="wiz">
       <div class="step"><div class="step-t"><span>1</span>לכמה ימים לחלק את השבוע?</div><div class="days-pick" id="daysPick"></div><div class="tpls" id="tpls"></div></div>
       <div class="step"><div class="step-t"><span>2</span>מה עושים בכל יום?</div><div id="dayCards"></div></div>
-      <div class="step"><div class="step-t"><span>3</span>דגשים לתוכנית (לא חובה)</div><textarea id="wkNotes" class="small" spellcheck="false" placeholder="להעלות משקל כשמגיעים לטווח העליון&#10;5 דק׳ חימום לפני כל אימון"></textarea></div>
+      <div class="step"><div class="step-t"><span>3</span>דגשים לתוכנית (לא חובה)</div><textarea id="wkNotes" class="small" spellcheck="false" placeholder="להעלות משקל כשמגיעים לטווח העליון&#10;5 דק׳ חימום לפני כל אימון"></textarea><div class="snips" data-for="wkNotes"></div></div>
     </div>
     <div id="swap">
       <div class="step"><div class="step-t"><span>1</span>מה המתכון מחליף?</div>
@@ -581,7 +604,7 @@ body.helpmode .side button,body.helpmode .side input,body.helpmode .side textare
       <div class="step"><div class="step-t"><span>1</span>כמה ארוחות ביום?</div><div class="days-pick mn-pick" id="mnPick"></div></div>
       <div class="step"><div class="step-t"><span>2</span>מה בכל ארוחה?</div><div id="mnMeals" style="display:flex;flex-direction:column;gap:10px"></div></div>
       <div class="step"><div class="step-t"><span>3</span>מדדים (לא חובה)</div><div class="g4" id="mnMeas"></div></div>
-      <div class="step"><div class="step-t"><span>4</span>דרישות יומיות (לא חובה)</div><textarea id="mnNotes" class="small" spellcheck="false" placeholder="9 אלף צעדים כל יום&#10;שקילה: ראשון, שלישי וחמישי&#10;3 ליטר מים"></textarea></div>
+      <div class="step"><div class="step-t"><span>4</span>דרישות יומיות (לא חובה)</div><textarea id="mnNotes" class="small" spellcheck="false" placeholder="9 אלף צעדים כל יום&#10;שקילה: ראשון, שלישי וחמישי&#10;3 ליטר מים"></textarea><div class="snips" data-for="mnNotes"></div></div>
     </div>
     <textarea id="src" spellcheck="false"></textarea>
     <div class="step" id="mtBox"><div class="step-t"><span>🎯</span>יעד ללקוח (לא חובה)</div>
@@ -622,6 +645,7 @@ body.helpmode .side button,body.helpmode .side input,body.helpmode .side textare
   <div class="dr-head"><b>👥 הלקוחות שלי</b><button class="chip-btn" id="drClose">✕</button></div>
   <input class="inp" id="drSearch" placeholder="חיפוש לקוח…">
   <button class="chip-btn" id="drNew" style="height:38px">+ מסמך חדש</button>
+  <div id="drWait"></div>
   <div id="drList"></div>
   <div class="sync-box" id="syncBox">
     <b>☁️ סנכרון בין הטלפון למחשב</b><div class="help" id="syncState"></div>
@@ -632,6 +656,11 @@ body.helpmode .side button,body.helpmode .side input,body.helpmode .side textare
   <div class="help">הכל נשמר על המכשיר הזה בלבד. להעביר בין המחשב לטלפון: גיבוי במכשיר אחד ← שחזור בשני.</div>
 </div></div>
 <div class="toast" id="toast"></div>
+<div class="drawer" id="cardDlg" hidden><div class="dr-bg"></div><div class="dr-panel">
+  <div class="dr-head"><b>📊 <span id="cdName"></span></b><button class="chip-btn" id="cdClose">✕</button></div>
+  <div class="help">כרטיס פנימי — רק אתה רואה, לא נכנס ל-PDF.</div>
+  <div id="cdBody" style="display:flex;flex-direction:column;gap:10px"></div>
+</div></div>
 <div class="drawer" id="mealsDlg" hidden><div class="dr-bg"></div><div class="dr-panel">
   <div class="dr-head"><b id="mlHead">🍱 הארוחות שלי</b><button class="chip-btn" id="mlClose">✕</button></div>
   <input class="inp" id="mlSearch" placeholder="חיפוש ארוחה…"><div id="mlList" style="display:flex;flex-direction:column"></div>
@@ -1576,9 +1605,9 @@ async function render(){
   if(wiz?!wdata.sections.length:!src.trim()){pv.innerHTML=wiz?`<div class="empty">בחר לכמה ימים לחלק את השבוע,<br>וכתוב את התרגילים של כל יום.<br><br>רוצה לראות איך זה נראה? לחץ <b>טען דוגמה</b>.</div>`:`<div class="empty">הדבק כאן ${TYPE==='menu'?'תפריט':'תוכנית אימון'} כרשימה פשוטה<br>והוא יהפוך ל-PDF מעוצב.<br><br>לא בטוח בפורמט? לחץ <b>טען דוגמה</b>.</div>`;$('#stats').innerHTML='מחכה לטקסט…';pages=[];return}
   let res;
   if(TYPE==='menu'){res=buildMenuBlocks(parseMenu(src),o);const s=res.stats;
-    $('#stats').innerHTML=`זוהו <b>${s.count}</b> ארוחות · <b>${s.items}</b> פריטים`+(o.macros?` · <b>~${r0(s.tot.kcal)}</b> קק״ל`:'')+(o.macros&&s.unknown.length?`<br><span class="warn">לא נכנסו למאקרו — לחץ כדי להוסיף:</span><br>${unkBtns(s.unknown)}`:'')+targetLine(s.tot)+(s.warn&&s.warn.length?`<br><span class="warn">⚠️ החלפות לא שקולות (מעל 25%):</span> <button class="unk pick bal">⚖️ אזן אוטומטית</button><br>${s.warn.map(x=>'• '+escH(x)).join('<br>')}`:'');}
+    $('#stats').innerHTML=`זוהו <b>${s.count}</b> ארוחות · <b>${s.items}</b> פריטים`+(o.macros?` · <b>~${r0(s.tot.kcal)}</b> קק״ל`:'')+(o.macros&&s.unknown.length?`<br><span class="warn">לא נכנסו למאקרו — לחץ כדי להוסיף:</span><br>${unkBtns(s.unknown)}`:'')+(typeof changesNote==='function'?changesNote():'')+targetLine(s.tot)+(s.warn&&s.warn.length?`<br><span class="warn">⚠️ החלפות לא שקולות (מעל 25%):</span> <button class="unk pick bal">⚖️ אזן אוטומטית</button><br>${s.warn.map(x=>'• '+escH(x)).join('<br>')}`:'');}
   else{res=buildWorkoutBlocks(wiz?wdata:parseWorkout(src),o);const s=res.stats;
-    $('#stats').innerHTML=`זוהו <b>${s.count}</b> טבלאות · <b>${s.items}</b> תרגילים`+(o.muscles&&s.noMus.length?`<br><span class="warn">בלי קבוצת שריר: ${s.noMus.map(escH).join(', ')} — אפשר לכתוב "חזה - …" בתחילת השורה</span>`:'');}
+    $('#stats').innerHTML=`זוהו <b>${s.count}</b> טבלאות · <b>${s.items}</b> תרגילים`+(o.muscles&&s.noMus.length?`<br><span class="warn">בלי קבוצת שריר: ${s.noMus.map(escH).join(', ')} — אפשר לכתוב "חזה - …" בתחילת השורה</span>`:'')+(typeof changesNote==='function'?changesNote():'');}
   pages=paginate($('#stage'),res.blocks,o);drawPreview(pv);
 }
 function drawPreview(pv){
@@ -1635,7 +1664,7 @@ function saveDoc(silent){
   let d=curDoc&&docs.find(x=>x.id===curDoc&&x.type===s.type&&x.client===s.client);
   if(d){d.state=s;d.updated=now}
   else{d={id:now.toString(36)+Math.random().toString(36).slice(2,6),client:s.client,type:s.type,state:s,created:now,updated:now};docs.push(d);curDoc=d.id}
-  saveDocs();if(!silent)toast(`נשמר אצל ${s.client} ✓`);return true;
+  saveDocs();if(typeof updWaitBadge==='function')updWaitBadge();if(!silent)toast(`נשמר אצל ${s.client} ✓`);return true;
 }
 function setColor(i){colorIdx=i;store.set('pdfs2_color',i);document.querySelectorAll('.sw').forEach((x,j)=>x.classList.toggle('on',j===i))}
 function openDoc(id){
@@ -1663,7 +1692,8 @@ function drawDrawer(){
   const q=$('#drSearch').value.trim();
   const by={};docs.filter(d=>!q||d.client.includes(q)).forEach(d=>(by[d.client]=by[d.client]||[]).push(d));
   const clients=Object.keys(by).sort((a,b)=>Math.max(...by[b].map(d=>d.updated))-Math.max(...by[a].map(d=>d.updated)));
-  $('#drList').innerHTML=clients.length?clients.map(c=>`<div class="cl"><div class="cl-h">${escH(c)}<small>${by[c].length} מסמכים</small></div>${by[c].sort((a,b)=>b.updated-a.updated).map(d=>`<div class="dr-row${d.id===curDoc?' cur':''}" data-id="${d.id}"><span>${TYPE_ICON[d.type]}</span><span class="dr-t">${escH(d.state.title||DEF_TITLE[d.type])}<small>עודכן ${fmtD(d.updated)}</small></span><button class="dr-dup" data-dup="${d.id}" title="שכפל ללקוח אחר">⧉</button><button class="dr-del" data-del="${d.id}" title="מחק">🗑</button></div>`).join('')}</div>`).join('')
+  if(typeof drawWaiting==='function')drawWaiting();
+  $('#drList').innerHTML=clients.length?clients.map(c=>`<div class="cl"><div class="cl-h"><span>${escH(c)} <small>${by[c].length} מסמכים</small></span><button class="chip-btn" data-card="${escH(c)}">📊 כרטיס</button></div>${by[c].sort((a,b)=>b.updated-a.updated).map(d=>`<div class="dr-row${d.id===curDoc?' cur':''}" data-id="${d.id}"><span>${TYPE_ICON[d.type]}</span><span class="dr-t">${escH(d.state.title||DEF_TITLE[d.type])}<small>עודכן ${fmtD(d.updated)}</small></span><button class="dr-dup" data-dup="${d.id}" title="שכפל ללקוח אחר">⧉</button><button class="dr-del" data-del="${d.id}" title="מחק">🗑</button></div>`).join('')}</div>`).join('')
     :`<div class="empty-s">${docs.length?'לא נמצא לקוח בשם הזה':'עדיין אין לקוחות שמורים.<br>כותבים שם לקוח ולוחצים "שמור" — או פשוט מורידים PDF, והוא נשמר לבד.'}</div>`;
   $('#drList').querySelectorAll('.dr-row').forEach(r=>r.onclick=e=>{if(e.target.dataset.del||e.target.dataset.dup)return;openDoc(r.dataset.id)});
   $('#drList').querySelectorAll('.dr-del').forEach(b=>b.onclick=()=>{const d=docs.find(x=>x.id===b.dataset.del);if(!confirm(`למחוק את "${d.state.title}" של ${d.client}?`))return;docs=docs.filter(x=>x!==d);if(curDoc===d.id)curDoc=null;const dl=getJ('pdfs2_deleted',[]);dl.push(d.id);store.set('pdfs2_deleted',JSON.stringify(dl));saveDocs();drawDrawer()});
@@ -2529,18 +2559,19 @@ HELP_TX.unshift(
  ['#syncBox','☁️ סנכרון — הלקוחות, המזונות, התרגילים והארוחות שלך זהים בטלפון ובמחשב, אוטומטית.']);
 
 /* ================= 2. CLOUD SYNC (Google Apps Script web app, data in Aviel's Drive) ================= */
-const SYNC_KEYS={'pdfs2_docs':'docs','pdfs2_foods':'foods','pdfs2_meals':'meals','pdfs2_exlib':'exlib'};
+const SYNC_KEYS={'pdfs2_docs':'docs','pdfs2_foods':'foods','pdfs2_meals':'meals','pdfs2_exlib':'exlib','pdfs2_clients':'clients','pdfs2_snips':'snips'};
 const SY={url:store.get('pdfs2_sync_url')||'',key:store.get('pdfs2_sync_key')||'',busy:false,timer:null,quiet:false,again:false};
 const _rawSet=store.set;
 store.set=(k,v)=>{_rawSet(k,v);if(!SY.quiet&&SYNC_KEYS[k]){_rawSet('pdfs2_at_'+SYNC_KEYS[k],String(Date.now()));schedPush()}};
 const getJ=(k,d)=>{try{const v=JSON.parse(store.get(k));return v==null?d:v}catch(e){return d}};
-function localPayload(){return {docs:getJ('pdfs2_docs',[]),deleted:getJ('pdfs2_deleted',[]),foods:getJ('pdfs2_foods',[]),meals:getJ('pdfs2_meals',[]),exlib:getJ('pdfs2_exlib',{}),
-  at:{foods:+store.get('pdfs2_at_foods')||0,meals:+store.get('pdfs2_at_meals')||0,exlib:+store.get('pdfs2_at_exlib')||0}}}
+function localPayload(){return {docs:getJ('pdfs2_docs',[]),deleted:getJ('pdfs2_deleted',[]),foods:getJ('pdfs2_foods',[]),meals:getJ('pdfs2_meals',[]),exlib:getJ('pdfs2_exlib',{}),clients:getJ('pdfs2_clients',{}),snips:getJ('pdfs2_snips',null),
+  at:{foods:+store.get('pdfs2_at_foods')||0,meals:+store.get('pdfs2_at_meals')||0,exlib:+store.get('pdfs2_at_exlib')||0,snips:+store.get('pdfs2_at_snips')||0}}}
 function mergeSync(L,R){
   const del=[...new Set([...(L.deleted||[]),...(R.deleted||[])])];
   const by={};[...(R.docs||[]),...(L.docs||[])].forEach(d=>{const x=by[d.id];if(!x||d.updated>x.updated)by[d.id]=d});
   const out={docs:Object.values(by).filter(d=>!del.includes(d.id)),deleted:del.slice(-1000),at:{}};
-  ['foods','meals','exlib'].forEach(c=>{const lr=(L.at||{})[c]||0,rr=(R.at||{})[c]||0;out[c]=rr>lr?(R[c]||(c==='exlib'?{}:[])):L[c];out.at[c]=Math.max(lr,rr)});
+  ['foods','meals','exlib','snips'].forEach(c=>{const lr=(L.at||{})[c]||0,rr=(R.at||{})[c]||0;out[c]=rr>lr?(R[c]||(c==='exlib'?{}:c==='snips'?null:[])):L[c];out.at[c]=Math.max(lr,rr)});
+  const cl={...(R.clients||{})};Object.entries(L.clients||{}).forEach(([k,v])=>{if(!cl[k]||(v.at||0)>(cl[k].at||0))cl[k]=v});out.clients=cl;
   return out;
 }
 async function syncCall(body){
@@ -2557,13 +2588,14 @@ async function syncNow(silent){
     SY.quiet=true;
     store.set('pdfs2_docs',JSON.stringify(M.docs));store.set('pdfs2_deleted',JSON.stringify(M.deleted));
     store.set('pdfs2_foods',JSON.stringify(M.foods||[]));store.set('pdfs2_meals',JSON.stringify(M.meals||[]));store.set('pdfs2_exlib',JSON.stringify(M.exlib||{}));
-    ['foods','meals','exlib'].forEach(c=>store.set('pdfs2_at_'+c,String(M.at[c]||0)));
+    store.set('pdfs2_clients',JSON.stringify(M.clients||{}));if(M.snips)store.set('pdfs2_snips',JSON.stringify(M.snips));
+    ['foods','meals','exlib','snips'].forEach(c=>store.set('pdfs2_at_'+c,String(M.at[c]||0)));
     SY.quiet=false;
     docs=M.docs;rebuildFoods();
     await syncCall({op:'put',data:M});store.set('pdfs2_sync_last',String(Date.now()));
     setSyncState(`✓ מסונכרן · ${M.docs.length} מסמכים · ${new Date().toLocaleTimeString('he-IL',{hour:'2-digit',minute:'2-digit'})}`);
     if(!silent)toast('☁️ מסונכרן ✓');
-    if(!$('#drawer').hidden)drawDrawer();
+    if(!$('#drawer').hidden)drawDrawer();if(typeof updWaitBadge==='function'){updWaitBadge();drawSnips()}
   }catch(e){SY.quiet=false;setSyncState('⚠️ '+e.message);if(!silent)toast('הסנכרון נכשל: '+e.message)}
   finally{SY.busy=false;if(SY.again){SY.again=false;schedPush()}}
 }
@@ -2780,6 +2812,112 @@ HELP_TX.unshift(
  ['#swMenuBox','📄 מעלים את קובץ התפריט של הלקוח (PDF / Word / צילום מסך) — ואז מסמנים אילו ארוחות המתכון מחליף. הערכים שלהן הופכים ליעד של המתכון.'],
  ['#swRecBox','📷 מעלים את המתכון שהלקוח שלח — צילום מסך מטיקטוק/אינסטגרם, PDF או טקסט. האתר קורא את המצרכים ומחשב כמה הוא יכול לאכול.'],
  ['.swm','לוחצים כדי לסמן / לבטל ארוחה שהמתכון מחליף.']);
+
+/* ================= CLIENT CARD · WAITING LIST · WHATSAPP · WHAT CHANGED · SNIPPETS ================= */
+const clientsDB=()=>getJ('pdfs2_clients',{});
+const saveClient=(name,patch)=>{const all=clientsDB();all[name]={...(all[name]||{}),...patch,at:Date.now()};store.set('pdfs2_clients',JSON.stringify(all))};
+const WAIT_DAYS=14;
+function clientIndex(){const by={};docs.forEach(d=>{(by[d.client]=by[d.client]||[]).push(d)});Object.values(by).forEach(L=>L.sort((a,b)=>b.updated-a.updated));return by}
+function waitingList(){const by=clientIndex(),now=Date.now();return Object.entries(by).map(([c,L])=>({c,last:L[0],days:Math.floor((now-L[0].updated)/864e5)})).filter(x=>x.days>=WAIT_DAYS&&!clientsDB()[x.c]?.paused).sort((a,b)=>b.days-a.days)}
+function updWaitBadge(){const n=waitingList().length,b=$('#clientsBtn');if(!b)return;let s=b.querySelector('.wait-n');if(!s){s=h('span','wait-n');b.appendChild(s)}s.textContent=n?n:'';s.hidden=!n;s.title=n?`${n} לקוחות מחכים לעדכון`:''}
+function drawWaiting(){
+  const L=waitingList(),box=$('#drWait');if(!box)return;
+  box.innerHTML=L.length?`<div class="wait-h">⏰ מחכים לעדכון <small>(יותר מ-${WAIT_DAYS} יום)</small></div>`+L.map(x=>`<div class="dr-row wait" data-id="${x.last.id}"><span>${TYPE_ICON[x.last.type]}</span><span class="dr-t">${escH(x.c)}<small>לפני ${x.days} ימים · ${escH(x.last.state.title||DEF_TITLE[x.last.type])}</small></span><button class="chip-btn" data-card="${escH(x.c)}">📊</button></div>`).join(''):'';
+  box.querySelectorAll('.dr-row').forEach(r=>r.onclick=e=>{if(e.target.dataset.card)return openCard(e.target.dataset.card);openDoc(r.dataset.id)});
+}
+/* ---- client card ---- */
+function weightSeries(name){
+  return docs.filter(d=>d.client===name&&d.type==='menu').map(d=>({at:d.updated,w:weightOf(d.state.src)})).filter(x=>x.w).sort((a,b)=>a.at-b.at);
+}
+function weightChart(S){
+  if(S.length<2)return `<div class="help">${S.length?`משקל אחרון: <b>${S[0].w}</b> ק״ג (${fmtD(S[0].at)}) — הגרף יופיע מהעדכון הבא`:'עוד אין משקל שמור — הוא נכנס מהמדדים בתפריט או מ"📈 עדכון שבועי".'}</div>`;
+  const W=360,H=130,P=26,ws=S.map(x=>x.w),mn=Math.min(...ws),mx=Math.max(...ws),rg=Math.max(1,mx-mn),t0=S[0].at,t1=S[S.length-1].at,tr=Math.max(1,t1-t0);
+  const X=a=>W-P-(a-t0)/tr*(W-2*P),Y=w=>22+(mx-w)/rg*(H-48);
+  const pts=S.map(x=>`${X(x.at).toFixed(1)},${Y(x.w).toFixed(1)}`).join(' ');
+  const d=S[S.length-1].w-S[0].w;
+  return `<div class="wchart"><svg viewBox="0 0 ${W} ${H}" width="100%"><polyline points="${pts}" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linejoin="round"/>${S.map(x=>`<circle cx="${X(x.at).toFixed(1)}" cy="${Y(x.w).toFixed(1)}" r="3.5" fill="var(--accent)"/><text x="${X(x.at).toFixed(1)}" y="${(Y(x.w)-8).toFixed(1)}" text-anchor="middle" font-size="10" fill="#5f5d4c">${x.w}</text><text x="${X(x.at).toFixed(1)}" y="${H-2}" text-anchor="middle" font-size="9" fill="#8f8c76">${fmtD(x.at)}</text>`).join('')}</svg>
+    <div class="wsum"><b class="ltr">${d>0?'+':''}${d.toFixed(1)}</b> ק״ג מאז ${fmtD(S[0].at)}</div></div>`;
+}
+function openCard(name){
+  const c=clientsDB()[name]||{},L=(clientIndex()[name]||[]);
+  $('#cardDlg').hidden=false;$('#cdName').textContent=name;
+  $('#cdBody').innerHTML=`
+    <div class="row2"><label class="f">טלפון (לשליחה בווטסאפ)<input class="inp" data-f="phone" inputmode="tel" placeholder="050-0000000"></label><label class="f">תאריך התחלה<input class="inp" data-f="start" placeholder="למשל 1.9.26"></label></div>
+    <label class="f">מטרה<input class="inp" data-f="goal" placeholder="למשל: חיטוב — 8 ק״ג עד הקיץ"></label>
+    <label class="f">הערות פנימיות (רק אתה רואה)<textarea class="small" data-f="notes" spellcheck="false" placeholder="אלרגיות, העדפות, מה עובד איתו…"></textarea></label>
+    <label class="tog"><input type="checkbox" data-f="paused">לקוח בהפסקה — לא להציג ב"מחכים לעדכון"</label>
+    <div class="cd-h">📈 משקל</div>${weightChart(weightSeries(name))}
+    <div class="cd-h">🗂 היסטוריה (${L.length})</div>${L.map(d=>`<div class="dr-row" data-id="${d.id}"><span>${TYPE_ICON[d.type]}</span><span class="dr-t">${escH(d.state.title||DEF_TITLE[d.type])}<small>${fmtD(d.updated)}${d.type==='menu'?` · ${r0(menuTotals(d.state.src||'').kcal).toLocaleString()} קק״ל`:''}${d.type==='menu'&&weightOf(d.state.src)?` · ${weightOf(d.state.src)} ק״ג`:''}</small></span></div>`).join('')}`;
+  $('#cdBody').querySelectorAll('[data-f]').forEach(el=>{const f=el.dataset.f;if(el.type==='checkbox'){el.checked=!!c[f];el.onchange=()=>{saveClient(name,{[f]:el.checked});updWaitBadge()}}else{el.value=c[f]||'';el.oninput=()=>saveClient(name,{[f]:el.value})}});
+  $('#cdBody').querySelectorAll('.dr-row').forEach(r=>r.onclick=()=>{$('#cardDlg').hidden=true;openDoc(r.dataset.id)});
+}
+$('#cdClose').onclick=()=>$('#cardDlg').hidden=true;$('#cardDlg .dr-bg').onclick=()=>$('#cardDlg').hidden=true;
+document.getElementById('drList').addEventListener('click',e=>{const b=e.target.closest('[data-card]');if(b){e.stopPropagation();openCard(b.dataset.card)}},true);
+
+/* ---- WhatsApp ---- */
+const waPhone=p=>{p=(p||'').replace(/\D/g,'');if(p.startsWith('0'))p='972'+p.slice(1);return p.length>=11?p:''};
+function waText(){const o=opts();return (store.get('pdfs2_watext')||'היי {שם} 💪 מצרף את {מסמך} המעודכן שלך. יש שאלה — אני כאן.').replace(/\{שם\}/g,(o.client||'').split(' ')[0]).replace(/\{מסמך\}/g,o.title)}
+$('#share').hidden=false;$('#share').textContent='📲 שלח';
+$('#share').onclick=()=>busy($('#share'),async()=>{
+  if(!pages.length)return toast('אין עדיין תוכן');
+  const {pdf,fname}=await makePdf();saveDoc(true);const msg=waText();
+  const f=new File([pdf.output('blob')],fname,{type:'application/pdf'});
+  let canFile=false;try{canFile=!!(navigator.canShare&&navigator.canShare({files:[f]}))}catch(e){}
+  if(canFile){try{await navigator.share({files:[f],title:fname,text:msg})}catch(e){}return}
+  // computer: download the PDF and open the client's WhatsApp chat — attach the file there
+  pdf.save(fname);const ph=waPhone((clientsDB()[$('#client').value.trim()]||{}).phone);
+  window.open(ph?`https://wa.me/${ph}?text=${encodeURIComponent(msg)}`:`https://web.whatsapp.com/`,'_blank','noopener');
+  toast(ph?'ה-PDF ירד — גרור אותו לצ׳אט שנפתח':'ה-PDF ירד · אין טלפון בכרטיס הלקוח (📊) — פתחתי ווטסאפ');
+});
+
+/* ---- what changed since the last saved version ---- */
+function docText(st){
+  if(!st)return '';
+  if(st.type==='workout'&&st.wk&&st.wk.mode==='wizard')return st.wk.days.slice(0,st.wk.n).map((d,i)=>`יום ${i+1}${d.name?' – '+d.name:''}:\n${d.dup!==''?`(כמו יום ${+d.dup+1})`:d.ex||''}`).join('\n');
+  if(st.type==='swap'&&st.sw)return `${st.sw.recipeName}\n${st.sw.recipe}`;
+  if(st.type==='menu'){try{return composeMenu(mealsFromText(st.src||''))}catch(e){}}
+  return st.src||'';
+}
+function diffLines(a,b){
+  const A=a.split('\n').map(x=>x.trim()).filter(Boolean),B=b.split('\n').map(x=>x.trim()).filter(Boolean);
+  const n=A.length,m=B.length,T=Array.from({length:n+1},()=>new Array(m+1).fill(0));
+  for(let i=n-1;i>=0;i--)for(let j=m-1;j>=0;j--)T[i][j]=A[i]===B[j]?T[i+1][j+1]+1:Math.max(T[i+1][j],T[i][j+1]);
+  const rem=[],add=[];let i=0,j=0;while(i<n&&j<m){if(A[i]===B[j]){i++;j++}else if(T[i+1][j]>=T[i][j+1])rem.push(A[i++]);else add.push(B[j++])}
+  while(i<n)rem.push(A[i++]);while(j<m)add.push(B[j++]);
+  const key=s=>s.replace(/[\d.,/]+/g,'#').replace(/\s+/g,' ');const out=[];
+  rem.forEach(r=>{const k=add.findIndex(a=>key(a)===key(r));if(k>-1){out.push({t:'chg',a:r,b:add[k]});add.splice(k,1)}else out.push({t:'del',a:r})});
+  add.forEach(a=>out.push({t:'add',b:a}));return out;
+}
+function changesNote(){
+  const name=$('#client').value.trim();if(!name)return '';
+  const cur=snapshot();let base=null;
+  if(curDoc){const d=docs.find(x=>x.id===curDoc);if(d&&d.type===TYPE)base=d}
+  if(!base)base=(clientIndex()[name]||[]).find(d=>d.type===TYPE);
+  if(!base)return '';
+  const D=diffLines(docText(base.state),docText(cur));if(!D.length)return `<br><span class="chg-ok">🔍 אין שינויים מהגרסה של ${fmtD(base.updated)}</span>`;
+  const row=x=>x.t==='chg'?`<div class="chg c">✎ ${escH(x.a)}<br>→ ${escH(x.b)}</div>`:x.t==='add'?`<div class="chg a">＋ ${escH(x.b)}</div>`:`<div class="chg d">− ${escH(x.a)}</div>`;
+  return `<details class="chg-box"><summary>🔍 ${D.length} שינויים מהגרסה של ${fmtD(base.updated)}</summary>${D.slice(0,25).map(row).join('')}${D.length>25?`<div class="help">ועוד ${D.length-25}…</div>`:''}</details>`;
+}
+
+/* ---- snippets ---- */
+const SNIP0=['לשתות לפחות 3 ליטר מים ביום','9 אלף צעדים כל יום — לשלוח לי בערב','שקילה: ראשון, שלישי וחמישי','סדר הארוחות לא משנה — העיקר שהכל נאכל עד סוף היום','משקלי אוכל אחרי בישול','ירקות — חופשי, בלי הגבלה','להעלות משקל כשמגיעים לטווח העליון של החזרות','לרשום משקלים בכל אימון','5 דק׳ חימום לפני כל אימון','לדבר איתי על כל קושי'];
+const snips=()=>getJ('pdfs2_snips',null)||SNIP0.slice();
+function drawSnips(){
+  document.querySelectorAll('.snips').forEach(box=>{
+    const ta=document.getElementById(box.dataset.for);
+    box.innerHTML=snips().map((t,i)=>`<span class="snip"><button class="snip-t" data-i="${i}">${escH(t)}</button><button class="snip-x" data-x="${i}" title="מחק">×</button></span>`).join('')+`<button class="chip-btn snip-add">＋ משפט חדש</button>`;
+    box.querySelectorAll('.snip-t').forEach(b=>b.onclick=()=>{const t=snips()[+b.dataset.i];if(ta.value.split('\n').map(x=>x.trim()).includes(t))return toast('כבר כתוב');ta.value=(ta.value.trim()?ta.value.replace(/\s+$/,'')+'\n':'')+t;ta.dispatchEvent(new Event('input',{bubbles:true}))});
+    box.querySelectorAll('.snip-x').forEach(b=>b.onclick=()=>{const L=snips();L.splice(+b.dataset.x,1);store.set('pdfs2_snips',JSON.stringify(L));drawSnips()});
+    box.querySelector('.snip-add').onclick=()=>{const t=(prompt('משפט שאתה כותב הרבה (דרישה / הערה):')||'').trim();if(!t)return;const L=snips();if(!L.includes(t))L.unshift(t);store.set('pdfs2_snips',JSON.stringify(L));drawSnips()};
+  });
+}
+drawSnips();updWaitBadge();
+HELP_TX.unshift(
+ ['.wait-n','כמה לקוחות מחכים לעדכון (לא קיבלו תפריט/תוכנית יותר מ-14 יום).'],
+ ['#drWait','⏰ לקוחות שלא קיבלו עדכון יותר מ-14 יום. לוחצים כדי לפתוח את המסמך האחרון שלהם.'],
+ ['[data-card]','📊 כרטיס לקוח: טלפון, מטרה, הערות פנימיות, גרף משקל והיסטוריה. רק אתה רואה.'],
+ ['.chg-box','🔍 מה שינית מהגרסה הקודמת של הלקוח הזה (לא מופיע ב-PDF).'],
+ ['.snips','📝 משפטים מוכנים — לוחצים והמשפט נכנס. ＋ להוסיף, × למחוק.']);
 
 setType('workout',true);
 </script>
