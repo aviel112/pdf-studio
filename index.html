@@ -1653,6 +1653,8 @@ function drawPreview(pv){
 function targetLine(tot){
   const T=calcTarget().t;if(!T)return '';
   const d=r0(tot.kcal-T.kcal),dp=r0(tot.p-T.p);const ok=Math.abs(d)<=T.kcal*.05,okp=Math.abs(dp)<=12;
+  const ratio=T.kcal/Math.max(1,tot.kcal);
+  if(ratio>2.4||ratio<.45)return `<div class="tgt far">⚠️ התפריט <b>${r0(tot.kcal).toLocaleString()}</b> קק״ל — רחוק מאוד מהיעד ${T.kcal.toLocaleString()}. כנראה חסרות ארוחות — השלם אותן, וההתאמה תעשה את השאר.</div>`;
   if(ok&&okp)return `<br><span class="tgt ok">🎯 ביעד ✓ <b>${r0(tot.kcal).toLocaleString()}</b> מתוך ${T.kcal.toLocaleString()} קק״ל · חלבון <b>${r0(tot.p)}</b>/${T.p}</span>`;
   return `<div class="tgt far">⚠️ התפריט <b>${r0(tot.kcal).toLocaleString()}</b> קק״ל · <b>${r0(tot.p)}</b> חלבון — היעד ${T.kcal.toLocaleString()} · ${T.p} <span class="ltr">(${d>0?'+':''}${d})</span><button class="unk pick fitnow">🎯 התאם עכשיו ליעד</button></div>`;
 }
@@ -1978,10 +1980,14 @@ function fitMenuText(text,T){
 function doFit(T,silent){
   const src=$('#src').value;if(!src.trim())return false;
   const totOf=menuTotals;
+  const k0=totOf(src).kcal;
+  // a menu that is way off (e.g. only one meal written) can't be "fit" — scaling it ×3 would be nonsense
+  if(!k0||T.kcal/k0>2.4||T.kcal/k0<.45){if(!silent)toast(`התפריט (${r0(k0).toLocaleString()} קק״ל) רחוק מדי מהיעד — כנראה חסרות ארוחות. השלם אותן ואז התאם`);return false}
   let out=fitMenuText(src,T);if(!out){toast('לא מצאתי פריטים עם ערכים להתאמה');return false}
-  // a few correction passes — fixed items (1 banana, 1 yogurt) and rounding push the total off
+  // a few correction passes — fixed items (1 banana, 1 yogurt) and rounding push the total off; never drift past ×2.5 of the original
   for(let k=0;k<5;k++){const c=totOf(out);if(Math.abs(c.kcal-T.kcal)<=T.kcal*.03&&Math.abs(c.p-T.p)<=8)break;
-    const nx=fitMenuText(out,T);if(!nx||nx===out)break;out=nx}
+    const nx=fitMenuText(out,T);if(!nx||nx===out)break;const r=totOf(nx).kcal/k0;if(r>2.5||r<.4)break;
+    if(Math.abs(totOf(nx).kcal-T.kcal)>=Math.abs(c.kcal-T.kcal)&&Math.abs(totOf(nx).p-T.p)>=Math.abs(c.p-T.p))break;out=nx}
   fitUndo=src;$('#src').value=out;$('#undoFit').hidden=false;render();
   const tot=menuTotals(out);
   if(!silent)toast(`הותאם: ${r0(tot.kcal).toLocaleString()} קק״ל · ${r0(tot.p)} חלבון (יעד ${T.kcal.toLocaleString()} · ${T.p})`);
