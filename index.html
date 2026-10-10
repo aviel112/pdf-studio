@@ -590,6 +590,7 @@ body.helpmode .side button,body.helpmode .side input,body.helpmode .side textare
   <div class="logo">PDF <b>STUDIO</b></div>
   <small>תפריטים ותוכניות אימון — מטקסט ל-PDF מעוצב</small>
   <button class="chip-btn top-btn" id="homeBtn" title="מסך פתיחה">🏠</button>
+  <button class="chip-btn top-btn2" id="dashBtn" title="מעקב לקוחות">📊<span class="lbl"> מעקב</span></button>
   <button class="chip-btn top-btn2" id="quickBtn" title="לקוח חדש">⚡<span class="lbl"> לקוח חדש</span></button>
   <button class="chip-btn top-btn2" id="clientsBtn" title="הלקוחות שלי">👥<span class="lbl"> הלקוחות שלי</span></button>
   <button class="chip-btn top-btn2" id="guideBtn" title="מדריך">📖<span class="lbl"> מדריך</span></button>
@@ -744,6 +745,7 @@ body.helpmode .side button,body.helpmode .side input,body.helpmode .side textare
       <ul><li>כל הורדה / שמירה נשמרת תחת שם הלקוח. לוחצים כדי לפתוח, <b>⧉</b> לשכפל ללקוח אחר.</li>
       <li><b>📊 כרטיס</b> — טלפון, מטרה, הערות פנימיות, <b>גרף משקל</b> והיסטוריה.</li>
       <li><b>🚫 מה לא אוכל</b> (בכרטיס) — צמחוני / בלי דגים / בלי חלב… חלופות, תבניות ו-Gemini מדלגים עליהם, ומה שכבר בתפריט מסומן עם "הסר".</li>
+      <li><b>📊 מעקב</b> — כל הלקוחות: תשלום, זום הבא, מגמת משקל ומי דורש תשומת לב. בכרטיס: <b>📏 מדידה חודשית</b> אחרי הזום + <b>✓ שילם</b>.</li>
       <li><b>⏰ מחכים לעדכון</b> — מי לא קיבל עדכון 14+ יום (מספר כתום על הכפתור).</li>
       <li><b>📈 עדכון שבועי</b> — משקל חדש → הצעת תיקון קלוריות → גרסה חדשה.</li>
       <li><b>🔍 מה השתנה</b> — בצד מופיע מה שינית מהגרסה הקודמת (לא ב-PDF).</li></ul></details>
@@ -2996,7 +2998,7 @@ function drawWaiting(){
 }
 /* ---- client card ---- */
 function weightSeries(name){
-  return docs.filter(d=>d.client===name&&d.type==='menu').map(d=>({at:d.updated,w:weightOf(d.state.src)})).filter(x=>x.w).sort((a,b)=>a.at-b.at);
+  return measSeries(name).filter(x=>x.v['משקל']).map(x=>({at:x.at,w:x.v['משקל']}));
 }
 function weightChart(S){
   if(S.length<2)return `<div class="help">${S.length?`משקל אחרון: <b>${S[0].w}</b> ק״ג (${fmtD(S[0].at)}) — הגרף יופיע מהעדכון הבא`:'עוד אין משקל שמור — הוא נכנס מהמדדים בתפריט או מ"📈 עדכון שבועי".'}</div>`;
@@ -3017,10 +3019,10 @@ function openCard(name){
     <div class="cd-h">🚫 מה לא אוכל</div><div class="ex-tags">${EXCL.map(e=>`<button class="chip-btn${(c.excl||[]).includes(e[0])?' on':''}" data-ex="${e[0]}">${e[0]}</button>`).join('')}</div>
     <label class="f">עוד דברים (מופרד בפסיקים)<input class="inp" data-f="exclTxt" placeholder="למשל: סלמון, פטריות, טונה"></label>
     <label class="tog"><input type="checkbox" data-f="paused">לקוח בהפסקה — לא להציג ב"מחכים לעדכון"</label>
-    <div class="cd-h">📈 משקל</div>${weightChart(weightSeries(name))}
+    ${cardTrackHTML(name,c)}
     <div class="cd-h">🗂 היסטוריה (${L.length})</div>${L.map(d=>`<div class="dr-row" data-id="${d.id}"><span>${TYPE_ICON[d.type]}</span><span class="dr-t">${escH(d.state.title||DEF_TITLE[d.type])}<small>${fmtD(d.updated)}${d.type==='menu'?` · ${r0(menuTotals(d.state.src||'').kcal).toLocaleString()} קק״ל`:''}${d.type==='menu'&&weightOf(d.state.src)?` · ${weightOf(d.state.src)} ק״ג`:''}</small></span></div>`).join('')}`;
   $('#cdBody').querySelectorAll('[data-f]').forEach(el=>{const f=el.dataset.f;if(el.type==='checkbox'){el.checked=!!c[f];el.onchange=()=>{saveClient(name,{[f]:el.checked});updWaitBadge()}}else{el.value=c[f]||'';el.oninput=()=>saveClient(name,{[f]:el.value})}});
-  $('#cdBody').querySelectorAll('[data-ex]').forEach(b=>b.onclick=()=>{const L=clientsDB()[name]?.excl||[];const t=b.dataset.ex;const N=L.includes(t)?L.filter(x=>x!==t):[...L,t];saveClient(name,{excl:N});b.classList.toggle('on');later()});$('#cdBody').querySelector('[data-f=exclTxt]').addEventListener('input',later);
+  bindTrack(name);$('#cdBody').querySelectorAll('[data-ex]').forEach(b=>b.onclick=()=>{const L=clientsDB()[name]?.excl||[];const t=b.dataset.ex;const N=L.includes(t)?L.filter(x=>x!==t):[...L,t];saveClient(name,{excl:N});b.classList.toggle('on');later()});$('#cdBody').querySelector('[data-f=exclTxt]').addEventListener('input',later);
   $('#cdBody').querySelectorAll('.dr-row').forEach(r=>r.onclick=()=>{$('#cardDlg').hidden=true;openDoc(r.dataset.id)});
 }
 $('#cdClose').onclick=()=>$('#cardDlg').hidden=true;$('#cardDlg .dr-bg').onclick=()=>$('#cardDlg').hidden=true;
@@ -3323,6 +3325,108 @@ $('#stats').addEventListener('click',e=>{const b=e.target.closest('.unk');if(!b)
   if(b.classList.contains('altall'))openAlts(null)});
 $('#altBtn').onclick=()=>openAlts(null);
 HELP_TX.unshift(['#altBtn','➕ לכל שורה בתפריט — מזונות חלופיים מאותה קטגוריה (חלבון / פחמימה / שומן / פרי) עם כמות שכבר מחושבת לאותן קלוריות. לחיצה מוסיפה "או …". מדלג על מה שהלקוח לא אוכל.']);
+
+/* ================= 📊 TRACKING — monthly measurements · payment · zoom · dashboard ================= */
+const isoD=t=>{const x=new Date(t);return `${x.getFullYear()}-${String(x.getMonth()+1).padStart(2,'0')}-${String(x.getDate()).padStart(2,'0')}`};
+const dTs=s=>{const [y,m,d]=String(s).slice(0,10).split('-').map(Number);return new Date(y,m-1,d).getTime()};
+const daysTo=s=>s?Math.round((dTs(s)-dTs(isoD(Date.now())))/864e5):null;
+const addMonth=(s,n=1)=>{const d=new Date(dTs(s));d.setMonth(d.getMonth()+n);return isoD(d)};
+const fmtS=s=>s?fmtD(dTs(s))+(String(s).includes('T')?' '+String(s).split('T')[1]:''):'';
+function measSeries(name){const by={};
+  docs.filter(d=>d.client===name&&d.type==='menu').forEach(d=>{const m=parseMenu(d.state.src||'').meas||[];if(!m.length)return;const k=isoD(d.updated);by[k]=by[k]||{};
+    m.forEach(x=>{const v=parseFloat(String(x.v).replace(',','.'));if(v)by[k][x.k]=v})});
+  ((clientsDB()[name]||{}).meas||[]).forEach(e=>{by[e.d]={...(by[e.d]||{}),...e.v}});
+  return Object.entries(by).map(([d,v])=>({d,at:dTs(d),v})).sort((a,b)=>a.at-b.at)}
+const GAIN_RE=/עלי|מסה|בני(ית|ה)|להעלות|לעלות/;
+function trendOf(name){const c=clientsDB()[name]||{},S=weightSeries(name);if(!S.length)return {S,st:'none'};
+  const gain=GAIN_RE.test(c.goal||''),last=S[S.length-1].w,prev=S.length>1?S[S.length-2].w:null;
+  const d=prev==null?null:+(last-prev).toFixed(1),tot=+(last-S[0].w).toFixed(1);
+  let st='new';if(d!=null)st=(gain?d>=.3:d<=-.3)?'good':(gain?d<=-.3:d>=.3)?'bad':'flat';
+  return {S,last,d,tot,st,gain,lastAt:S[S.length-1].at}}
+const ST_TXT={good:['✅','במגמה','good'],bad:['📈','הפוך מהמטרה','bad'],flat:['➖','תקוע','flat'],new:['•','מדידה ראשונה',''],none:['—','אין מדידות','']};
+function spark(S){if(S.length<2)return '<svg class="spk"></svg>';const W=96,H=30,ws=S.map(x=>x.w),mn=Math.min(...ws),rg=Math.max(.5,Math.max(...ws)-mn),t0=S[0].at,tr=Math.max(1,S[S.length-1].at-t0);
+  return `<svg class="spk" viewBox="0 0 ${W} ${H}"><polyline points="${S.map(x=>`${(W-3-(x.at-t0)/tr*(W-6)).toFixed(1)},${(3+(mn+rg-x.w)/rg*(H-6)).toFixed(1)}`).join(' ')}" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linejoin="round"/></svg>`}
+function allClients(){const s=new Set([...Object.keys(clientsDB()),...Object.keys(clientIndex())]);s.delete('');return [...s]}
+function clientRow(n){const c=clientsDB()[n]||{},L=clientIndex()[n]||[],T=trendOf(n),M=measSeries(n);
+  const pay=daysTo(c.paidUntil),meet=daysTo(c.nextMeet),lastM=M.length?Math.floor((Date.now()-M[M.length-1].at)/864e5):null,lastDoc=L.length?Math.floor((Date.now()-L[0].updated)/864e5):null;
+  const tags=[];
+  if(pay!=null)tags.push(pay<0?['bad',`💳 חוב ${-pay} ימים`]:pay<=7?['warn',`💳 לתשלום ${pay?'בעוד '+pay+' ימים':'היום'}`]:['',`💳 עד ${fmtS(c.paidUntil)}`]);
+  if(meet!=null&&meet>=0)tags.push([meet<=7?'warn':'',`📅 זום ${meet?fmtS(c.nextMeet):'היום '+(String(c.nextMeet).split('T')[1]||'')}`]);
+  else if(lastM==null||lastM>=28)tags.push(['warn','📅 לקבוע זום']);
+  if(lastM!=null&&lastM>40)tags.push(['bad',`📏 בלי מדידה ${lastM} ימים`]);
+  if(lastDoc!=null)tags.push([lastDoc>=WAIT_DAYS?'warn':'',`🍽️ עדכון לפני ${lastDoc} ימים`]);
+  const risk=(pay!=null&&pay<0)||T.st==='bad'||T.st==='flat'||(lastM!=null&&lastM>40);
+  return {n,c,T,pay,meet,risk,tags,paused:!!c.paused}}
+let dashF='all',dashBack=false;
+function openDash(){$('#dashDlg').hidden=false;drawDash()}
+function drawDash(){
+  const R=allClients().map(clientRow),act=R.filter(r=>!r.paused);
+  const F={all:r=>true,risk:r=>r.risk,pay:r=>r.pay!=null&&r.pay<=7,meet:r=>r.meet!=null&&r.meet>=0&&r.meet<=7||r.tags.some(t=>t[1]==='📅 לקבוע זום'),good:r=>r.T.st==='good',flat:r=>r.T.st==='flat'||r.T.st==='bad'};
+  const cnt=k=>act.filter(F[k]).length;
+  const rows=act.filter(F[dashF]).sort((a,b)=>(b.risk-a.risk)||((a.pay??999)-(b.pay??999))||a.n.localeCompare(b.n,'he'));
+  $('#dashBody').innerHTML=`
+    <div class="db-stats"><div><b>${act.length}</b><small>לקוחות פעילים</small></div><div class="${cnt('pay')?'warnc':''}"><b>${cnt('pay')}</b><small>💳 לתשלום השבוע</small></div><div><b>${cnt('meet')}</b><small>📅 זום / לקבוע</small></div><div><b>${cnt('good')}</b><small>✅ במגמה</small></div><div class="${cnt('risk')?'warnc':''}"><b>${cnt('risk')}</b><small>⚠️ דורשים תשומת לב</small></div></div>
+    <div class="db-f">${[['all','הכל'],['risk','⚠️ תשומת לב'],['pay','💳 תשלום'],['meet','📅 זום'],['good','✅ במגמה'],['flat','➖ תקועים']].map(([k,t])=>`<button class="chip-btn${dashF===k?' on':''}" data-f="${k}">${t} <small>${k==='all'?act.length:cnt(k)}</small></button>`).join('')}</div>
+    ${rows.length?rows.map(r=>{const s=ST_TXT[r.T.st];return `<div class="db-row${r.risk?' risk':''}" data-n="${escH(r.n)}">
+      <div class="db-n"><b>${escH(r.n)}</b><small>${escH(r.c.goal||r.c.pkg||'')}</small></div>
+      ${spark(r.T.S)}
+      <div class="db-w">${r.T.last?`<b>${r.T.last}</b> ק״ג<small class="ltr">${r.T.tot>0?'+':''}${r.T.tot??''} מההתחלה</small>`:'<small>אין משקל</small>'}</div>
+      <div class="db-st ${s[2]}">${s[0]} ${s[1]}${r.T.d!=null?` <span class="ltr">(${r.T.d>0?'+':''}${r.T.d})</span>`:''}</div>
+      <div class="db-tags">${r.tags.map(t=>`<span class="${t[0]}">${t[1]}</span>`).join('')}</div></div>`}).join(''):'<div class="help" style="text-align:center;padding:14px">אין לקוחות כאן 👌</div>'}
+    <div class="db-add"><input class="inp" id="dbNew" placeholder="שם לקוח חדש למעקב"><button class="chip-btn hot" id="dbAdd">➕ הוסף</button></div>
+    ${R.some(r=>r.paused)?`<div class="help">בהפסקה: ${R.filter(r=>r.paused).map(r=>escH(r.n)).join(', ')}</div>`:''}`;
+  $('#dashBody').querySelectorAll('.db-f [data-f]').forEach(b=>b.onclick=()=>{dashF=b.dataset.f;drawDash()});
+  $('#dashBody').querySelectorAll('.db-row').forEach(r=>r.onclick=()=>{$('#dashDlg').hidden=true;dashBack=true;openCard(r.dataset.n)});
+  $('#dbAdd').onclick=()=>{const n=$('#dbNew').value.trim();if(!n)return;if(!clientsDB()[n])saveClient(n,{start:fmtD(Date.now())});$('#dashDlg').hidden=true;dashBack=true;openCard(n)};
+}
+/* card section: payment · zoom · monthly measurement */
+function cardTrackHTML(name,c){const M=measSeries(name),keys=MEAS_KEYS.filter(k=>M.some(e=>e.v[k]));const own=new Set((c.meas||[]).map(e=>e.d));
+  const first=M[0],last=M[M.length-1];
+  return `<div class="cd-h">💳 תשלום · 📅 זום</div>
+    <div class="row2"><label class="f">חבילה<input class="inp" data-f="pkg" placeholder="ליווי חודשי"></label><label class="f">מחיר לחודש ₪<input class="inp" data-f="price" inputmode="numeric"></label></div>
+    <div class="row2"><label class="f">שולם עד<input class="inp" type="date" data-f="paidUntil"></label><label class="f">זום הבא<input class="inp" type="datetime-local" data-f="nextMeet"></label></div>
+    <div class="ct-acts"><button class="chip-btn hot" data-a="paid">✓ שילם — הארך בחודש</button>${(c.payments||[]).length?`<small class="help">תשלומים: ${(c.payments||[]).slice(-4).reverse().map(p=>`${fmtS(p.d)}${p.amt?' · ₪'+p.amt:''}`).join(' | ')}</small>`:''}</div>
+    <div class="cd-h">📏 מדידה חודשית (אחרי הזום)</div>
+    <div class="ms-grid"><label class="f" style="grid-column:span 2">תאריך<input class="inp" type="date" data-md value="${isoD(Date.now())}"></label>${MEAS_KEYS.map(k=>`<label class="f">${k}<input class="inp" data-m="${k}" inputmode="decimal"></label>`).join('')}</div>
+    <button class="chip-btn hot" data-a="meas">➕ שמור מדידה</button>
+    ${weightChart(weightSeries(name))}
+    ${M.length?`<div class="ms-tbl"><table><tr><th>תאריך</th>${keys.map(k=>`<th>${k}</th>`).join('')}<th></th></tr>${M.slice().reverse().map(e=>`<tr><td>${fmtS(e.d)}</td>${keys.map(k=>`<td>${e.v[k]??''}</td>`).join('')}<td>${own.has(e.d)?`<button class="dr-del" data-del="${e.d}">✕</button>`:''}</td></tr>`).join('')}${M.length>1?`<tr class="tot"><td>שינוי</td>${keys.map(k=>{const a=first.v[k],b=last.v[k];if(a==null||b==null)return '<td></td>';const d=+(b-a).toFixed(1);return `<td class="ltr">${d>0?'+':''}${d}</td>`}).join('')}<td></td></tr>`:''}</table></div>`:''}`}
+function bindTrack(name){const B=$('#cdBody'),re=()=>{openCard(name)};
+  B.querySelector('[data-a=paid]').onclick=()=>{const c=clientsDB()[name]||{},t=isoD(Date.now());const base=c.paidUntil&&daysTo(c.paidUntil)>-20?c.paidUntil:t;
+    saveClient(name,{paidUntil:addMonth(base),payments:[...(c.payments||[]),{d:t,amt:c.price||''}]});toast(`💳 נרשם — שולם עד ${fmtS(addMonth(base))}`);re()};
+  B.querySelector('[data-a=meas]').onclick=()=>{const v={};B.querySelectorAll('[data-m]').forEach(i=>{const x=parseFloat(i.value.replace(',','.'));if(x)v[i.dataset.m]=x});
+    if(!Object.keys(v).length)return toast('לא הוזנו מדדים');const d=B.querySelector('[data-md]').value||isoD(Date.now()),c=clientsDB()[name]||{};
+    const meas=[...(c.meas||[]).filter(e=>e.d!==d),{d,v}].sort((a,b)=>a.d<b.d?-1:1);const p={meas};
+    if(!c.nextMeet||daysTo(c.nextMeet)<0){p.nextMeet=addMonth(d)+'T'+((c.nextMeet||'').split('T')[1]||'20:00')}
+    saveClient(name,p);toast('📏 נשמר'+(p.nextMeet?` · זום הבא ${fmtS(p.nextMeet)}`:''));re()};
+  B.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{if(!confirm('למחוק את המדידה?'))return;const c=clientsDB()[name]||{};saveClient(name,{meas:(c.meas||[]).filter(e=>e.d!==b.dataset.del)});re()});
+}
+document.body.insertAdjacentHTML('beforeend',`<div class="drawer home dash" id="dashDlg" hidden><div class="dr-bg"></div><div class="dr-panel">
+  <div class="dr-head"><b>📊 מעקב לקוחות</b><button class="chip-btn" id="dashClose">✕</button></div>
+  <div id="dashBody" style="display:flex;flex-direction:column;gap:10px"></div></div></div>`);
+$('#dashBtn').onclick=openDash;$('#dashClose').onclick=()=>$('#dashDlg').hidden=true;$('#dashDlg .dr-bg').onclick=()=>$('#dashDlg').hidden=true;
+['#cdClose','#cardDlg .dr-bg'].forEach(s=>$(s).addEventListener('click',()=>{if(dashBack){dashBack=false;openDash()}}));
+document.head.insertAdjacentHTML('beforeend',`<style>
+.drawer.dash .dr-panel{width:min(900px,96vw)}
+.db-stats{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.db-stats>div{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 6px;text-align:center}
+.db-stats b{display:block;font-size:1.45rem;color:var(--accent)}.db-stats small{font-size:.68rem;color:var(--text3)}.db-stats .warnc b{color:#b0561c}
+.db-f{display:flex;flex-wrap:wrap;gap:6px}.db-f .chip-btn.on{background:var(--accent);border-color:var(--accent);color:#fff}.db-f small{opacity:.7}
+.db-row{display:grid;grid-template-columns:minmax(110px,1.2fr) 96px 90px 120px 2fr;gap:12px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 12px;cursor:pointer}
+.db-row:hover{border-color:var(--accent)}.db-row.risk{border-right:3px solid #b0561c}
+.db-n b{display:block;font-size:.92rem}.db-n small,.db-w small{display:block;font-size:.7rem;color:var(--text3)}
+.db-w{font-size:.8rem}.db-w b{font-size:1rem}.spk{width:96px;height:30px}
+.db-st{font-size:.76rem;font-weight:700}.db-st.good{color:#4f7a2a}.db-st.bad{color:#b0561c}.db-st.flat{color:#a07a1c}
+.db-tags{display:flex;flex-wrap:wrap;gap:4px}.db-tags span{font-size:.7rem;border:1px solid var(--line);border-radius:99px;padding:2px 8px;color:var(--text2)}
+.db-tags .warn{border-color:#d9a441;color:#8a6214;background:rgba(217,164,65,.1)}.db-tags .bad{border-color:#c46a3c;color:#a3471c;background:rgba(196,106,60,.1)}
+.db-add{display:flex;gap:8px}.db-add .inp{flex:1}
+.ct-acts{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.ms-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.ms-tbl{overflow-x:auto}.ms-tbl table{width:100%;border-collapse:collapse;font-size:.76rem}.ms-tbl th,.ms-tbl td{padding:5px 4px;border-bottom:1px solid var(--line);text-align:center;white-space:nowrap}
+.ms-tbl th{color:var(--text3);font-weight:700}.ms-tbl tr.tot td{font-weight:800;color:var(--accent)}.ms-tbl .dr-del{padding:0 6px;height:22px}
+@media(max-width:700px){.db-stats{gap:4px}.db-stats>div{padding:7px 2px}.db-stats b{font-size:1.1rem}.db-stats small{font-size:.58rem;line-height:1.2;display:block}.db-row{grid-template-columns:1fr auto;gap:6px 10px}.db-row .spk{grid-row:1;grid-column:2}.db-w,.db-st{grid-column:auto}.db-tags{grid-column:1/-1}.ms-grid{grid-template-columns:repeat(3,1fr)}}
+</style>`);
+HELP_TX.unshift(['#dashBtn','📊 כל הלקוחות במסך אחד: מי צריך לשלם, מי צריך זום, מגמת משקל (יורד / תקוע / עולה) ומי דורש תשומת לב. לחיצה על לקוח פותחת את הכרטיס שלו.']);
 
 setType('workout',true);
 </script>
