@@ -558,6 +558,10 @@ body.helpmode .side button,body.helpmode .side input,body.helpmode .side textare
 .hm-a{display:flex;flex-direction:column;align-items:center;gap:4px;border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:12px 4px;font-size:1.4rem;cursor:pointer;font-family:inherit;color:var(--text)}
 .hm-a span{font-size:.74rem;font-weight:700}.hm-a:hover{border-color:var(--accent);background:rgba(91,107,47,.06)}
 @media (max-width:900px){.mic-btn{bottom:88px;left:12px}.hm-acts{grid-template-columns:repeat(2,1fr)}}
+.tgt{display:block;margin-top:6px;border-radius:10px;padding:8px 10px;font-size:.8rem;line-height:1.6}
+.tgt.ok{background:rgba(91,107,47,.1);color:#3f6b2f}
+.tgt.far{background:#fff4ea;border:1px solid #e2b48d;color:#7a3c12}
+.tgt .fitnow{display:block;margin-top:6px;width:100%;padding:6px;font-weight:800;font-size:.82rem}
 </style>
 </head>
 <body>
@@ -634,7 +638,8 @@ body.helpmode .side button,body.helpmode .side input,body.helpmode .side textare
       <div class="row2" style="margin-top:8px"><select class="inp" id="mt_act"><option value="1.2">יושבני</option><option value="1.375">פעיל קל (2-3 אימונים)</option><option value="1.55">פעיל (4-5 אימונים)</option><option value="1.725">פעיל מאוד</option></select><select class="inp" id="mt_goal"><option value="cut">חיטוב (-20%)</option><option value="keep">שמירה</option><option value="bulk">מסה (+10%)</option></select></div>
       <div class="mt-res" id="mtRes"></div>
       <div class="row2"><label class="f">או יעד ידני: קלוריות<input class="inp" id="mt_kcal" inputmode="numeric"></label><label class="f">חלבון (גר׳)<input class="inp" id="mt_p" inputmode="numeric"></label></div>
-      <label class="tog" style="margin-top:8px"><input type="checkbox" id="mt_show" checked>להציג את היעד ב-PDF</label>
+      <label class="tog" style="margin-top:8px"><input type="checkbox" id="mt_auto" checked>🎯 להתאים את התפריט ליעד אוטומטית</label>
+      <label class="tog" style="margin-top:4px"><input type="checkbox" id="mt_show" checked>להציג את היעד ב-PDF</label>
     </div>
     <div class="tools">
       <button class="chip-btn" id="sample">טען דוגמה</button>
@@ -1646,8 +1651,9 @@ function drawPreview(pv){
 }
 function targetLine(tot){
   const T=calcTarget().t;if(!T)return '';
-  const d=r0(tot.kcal-T.kcal),dp=r0(tot.p-T.p);const ok=Math.abs(d)<=T.kcal*.05,okp=dp>=-10;
-  return `<br>מול היעד: <b style="color:${ok?'#7fe0a8':'#ffb38f'}">${d>0?'+':''}${d} קק״ל</b> · חלבון <b style="color:${okp?'#7fe0a8':'#ffb38f'}">${dp>0?'+':''}${dp} גר׳</b>`+(ok&&okp?' ✓':'');
+  const d=r0(tot.kcal-T.kcal),dp=r0(tot.p-T.p);const ok=Math.abs(d)<=T.kcal*.05,okp=Math.abs(dp)<=12;
+  if(ok&&okp)return `<br><span class="tgt ok">🎯 ביעד ✓ <b>${r0(tot.kcal).toLocaleString()}</b> מתוך ${T.kcal.toLocaleString()} קק״ל · חלבון <b>${r0(tot.p)}</b>/${T.p}</span>`;
+  return `<div class="tgt far">⚠️ התפריט <b>${r0(tot.kcal).toLocaleString()}</b> קק״ל · <b>${r0(tot.p)}</b> חלבון — היעד ${T.kcal.toLocaleString()} · ${T.p} <span class="ltr">(${d>0?'+':''}${d})</span><button class="unk pick fitnow">🎯 התאם עכשיו ליעד</button></div>`;
 }
 const later=()=>{clearTimeout(timer);timer=setTimeout(render,250)};
 ['#src','#client','#date','#title','#subtitle'].forEach(s=>$(s).addEventListener('input',later));
@@ -1772,6 +1778,17 @@ function drawMt(){
 }
 ['sex','age','w','h','act','goal','kcal','p'].forEach(k=>{const el=$('#mt_'+k);el.addEventListener(el.tagName==='SELECT'?'change':'input',()=>{mt[k]=el.value;saveMt();drawMt();later()})});
 $('#mt_show').onchange=e=>{mt.show=e.target.checked;saveMt();render()};
+$('#mt_auto').checked=mt.auto!==false;$('#mt_auto').onchange=e=>{mt.auto=e.target.checked;saveMt();if(mt.auto)autoFit(true)};
+// fit the menu to the target on its own: when the target changes, after a template / import / Gemini answer
+let autoTimer=null;
+function autoFit(now){
+  clearTimeout(autoTimer);
+  const go=()=>{if(TYPE!=='menu'||mt.auto===false)return;const T=calcTarget().t;if(!T)return;const src=$('#src').value;if(!parseMenu(src).sections.length)return;
+    const c=menuTotals(src);if(Math.abs(c.kcal-T.kcal)<=T.kcal*.03&&Math.abs(c.p-T.p)<=8)return;
+    if(doFit(T,true))toast(`🎯 התפריט הותאם ליעד: ${r0(menuTotals($('#src').value).kcal).toLocaleString()} קק״ל · ${r0(menuTotals($('#src').value).p)} חלבון`)};
+  if(now)go();else autoTimer=setTimeout(go,1200);
+}
+['sex','age','w','h','act','goal','kcal','p'].forEach(k=>{const el=$('#mt_'+k);el.addEventListener(el.tagName==='SELECT'?'change':'input',()=>autoFit(false))});
 drawMt();
 
 /* ================= 3. EXERCISE LIBRARY + AUTOCOMPLETE ================= */
@@ -1854,7 +1871,7 @@ $('#fdAdd').onclick=()=>{
   store.set('pdfs2_foods',JSON.stringify(L));rebuildFoods();drawFoods();render();
   ['fd_name','fd_p','fd_c','fd_f','fd_u'].forEach(k=>$('#'+k).value='');toast(`${names[0]} נוסף ✓`);
 };
-$('#stats').addEventListener('click',e=>{const b=e.target.closest('.unk');if(!b)return;if(b.classList.contains('bal')){doBalance();return}if(b.dataset.pick)pickAmbig(b.dataset.w,b.dataset.pick);else openFoods(b.dataset.n)});
+$('#stats').addEventListener('click',e=>{const b=e.target.closest('.unk');if(!b)return;if(b.classList.contains('fitnow')){const T=calcTarget().t;if(T)doFit(T);return}if(b.classList.contains('bal')){doBalance();return}if(b.dataset.pick)pickAmbig(b.dataset.w,b.dataset.pick);else openFoods(b.dataset.n)});
 rebuildFoods();
 
 /* ================= FIT MENU TO TARGET ================= */
@@ -1872,7 +1889,8 @@ function scalePart(part,k){
 }
 const scaleOpt=(t,k)=>splitTop(t,PLUS_SEP).map(p=>scalePart(p,k)).join(' + ').replace(/(^|\s)(\d+(?:\.\d+)?)\s+ביצה(?=\s|$|[,)+])/g,(m,a,n)=>`${a}${n} ${+n>1?'ביצים':'ביצה'}`);
 /* ⚖️ make every option in an exchange line worth the same as the first option */
-function balanceText(text){
+function balanceText(text){const g=balanceGroups(text),o=balanceOpts(g.text);return {text:o.text,n:g.n+o.n}}
+function balanceGroups(text){
   const data=parseMenu(text);const lines=text.split('\n');let n=0;
   data.sections.flatMap(s=>s.items).filter(i=>i.kind==='group'&&i.li>=0).forEach(g=>{
     const base=g.opts.find(o=>o.m);if(!base)return;const B=base.m.kcal;if(!B)return;
@@ -1895,6 +1913,32 @@ function balanceText(text){
     lines[g.li]=lead+orP+catP+out;
   });
   return {text:lines.join('\n'),n};
+}
+// scale a whole menu line (single item or "או" group) by k, keeping its prefixes and separators
+function scaleLine(orig,isGroup,k){
+  const lead=(orig.match(/^\s*(?:[-•*·▪●]+|\d+[.)](?!\d))?\s*/)||[''])[0];
+  let body=orig.slice(lead.length);const orP=/^או\s+/.test(body)?'או ':'';if(orP)body=body.replace(/^או\s+/,'');
+  let catP='';const cm=body.match(CAT_RE);if(cm){catP=cm[0];body=body.slice(cm[0].length)}
+  if(!isGroup)return lead+orP+catP+scaleOpt(body,k);
+  const opts=splitTop(body,OPT_SEP);let out=body,pos=0;
+  opts.forEach(op=>{const at=out.indexOf(op,pos);const nw=scaleOpt(op,k);if(at>-1){out=out.slice(0,at)+nw+out.slice(at+op.length);pos=at+nw.length}});
+  return lead+orP+catP+out;
+}
+// meals with "אופציה 1 / 2 / 3": every option should be worth the same as option 1
+function balanceOpts(text){
+  let n=0;
+  for(let pass=0;pass<3;pass++){
+    const data=parseMenu(text),lines=text.split('\n');let changed=false;
+    data.sections.forEach(s=>{
+      const by={};s.items.forEach(i=>{if(i.optN>0&&(i.kind==='item'||i.kind==='group')&&i.m&&i.li>=0&&!i.alt)(by[i.optN]=by[i.optN]||[]).push(i)});
+      const ks=Object.keys(by).map(Number).sort((a,b)=>a-b);if(ks.length<2)return;
+      const sum=L=>L.reduce((a,i)=>a+i.m.kcal,0),base=sum(by[ks[0]]);if(!base)return;
+      ks.slice(1).forEach(k=>{const tot=sum(by[k]);if(!tot||Math.abs(tot-base)/base<=.08)return;const f=base/tot;
+        by[k].forEach(i=>{const nw=scaleLine(lines[i.li],i.kind==='group',f);if(nw!==lines[i.li]){lines[i.li]=nw;changed=true}});if(pass===0)n++});
+    });
+    text=lines.join('\n');if(!changed)break;
+  }
+  return {text,n};
 }
 function doBalance(){
   const src=$('#src').value;if(!src.trim())return;
@@ -2107,7 +2151,7 @@ function drawMenuTpls(){
   $('#menuTpls').innerHTML='<span>הפורמטים שלך:</span>'+COACH_TPLS.map((t,i)=>`<button class="chip-btn" data-c="${i}">${t.n}</button>`).join('')+'<br><span>תבנית לפי קלוריות:</span>'+(T?`<button class="chip-btn hot" data-t="target">🎯 לפי היעד (${T.kcal.toLocaleString()})</button>`:'')+MENU_TPLS.map((t,i)=>`<button class="chip-btn" data-i="${i}">${t.n} קק״ל</button>`).join('');
   $('#menuTpls').querySelectorAll('button').forEach(b=>b.onclick=()=>{
     if($('#src').value.trim()&&!confirm('להחליף את התפריט שכתבת בתבנית?'))return;
-    if(b.dataset.c!=null){$('#src').value=COACH_TPLS[+b.dataset.c].t;fitUndo=null;$('#undoFit').hidden=true;render();toast('נטען — עכשיו ממלאים ומתאימים ללקוח');return}
+    if(b.dataset.c!=null){$('#src').value=COACH_TPLS[+b.dataset.c].t;fitUndo=null;$('#undoFit').hidden=true;mnLast=null;render().then(()=>{const bb=balanceText($('#src').value);if(bb.n){$('#src').value=bb.text;mnLast=null}autoFit(true)});toast('נטען — עכשיו ממלאים ומתאימים ללקוח');return}
     const T2=b.dataset.t==='target'?calcTarget().t:MENU_TPLS[+b.dataset.i];
     $('#src').value=MENU_BASE;doFit(T2,true);fitUndo=null;$('#undoFit').hidden=true;
     toast(`תבנית ${T2.kcal.toLocaleString()} קק״ל נטענה — עכשיו מתאימים ללקוח`);
@@ -2211,7 +2255,7 @@ const cleanAI=t=>{t=t.trim();const m=t.match(/```[a-z]*\s*\n?([\s\S]*?)```/i);if
 async function applyAI(out){
   out=cleanAI(out);aiUndo=snapshotAI();
   let balanced=0;
-  if(TYPE==='menu'){const b=balanceText(out);balanced=b.n;out=b.text;$('#src').value=out}
+  if(TYPE==='menu'){const b=balanceText(out);balanced=b.n;out=b.text;$('#src').value=out;mnLast=null;await render();autoFit(true);out=$('#src').value}
   else if(TYPE==='workout'){wk.mode='free';saveWk();applyPanels();$('#src').value=out}
   else{const ls=out.split('\n');sw.recipeName=ls[0].replace(/^(שם המנה|מתכון)\s*:\s*/,'').trim();sw.recipe=ls.slice(1).join('\n').trim();saveSw();drawSwap()}
   $('#aiUndo').hidden=false;await render();
@@ -2783,7 +2827,7 @@ async function importFile(file){
         if(m){if(m[1]&&!$('#client').value.trim())$('#client').value=m[1].replace(/^_+/,'').trim();if(m[2])$('#date').value=m[2].replace(/\s*עד\s*/,' – ')}
         t=t.split('\n').filter(l=>l!==tl).join('\n')}
       const was=$('#src').value;if(was.trim()&&!confirm('להחליף את התפריט שכתוב עכשיו בתפריט מהקובץ?')){st.textContent='בוטל';return}
-      fitUndo=was;$('#undoFit').hidden=false;$('#src').value=t;mnLast=null;await render();
+      fitUndo=was;$('#undoFit').hidden=false;$('#src').value=t;mnLast=null;await render();autoFit(true);
       const d=parseMenu(t);st.innerHTML=`✓ יובאו <b>${d.sections.length}</b> ארוחות`+(d.meas.length?` · ${d.meas.length} מדדים`:'')+(d.notes&&d.notes.length?` · ${d.notes.length} דרישות`:'')+' — עבור על הכרטיסים ובדוק';
     }
     toast('📄 הקובץ יובא ✓');
