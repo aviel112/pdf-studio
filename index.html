@@ -3475,12 +3475,13 @@ function showLogin(msg){$('#loginDlg').hidden=false;$('#lgErr').textContent=msg|
 $('#loginDlg').querySelectorAll('[data-u]').forEach(b=>b.onclick=()=>{$('#loginDlg').querySelectorAll('[data-u]').forEach(x=>x.classList.toggle('on',x===b));$('#lgUser').value=b.dataset.u;$('#lgPass').focus()});
 $('#lgForm').onsubmit=async e=>{e.preventDefault();const pw=$('#lgPass').value.trim();if(!pw)return;
   const btn=$('#lgForm .lg-go');btn.disabled=true;$('#lgErr').textContent='בודק…';
-  try{const r=await fetch(SYNC_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({key:pw,op:'get'})});const j=await r.json();
+  const ac=new AbortController(),tm=setTimeout(()=>ac.abort(),25000);
+  try{const r=await fetch(SYNC_URL,{method:'POST',signal:ac.signal,headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({key:pw,op:'get'})});const j=await r.json();clearTimeout(tm);
     if(j.error)throw new Error(j.error==='מפתח שגוי'?'סיסמה שגויה':j.error);
     const prevKey=store.get('pdfs2_sync_key');if(prevKey&&prevKey!==pw)wipeLocal();
     SY.url=SYNC_URL;SY.key=pw;_rawSet('pdfs2_sync_url',SYNC_URL);_rawSet('pdfs2_sync_key',pw);_rawSet('pdfs2_user',$('#lgUser').value);_rawSet('pdfs2_role',j.role||'admin');
     $('#lgPass').value='';$('#loginDlg').hidden=true;applyRole();drawSync();drawWho();await syncNow(true);if(typeof render==='function')render();toast(`שלום ${$('#lgUser').value} 👋`)}
-  catch(err){$('#lgErr').textContent=err.message||'אין חיבור — נסה שוב'}finally{btn.disabled=false}};
+  catch(err){clearTimeout(tm);$('#lgErr').textContent=err.name==='AbortError'?'השרת לא ענה — בדוק שהכתובת היא aviel112.github.io/pdf-studio ונסה שוב':(err.message||'אין חיבור — נסה שוב')}finally{btn.disabled=false}};
 function wipeLocal(){Object.keys(localStorage).filter(k=>k.startsWith('pdfs2_')&&!['pdfs2_home'].includes(k)).forEach(k=>localStorage.removeItem(k));docs=[]}
 function logout(){if(!confirm('לצאת מהחשבון? הנתונים יימחקו מהמכשיר הזה (הם שמורים בענן)'))return;SY.url='';SY.key='';wipeLocal();location.reload()}
 function drawWho(){const box=$('#syncBox');if(!box)return;let w=$('#whoBar');if(!w){w=h('div','who-bar');w.id='whoBar';box.prepend(w)}
