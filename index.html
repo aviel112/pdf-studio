@@ -2773,7 +2773,7 @@ async function syncNow(silent){
 function schedPush(){if(!SY.url||!SY.key)return;clearTimeout(SY.timer);SY.timer=setTimeout(()=>syncNow(true),2500)}
 const pairCode=(k=SY.key)=>'PS1.'+btoa(unescape(encodeURIComponent(JSON.stringify({u:SY.url,k}))));
 const isStaff=()=>store.get('pdfs2_role')==='staff';
-function applyRole(){const st=isStaff();document.body.classList.toggle('staff',st);const sc=$('#syncCopy'),ss=$('#syncStaff'),so=$('#syncOff2');if(sc)sc.hidden=st;if(ss)ss.hidden=true;if(so)so.hidden=true}
+function applyRole(){const st=isStaff();document.body.classList.toggle('staff',st);const sc=$('#syncCopy'),ss=$('#syncStaff'),so=$('#syncOff2');if(sc)sc.hidden=st;if(ss)ss.hidden=st||!store.get('pdfs2_staff_key');if(so)so.hidden=true}
 function readPair(t){t=(t||'').trim();if(!t.startsWith('PS1.'))return null;try{const o=JSON.parse(decodeURIComponent(escape(atob(t.slice(4)))));return o.u&&o.k?o:null}catch(e){return null}}
 function drawSync(){
   const on=!!(SY.url&&SY.key);
@@ -3486,7 +3486,9 @@ function wipeLocal(){Object.keys(localStorage).filter(k=>k.startsWith('pdfs2_')&
 function logout(){if(!confirm('לצאת מהחשבון? הנתונים יימחקו מהמכשיר הזה (הם שמורים בענן)'))return;SY.url='';SY.key='';wipeLocal();location.reload()}
 function drawWho(){const box=$('#syncBox');if(!box)return;let w=$('#whoBar');if(!w){w=h('div','who-bar');w.id='whoBar';box.prepend(w)}
   w.innerHTML=`<span>👤 מחובר: <b>${escH(store.get('pdfs2_user')||'אביאל')}</b>${isStaff()?' · עובד':''}</span><button class="chip-btn" id="logoutBtn">יציאה</button>`;$('#logoutBtn').onclick=logout}
-if(!(SY.url&&SY.key))showLogin();else drawWho();
+if(SY.url&&SY.key)drawWho();
+$('#syncOff').insertAdjacentHTML('beforeend','<button class="chip-btn" id="lgOpen" style="margin-top:6px">🔐 כניסה עם סיסמה</button>');$('#lgOpen').onclick=()=>showLogin();
+$('#loginDlg').addEventListener('click',e=>{if(e.target.id==='loginDlg')$('#loginDlg').hidden=true});
 
 setType('workout',true);
 </script>
