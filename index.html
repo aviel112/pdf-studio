@@ -573,6 +573,16 @@ body.helpmode .side button,body.helpmode .side input,body.helpmode .side textare
 .gd-tip{background:rgba(91,107,47,.1);border:1px solid rgba(91,107,47,.3);border-radius:10px;padding:8px 12px}
 .gd-note{font-size:.76rem;color:var(--text3)}
 @media (max-width:900px){.top .lbl{display:none}.top .chip-btn{min-width:36px;padding:0 9px;height:34px;font-size:.95rem}.logo{font-size:.8rem;letter-spacing:3px}.mic-btn{width:46px;height:46px;font-size:1.15rem}}
+
+/* exchange rows: category column + options in neat columns */
+.item.xg{display:grid;grid-template-columns:62px 1fr;gap:10px;align-items:start;padding:9px 0}
+.item.xg::after{display:none!important}
+.xcat{font-family:var(--serif,inherit);font-weight:800;font-size:13px;color:var(--a);padding-top:1px}
+.xopts{display:grid;grid-template-columns:repeat(auto-fill,minmax(205px,1fr));gap:4px 20px}
+.xopt{display:flex;align-items:baseline;gap:6px;font-size:13px;line-height:1.5;color:var(--ink)}
+.xopt .ors{margin:0;font-size:10.5px;min-width:16px}
+.xopt:first-child{padding-right:22px}
+.pair .xopts{grid-template-columns:1fr}
 </style>
 </head>
 <body>
@@ -658,11 +668,12 @@ body.helpmode .side button,body.helpmode .side input,body.helpmode .side textare
       <button class="chip-btn" id="clear">נקה</button>
       <button class="chip-btn" id="fitBtn">🎯 התאם כמויות ליעד</button>
       <button class="chip-btn" id="balBtn">⚖️ אזן החלפות</button>
+      <button class="chip-btn" id="convBtn">🔀 אופציות → חלבון/פחמימה/שומן</button>
       <button class="chip-btn" id="undoFit" hidden>↩ בטל התאמה</button>
       <button class="chip-btn" id="foodsBtn">🥫 המזונות שלי</button>
       <label class="tog" id="macroTog"><input type="checkbox" id="macros" checked>מאקרו (הערכה)</label>
       <label class="tog" id="musTog"><input type="checkbox" id="muscles" checked>קבוצת שריר</label>
-      <button class="chip-btn" id="mealsBtn">🍱 הארוחות שלי</button>
+      <button class="chip-btn" id="mealsBtn">🍱 הארוחות שלי</button><button class="chip-btn" id="altBtn">➕ הצע חלופות</button>
       <button class="chip-btn" id="weeklyBtn">📈 עדכון שבועי</button>
       <label class="tog" id="shopTog"><input type="checkbox" id="shop">🛒 רשימת קניות ב-PDF</label>
     </div>
@@ -711,6 +722,8 @@ body.helpmode .side button,body.helpmode .side input,body.helpmode .side textare
       <li><b>כתיבה:</b> <code>חלבון: 150 גרם חזה עוף או 200 גרם אמנון</code> · "או" = החלפה · <code>+</code> = שילוב · <code>3 ירקות לבחירה</code> · <code>עד 120 קלוריות</code> · <code>אופציה 1 / אופציה 2</code>.</li>
       <li><b>🎯 יעד</b> — ממלאים נתונים (או יעד ידני) והתפריט <b>מותאם אוטומטית</b>. רחוק מהיעד? מופיע "🎯 התאם עכשיו".</li>
       <li><b>⚖️ אזן החלפות</b> — כל "או" (וכל אופציה) יוצאים שווים בקלוריות.</li>
+      <li><b>➕ חלופות</b> — לכל שורה מוצעים מזונות מאותה קטגוריה, בכמות של אותן קלוריות. לחיצה = "או …".</li>
+      <li><b>🔁 גיוון</b> — מזון שחוזר ב-3+ ארוחות מסומן בצד.</li>
       <li><b>📄 ייבוא מקובץ</b> — PDF / Word / צילום מסך של תפריט קיים → מתחלק לארוחות לבד.</li>
       <li><b>תבניות</b> — הפורמטים שלך + תבניות לפי קלוריות. <b>🍱 הארוחות שלי</b> — ארוחה ששמרת, לכל לקוח.</li>
       <li><b>📏 מדדים</b> ו<b>דרישות יומיות</b> (+ 📝 משפטים מוכנים) נכנסים ל-PDF. <b>🛒 רשימת קניות</b> — עמוד נוסף.</li></ul></details>
@@ -730,6 +743,7 @@ body.helpmode .side button,body.helpmode .side input,body.helpmode .side textare
     <details><summary>👥 לקוחות</summary>
       <ul><li>כל הורדה / שמירה נשמרת תחת שם הלקוח. לוחצים כדי לפתוח, <b>⧉</b> לשכפל ללקוח אחר.</li>
       <li><b>📊 כרטיס</b> — טלפון, מטרה, הערות פנימיות, <b>גרף משקל</b> והיסטוריה.</li>
+      <li><b>🚫 מה לא אוכל</b> (בכרטיס) — צמחוני / בלי דגים / בלי חלב… חלופות, תבניות ו-Gemini מדלגים עליהם, ומה שכבר בתפריט מסומן עם "הסר".</li>
       <li><b>⏰ מחכים לעדכון</b> — מי לא קיבל עדכון 14+ יום (מספר כתום על הכפתור).</li>
       <li><b>📈 עדכון שבועי</b> — משקל חדש → הצעת תיקון קלוריות → גרסה חדשה.</li>
       <li><b>🔍 מה השתנה</b> — בצד מופיע מה שינית מהגרסה הקודמת (לא ב-PDF).</li></ul></details>
@@ -980,7 +994,7 @@ const stripParen=s=>s.replace(/\([^)]*\)/g,' ').replace(/\s+/g,' ').trim();
 const KCAL_RE=/(?:עד|כ-?|~)\s*(\d{2,4})\s*(?:קלוריות|קק["״]?ל)/;
 const CAT_RE=/^(חלבון רזה|חלבון|פחמימות|פחמימה|שומנים|שומן|ירקות|ירק|פירות|פרי)\s*[:\-–]\s*/;
 const CAT_NORM={'חלבון רזה':'חלבון','פחמימות':'פחמימה','שומנים':'שומן','ירק':'ירקות','פירות':'פרי'};
-const FRUIT_RE=/פרי|תפוח(?! אדמה)|בננה|אגס|אפרסק|ענבים|תפוז|מנגו|אבטיח|מלון|תות|קיווי|שזיף|נקטרינה|קלמנטינה/;
+const FRUIT_RE=/פירות|פרי|אננס|תמר|מג.הול|תפוח(?! אדמה)|בננה|אגס|אפרסק|ענבים|תפוז|מנגו|אבטיח|מלון|תות|קיווי|שזיף|נקטרינה|קלמנטינה/;
 const VEG_RE=/ירק|סלט|מלפפון|עגבני|גזר|פלפל|ברוקולי/;
 const MEAS_RE=/^(משקל|ישבן|פופיק|מותניים|מותן|בטן|חזה|ידיים|ידים|יד|זרוע|ירכיים|ירך|צוואר|אחוז שומן|היקף [^\d:]+)\s*[:\-–]?\s*([\d.,]*)\s*:?\s*$/;
 const mz=()=>({p:0,c:0,f:0,kcal:0});
@@ -1000,7 +1014,7 @@ function optMacros(text,inheritQ){
 function catOf(name,m){
   if(VEG_RE.test(name))return 'ירקות';if(FRUIT_RE.test(name))return 'פרי';
   if(!m||!m.kcal)return '';
-  if(m.p*4/m.kcal>=.35)return 'חלבון';if(m.f*9/m.kcal>=.5)return 'שומן';return 'פחמימה';
+  if(m.p*4/m.kcal>=.32)return 'חלבון';if(m.f*9/m.kcal>=.5)return 'שומן';return 'פחמימה';
 }
 const counted=it=>(it.kind==='item'||it.kind==='group')&&!it.alt&&!(it.optN>1);
 
@@ -1036,6 +1050,7 @@ function parseMenu(text){
   });
   function addItem(line,li){
     const s=ensure();line=clean(line);
+    if(/^💡/.test(line)){s.items.push({kind:'note',name:line.replace(/^💡\s*/,''),li,optN:s.optN});return}
     const oh=line.match(/^אופציה\s*(\d+)/);
     if(oh){s.optN=+oh[1];s.items.push({kind:'opthead',name:line.replace(/:\s*$/,''),optN:s.optN});return}
     if(/^או[:.]?$/.test(line)){s.items.push({kind:'or',or:true});nextAlt=true;return}
@@ -1224,7 +1239,7 @@ function buildMenuBlocks(data,o){
       if(it.kind==='or'){rows.appendChild(h('div','orsep','או'));return}
       if(it.kind==='opthead'){rows.appendChild(h('div','opthead',escH(it.name)));return}
       if(it.kind==='note'){rows.appendChild(h('div','mnote',escH(it.name)));return}
-      if(it.kind==='group'){rows.appendChild(h('div','item grp'+(it.alt?' alt':''),`<span class="dot"></span><div class="gb">${it.cat?`<span class="cat">${escH(it.cat)}</span>`:''}${it.opts.map(op=>`<span class="opt">${optHTML(op)}</span>`).join('<span class="ors">או</span>')}</div>`));return}
+      if(it.kind==='group'){rows.appendChild(h('div','item grp xg'+(it.alt?' alt':''),`<div class="xcat">${escH(it.cat||'')}</div><div class="xopts${it.opts.length>3?' many':''}">${it.opts.map((op,j)=>`<div class="xopt">${j?'<span class="ors">או</span>':''}<span class="opt">${optHTML(op)}</span></div>`).join('')}</div>`));return}
       rows.appendChild(h('div','item'+(it.alt?' alt':''),`<span class="dot"></span><span class="iname">${escH(it.name)}</span>${it.amt?`<span class="iamt">${ltr(escH(it.amt))}</span>`:''}`));
     });
     if(full||i%2===0){const pr=h('div','pair'+(full?' one':''));pr.appendChild(b);blocks.push(pr)}else blocks[blocks.length-1].appendChild(b);
@@ -1451,7 +1466,7 @@ function applyPanels(){
   $('#macroTog').style.display=t==='menu'?'':'none';$('#musTog').style.display=t==='workout'?'':'none';
   $('#mtBox').style.display=t==='menu'?'':'none';
   if(typeof updSect==='function'&&$('#sBuild'))updSect();
-  ['#fitBtn','#balBtn','#menuTpls','#mealsBtn','#weeklyBtn','#shopTog'].forEach(x=>$(x).style.display=t==='menu'?'':'none');$('#foodsBtn').style.display=t==='workout'?'none':'';if(t!=='menu')$('#undoFit').hidden=true;
+  ['#fitBtn','#balBtn','#convBtn','#altBtn','#menuTpls','#mealsBtn','#weeklyBtn','#shopTog'].forEach(x=>$(x).style.display=t==='menu'?'':'none');$('#foodsBtn').style.display=t==='workout'?'none':'';if(t!=='menu')$('#undoFit').hidden=true;
 }
 function setWkMode(m){wk.mode=m;saveWk();applyPanels()}
 const WIZ_HELP=`בכל יום — שורה לכל תרגיל: <code>סקוואט 3x8-10 מנוחה 2 דקות</code>. הערה אחרי <code> - </code>. <code>+</code> בתחילת שורה = סופר סט. יום שחוזר על עצמו — בוחרים <code>שכפל את יום…</code> וזהו.`;
@@ -1701,7 +1716,7 @@ async function render(){
   if(wiz?!wdata.sections.length:!src.trim()){pv.innerHTML=wiz?`<div class="empty">בחר לכמה ימים לחלק את השבוע,<br>וכתוב את התרגילים של כל יום.<br><br>רוצה לראות איך זה נראה? לחץ <b>טען דוגמה</b>.</div>`:`<div class="empty">הדבק כאן ${TYPE==='menu'?'תפריט':'תוכנית אימון'} כרשימה פשוטה<br>והוא יהפוך ל-PDF מעוצב.<br><br>לא בטוח בפורמט? לחץ <b>טען דוגמה</b>.</div>`;$('#stats').innerHTML='מחכה לטקסט…';pages=[];return}
   let res;
   if(TYPE==='menu'){res=buildMenuBlocks(parseMenu(src),o);const s=res.stats;
-    $('#stats').innerHTML=`זוהו <b>${s.count}</b> ארוחות · <b>${s.items}</b> פריטים`+(o.macros?` · <b>~${r0(s.tot.kcal)}</b> קק״ל`:'')+(o.macros&&s.unknown.length?`<br><span class="warn">לא נכנסו למאקרו — לחץ כדי להוסיף:</span><br>${unkBtns(s.unknown)}`:'')+(typeof changesNote==='function'?changesNote():'')+targetLine(s.tot)+(s.warn&&s.warn.length?`<br><span class="warn">⚠️ החלפות לא שקולות (מעל 25%):</span> <button class="unk pick bal">⚖️ אזן אוטומטית</button><br>${s.warn.map(x=>'• '+escH(x)).join('<br>')}`:'');}
+    $('#stats').innerHTML=`זוהו <b>${s.count}</b> ארוחות · <b>${s.items}</b> פריטים`+(o.macros?` · <b>~${r0(s.tot.kcal)}</b> קק״ל`:'')+(o.macros&&s.unknown.length?`<br><span class="warn">לא נכנסו למאקרו — לחץ כדי להוסיף:</span><br>${unkBtns(s.unknown)}`:'')+(typeof changesNote==='function'?changesNote():'')+targetLine(s.tot)+(typeof menuExtras==='function'?menuExtras():'')+(s.warn&&s.warn.length?`<br><span class="warn">⚠️ החלפות לא שקולות (מעל 25%):</span> <button class="unk pick bal">⚖️ אזן אוטומטית</button><br>${s.warn.map(x=>'• '+escH(x)).join('<br>')}`:'');}
   else{res=buildWorkoutBlocks(wiz?wdata:parseWorkout(src),o);const s=res.stats;
     $('#stats').innerHTML=`זוהו <b>${s.count}</b> טבלאות · <b>${s.items}</b> תרגילים`+(o.muscles&&s.noMus.length?`<br><span class="warn">בלי קבוצת שריר: ${s.noMus.map(escH).join(', ')} — אפשר לכתוב "חזה - …" בתחילת השורה</span>`:'')+(typeof changesNote==='function'?changesNote():'');}
   pages=paginate($('#stage'),res.blocks,o);drawPreview(pv);
@@ -1935,7 +1950,7 @@ $('#fdAdd').onclick=()=>{
   store.set('pdfs2_foods',JSON.stringify(L));rebuildFoods();drawFoods();render();
   ['fd_name','fd_p','fd_c','fd_f','fd_u'].forEach(k=>$('#'+k).value='');toast(`${names[0]} נוסף ✓`);
 };
-$('#stats').addEventListener('click',e=>{const b=e.target.closest('.unk');if(!b)return;if(b.classList.contains('fitnow')){const T=calcTarget().t;if(T)doFit(T);return}if(b.classList.contains('bal')){doBalance();return}if(b.dataset.pick)pickAmbig(b.dataset.w,b.dataset.pick);else openFoods(b.dataset.n)});
+$('#stats').addEventListener('click',e=>{const b=e.target.closest('.unk');if(!b||b.classList.contains('exrm')||b.classList.contains('altall'))return;if(b.classList.contains('fitnow')){const T=calcTarget().t;if(T)doFit(T);return}if(b.classList.contains('bal')){doBalance();return}if(b.dataset.pick)pickAmbig(b.dataset.w,b.dataset.pick);else openFoods(b.dataset.n)});
 rebuildFoods();
 
 /* ================= FIT MENU TO TARGET ================= */
@@ -1953,7 +1968,10 @@ function scalePart(part,k){
 }
 const scaleOpt=(t,k)=>splitTop(t,PLUS_SEP).map(p=>scalePart(p,k)).join(' + ').replace(/(^|\s)(\d+(?:\.\d+)?)\s+ביצה(?=\s|$|[,)+])/g,(m,a,n)=>`${a}${n} ${+n>1?'ביצים':'ביצה'}`);
 /* ⚖️ make every option in an exchange line worth the same as the first option */
-function balanceText(text){const g=balanceGroups(text),o=balanceOpts(g.text);return {text:o.text,n:g.n+o.n}}
+function dedupeOpts(text){
+  return text.split('\n').map(l=>{const cm=l.match(CAT_RE);if(!cm)return l;const body=l.slice(cm[0].length);const ops=splitTop(body,OPT_SEP);const u=[...new Set(ops.map(o=>o.trim()))];return u.length<ops.length?cm[0]+u.join(' או '):l}).join('\n');
+}
+function balanceText(text){const g=balanceGroups(text),o=balanceOpts(g.text);return {text:dedupeOpts(o.text),n:g.n+o.n}}
 function balanceGroups(text){
   const data=parseMenu(text);const lines=text.split('\n');let n=0;
   data.sections.flatMap(s=>s.items).filter(i=>i.kind==='group'&&i.li>=0).forEach(g=>{
@@ -2152,7 +2170,7 @@ const COACH_TPLS=[
 60 דקות אירובי מדרגות
 שישי: בלי פחמימה בצהריים — לאכול בכיף, אבל בבקרה
 לדבר איתי על כל קושי`},
-{n:'📋 אופציות לבחירה',t:`ארוחת בוקר
+{n:'📋 החלפות — מנות לדוגמה',t:`ארוחת בוקר
 אופציה 1 – דייסת שיבולת שועל:
 60 גרם שיבולת שועל
 15 גרם אבקת חלבון או 100 גרם יוגורט יווני 0%
@@ -2219,9 +2237,9 @@ function drawMenuTpls(){
   $('#menuTpls').innerHTML='<span>הפורמטים שלך:</span>'+COACH_TPLS.map((t,i)=>`<button class="chip-btn" data-c="${i}">${t.n}</button>`).join('')+'<br><span>תבנית לפי קלוריות:</span>'+(T?`<button class="chip-btn hot" data-t="target">🎯 לפי היעד (${T.kcal.toLocaleString()})</button>`:'')+MENU_TPLS.map((t,i)=>`<button class="chip-btn" data-i="${i}">${t.n} קק״ל</button>`).join('');
   $('#menuTpls').querySelectorAll('button').forEach(b=>b.onclick=()=>{
     if($('#src').value.trim()&&!confirm('להחליף את התפריט שכתבת בתבנית?'))return;
-    if(b.dataset.c!=null){$('#src').value=COACH_TPLS[+b.dataset.c].t;fitUndo=null;$('#undoFit').hidden=true;mnLast=null;render().then(()=>{const bb=balanceText($('#src').value);if(bb.n){$('#src').value=bb.text;mnLast=null}autoFit(true)});toast('נטען — עכשיו ממלאים ומתאימים ללקוח');return}
+    if(b.dataset.c!=null){let tt=COACH_TPLS[+b.dataset.c].t;if(hasOptions(tt))tt=convertMenuToCats(tt).text;$('#src').value=tt;fitUndo=null;$('#undoFit').hidden=true;mnLast=null;render().then(()=>{const bb=balanceText($('#src').value);if(bb.n){$('#src').value=bb.text;mnLast=null}const xs=stripExcl($('#src').value);if(xs.n){$('#src').value=xs.text;mnLast=null}autoFit(true)});toast('נטען — עכשיו ממלאים ומתאימים ללקוח');return}
     const T2=b.dataset.t==='target'?calcTarget().t:MENU_TPLS[+b.dataset.i];
-    $('#src').value=MENU_BASE;doFit(T2,true);fitUndo=null;$('#undoFit').hidden=true;
+    $('#src').value=stripExcl(MENU_BASE).text;doFit(T2,true);fitUndo=null;$('#undoFit').hidden=true;
     toast(`תבנית ${T2.kcal.toLocaleString()} קק״ל נטענה — עכשיו מתאימים ללקוח`);
   });
 }
@@ -2309,7 +2327,7 @@ ${foodsTable(full,rel)}`;
 ${foodsTable(full,rel)}`;
 }
 function aiContext(){
-  const parts=[];
+  const parts=[];if(TYPE!=='workout'&&typeof exclText==='function'){const ex=exclText();if(ex)parts.push(`הלקוח לא אוכל: ${ex}. אסור להציע את המזונות האלה — גם לא כאופציה.`)}
   if(TYPE==='menu'){const T=calcTarget().t;if(T)parts.push(`יעד הלקוח: ${T.kcal} קק״ל, ${T.p} גר׳ חלבון, ${T.c} גר׳ פחמימה, ${T.f} גר׳ שומן.`);
     if(mnMode==='wizard'&&mnState.meals.length)parts.push(`מבנה התפריט: ${mnState.meals.length} ארוחות ביום — ${mnState.meals.map(m=>m.name).join(', ')}. לשמור בדיוק על המבנה הזה (אותן ארוחות, אותו סדר, אותם שמות) אלא אם אביאל ביקש אחרת. כל ארוחה בשורת כותרת שמסתיימת בנקודתיים.`);
     const cur=$('#src').value.trim();if(cur)parts.push(`התפריט הנוכחי (אם הבקשה היא שינוי — תחזיר את כל התפריט המעודכן):\n${cur}`)}
@@ -2457,8 +2475,8 @@ function drawMn(){
   mnState.meals.forEach((m,i)=>{
     const c=h('div','day');
     c.innerHTML=`<div class="day-h mn-h"><b>${i+1}</b><input class="inp" data-k="name" placeholder="שם הארוחה"><input class="inp mn-time" data-k="time" placeholder="שעה" inputmode="numeric"></div><textarea data-k="text" spellcheck="false" placeholder="${/ביניים|לפני|אחרי|השינה|נשנוש/.test(m.name)?'פרי: בננה קטנה או תפוח בינוני או כוס ענבים&#10;או: מעדן חלבון':/בוקר|ערב/.test(m.name)?'חלבון: 1 ביצה + 2 חלבונים או מעדן חלבון או 1/2 גביע קוטג׳ 5%&#10;פחמימה: 2 פרוסות לחם רגיל או 5 פריכיות&#10;2 ירקות לבחירה':MEAL_PH}"></textarea>`;
-    c.insertAdjacentHTML('beforeend','<div class="mn-acts"><button class="chip-btn" data-a="load">🍱 הכנס מהארוחות שלי</button><button class="chip-btn" data-a="save">💾 שמור לארוחות שלי</button></div>');
-    c.querySelector('[data-a=load]').onclick=()=>openMeals(i);c.querySelector('[data-a=save]').onclick=()=>saveMealCard(i);
+    c.insertAdjacentHTML('beforeend','<div class="mn-acts"><button class="chip-btn" data-a="load">🍱 הכנס מהארוחות שלי</button><button class="chip-btn" data-a="save">💾 שמור לארוחות שלי</button><button class="chip-btn" data-a="alt">➕ חלופות</button></div>');
+    c.querySelector('[data-a=load]').onclick=()=>openMeals(i);c.querySelector('[data-a=save]').onclick=()=>saveMealCard(i);c.querySelector('[data-a=alt]').onclick=()=>openAlts((m.name||'').trim()||null);
     c.querySelectorAll('[data-k]').forEach(el=>{el.value=m[el.dataset.k]||'';el.oninput=()=>{m[el.dataset.k]=el.value;mnWrite()}});
     box.appendChild(c);
   });
@@ -2996,10 +3014,13 @@ function openCard(name){
     <div class="row2"><label class="f">טלפון (לשליחה בווטסאפ)<input class="inp" data-f="phone" inputmode="tel" placeholder="050-0000000"></label><label class="f">תאריך התחלה<input class="inp" data-f="start" placeholder="למשל 1.9.26"></label></div>
     <label class="f">מטרה<input class="inp" data-f="goal" placeholder="למשל: חיטוב — 8 ק״ג עד הקיץ"></label>
     <label class="f">הערות פנימיות (רק אתה רואה)<textarea class="small" data-f="notes" spellcheck="false" placeholder="אלרגיות, העדפות, מה עובד איתו…"></textarea></label>
+    <div class="cd-h">🚫 מה לא אוכל</div><div class="ex-tags">${EXCL.map(e=>`<button class="chip-btn${(c.excl||[]).includes(e[0])?' on':''}" data-ex="${e[0]}">${e[0]}</button>`).join('')}</div>
+    <label class="f">עוד דברים (מופרד בפסיקים)<input class="inp" data-f="exclTxt" placeholder="למשל: סלמון, פטריות, טונה"></label>
     <label class="tog"><input type="checkbox" data-f="paused">לקוח בהפסקה — לא להציג ב"מחכים לעדכון"</label>
     <div class="cd-h">📈 משקל</div>${weightChart(weightSeries(name))}
     <div class="cd-h">🗂 היסטוריה (${L.length})</div>${L.map(d=>`<div class="dr-row" data-id="${d.id}"><span>${TYPE_ICON[d.type]}</span><span class="dr-t">${escH(d.state.title||DEF_TITLE[d.type])}<small>${fmtD(d.updated)}${d.type==='menu'?` · ${r0(menuTotals(d.state.src||'').kcal).toLocaleString()} קק״ל`:''}${d.type==='menu'&&weightOf(d.state.src)?` · ${weightOf(d.state.src)} ק״ג`:''}</small></span></div>`).join('')}`;
   $('#cdBody').querySelectorAll('[data-f]').forEach(el=>{const f=el.dataset.f;if(el.type==='checkbox'){el.checked=!!c[f];el.onchange=()=>{saveClient(name,{[f]:el.checked});updWaitBadge()}}else{el.value=c[f]||'';el.oninput=()=>saveClient(name,{[f]:el.value})}});
+  $('#cdBody').querySelectorAll('[data-ex]').forEach(b=>b.onclick=()=>{const L=clientsDB()[name]?.excl||[];const t=b.dataset.ex;const N=L.includes(t)?L.filter(x=>x!==t):[...L,t];saveClient(name,{excl:N});b.classList.toggle('on');later()});$('#cdBody').querySelector('[data-f=exclTxt]').addEventListener('input',later);
   $('#cdBody').querySelectorAll('.dr-row').forEach(r=>r.onclick=()=>{$('#cardDlg').hidden=true;openDoc(r.dataset.id)});
 }
 $('#cdClose').onclick=()=>$('#cardDlg').hidden=true;$('#cardDlg .dr-bg').onclick=()=>$('#cardDlg').hidden=true;
@@ -3140,6 +3161,169 @@ HELP_TX.unshift(
 /* ---- 📖 guide ---- */
 $('#guideBtn').onclick=()=>{$('#guideDlg').hidden=false};$('#gdClose').onclick=()=>$('#guideDlg').hidden=true;$('#guideDlg .dr-bg').onclick=()=>$('#guideDlg').hidden=true;
 HELP_TX.unshift(['#guideBtn','📖 מדריך מקוצר — כל מה שהאתר יודע לעשות, בעמוד אחד.']);
+/* ================= 🔀 OPTIONS → CATEGORIES ("אופציה 1/2/3" → חלבון / פחמימה / שומן with "או") ================= */
+const CAT_ORDER=['חלבון','פחמימה','שומן','פרי','ירקות'];
+function convertMealToCats(name,text){
+  const d=parseMenu(`${name}:\n${text}`);const s=d.sections[0];if(!s)return null;
+  const opts={},notes=[],dish=[];
+  s.items.forEach(i=>{
+    if(i.kind==='opthead'){dish.push(i.name.replace(/^אופציה\s*\d+\s*[–\-:]*\s*/,'').replace(/:$/,'').trim());return}
+    if(i.kind==='note'){notes.push(i.name);return}
+    if(!(i.optN>0))return;
+    if(i.kind!=='item'&&i.kind!=='group')return;
+    (opts[i.optN]=opts[i.optN]||[]).push(i);
+  });
+  const ks=Object.keys(opts).map(Number).sort((a,b)=>a-b);if(ks.length<2)return null;
+  const byCat={};
+  ks.forEach(k=>{
+    const per={};
+    opts[k].forEach(i=>{
+      const first=i.kind==='group'?i.opts[0].text:i.raw.replace(/^או\s+/,'');const fp=splitTop(first,PLUS_SEP)[0];const fpq=parseQty(stripParen(clean(fp)));
+      const cat=i.kind==='group'&&i.cat?i.cat:(catOf(fpq.name,optMacros(fp)||i.m)||'פחמימה');
+      (per[cat]=per[cat]||[]).push(i);
+    });
+    Object.entries(per).forEach(([cat,L])=>{
+      const alts=byCat[cat]=byCat[cat]||[];
+      if(L.length===1&&L[0].kind==='group'){L[0].opts.forEach(o=>alts.push(o.text))}           // inner "או" → separate alternatives
+      else alts.push(L.map(i=>i.kind==='group'?i.opts[0].text:i.raw.replace(/^או\s+/,'')).join(' + '));
+    });
+  });
+  const lines=[];
+  if(dish.filter(Boolean).length)lines.push(`💡 רעיונות למנה: ${dish.filter(Boolean).join(' · ')}`);
+  notes.forEach(n=>lines.push(n));
+  CAT_ORDER.concat(Object.keys(byCat).filter(c=>!CAT_ORDER.includes(c))).forEach(cat=>{
+    const alts=[...new Set(byCat[cat]||[])];if(!alts.length)return;
+    if(cat==='ירקות'){lines.push(alts[0]);return}
+    lines.push(`${cat}: ${alts.join(' או ')}`);
+  });
+  return lines.join('\n');
+}
+function hasOptions(src){return parseMenu(src).sections.some(s=>s.items.some(i=>i.kind==='opthead'))}
+function convertMenuToCats(src){
+  const st=mealsFromText(src);let n=0;
+  st.meals.forEach(m=>{const t=convertMealToCats(m.name,m.text);if(t){m.text=t;n++}});
+  return {text:n?composeMenu(st):src,n};
+}
+async function doConvert(silent){
+  const src=$('#src').value;if(!hasOptions(src)){if(!silent)toast('אין בתפריט "אופציה 1/2" להמרה');return false}
+  const c=convertMenuToCats(src);if(!c.n)return false;
+  fitUndo=src;$('#undoFit').hidden=false;
+  const b=balanceText(c.text);$('#src').value=b.text;mnLast=null;await render();autoFit(true);
+  if(!silent)toast(`🔀 ${c.n} ארוחות סודרו לפי חלבון / פחמימה / שומן`);return true;
+}
+$('#convBtn').onclick=()=>doConvert(false);
+HELP_TX.unshift(['#convBtn','🔀 תפריט שבנוי מ"אופציה 1 / 2 / 3" (מנה שלמה בכל אופציה) הופך לשורות: חלבון: … או … · פחמימה: … או … · שומן: … או … — ומאוזן לבד.']);
+
+/* ================= 🚫 EXCLUSIONS · ➕ ALTERNATIVES · 🔁 VARIETY ================= */
+const RX_FISH=/(^|\s)דג(ים)?(\s|$)|דג לבן|סלמון|סלומון|טונה|אמנון|דניס|לברק|מוסר|בקלה|סושי|פילה דג/;
+const RX_RED=/בקר|אנטריקוט|סטייק|סינטה|כתף|שייטל|טחון|קציצ|המבורגר|נתח|פילה(?!\s*(עוף|אמנון|דג|סלמון|הודו))/;
+const RX_POULTRY=/עוף|פרגי|שוקיים|שוקיות|כרעיים|כרעי|ירכיים עוף|הודו|פסטרמה|שניצל/;
+const RX_DAIRY=/חלב(?!ון)|קוטג|גבינ|לבנה|סקי|יוגורט|יווני|מעדן|משקה חלבון|צהובה|בולגרית|פטה|צפתית|פרמזן|מוצרלה|שמנת|חמאה(?!\s*(בוטנים|שקדים))|אקטיביה|דנונה|יופלה|גו חלבון/;
+const RX_EGG=/ביצ|חביתה|חביתות|(^|\s)חלבונים/;
+const EXCL=[
+ ['צמחוני',[RX_FISH,RX_RED,RX_POULTRY]],
+ ['טבעוני',[RX_FISH,RX_RED,RX_POULTRY,RX_DAIRY,RX_EGG,/דבש|אבקת חלבון|שייק חלבון|סקופ/]],
+ ['בלי דגים',[RX_FISH]],
+ ['בלי בשר אדום',[RX_RED]],
+ ['בלי עוף',[RX_POULTRY]],
+ ['בלי חלב',[RX_DAIRY]],
+ ['בלי ביצים',[RX_EGG]],
+ ['בלי גלוטן',[/לחם|פיתה|לחמני|טורטיה|לאפה|פסטה|ספגטי|פנה|מקרוני|בורגול|פתיתים|קוסקוס|קרקר|שניצל|קמח|גרנולה|כריות|שיבולת|קוואקר|דייסה|כוסמין|שיפון/]],
+ ['בלי אגוזים',[/שקד|אגוז|קשיו|פיסטוק|פקאן|בוטנים/]],
+];
+function curExcl(){const c=clientsDB()[$('#client').value.trim()]||{};
+  const words=(c.exclTxt||'').split(/[,،\n]+/).map(w=>w.trim().replace(/^(בלי|לא אוכל|לא אוכלת|לא)\s+/,'')).filter(w=>w.length>=2);
+  return {tags:(c.excl||[]).filter(t=>EXCL.some(e=>e[0]===t)),words};}
+function exclText(){const x=curExcl();return [...x.tags,...x.words.map(w=>'בלי '+w)].join(', ')}
+function exclOf(text,x){x=x||curExcl();const t=stripParen(text);
+  for(const tag of x.tags){const e=EXCL.find(e=>e[0]===tag);if(e[1].some(r=>r.test(t)))return tag}
+  for(const w of x.words)if(t.includes(w))return 'בלי '+w;return null}
+/* remove excluded options from "או" lines (keeps a line if nothing else is left) */
+function stripExcl(src){const x=curExcl();if(!x.tags.length&&!x.words.length)return {text:src,n:0};let n=0;
+  const out=src.split('\n').map(line=>{const m=line.match(/^(\s*(?:[-•*·]\s*)?(?:(?:חלבון רזה|חלבון|פחמימות|פחמימה|שומנים|שומן|ירקות|ירק|פירות|פרי)\s*[:\-–]\s*)?)(.*)$/);if(!m)return line;
+    const os=splitTop(m[2],OPT_SEP);if(os.length<2)return line;const keep=os.filter(o=>!exclOf(o,x));
+    if(!keep.length||keep.length===os.length)return line;n+=os.length-keep.length;return m[1]+keep.join(' או ')});
+  return {text:out.join('\n'),n};}
+
+/* suggestion pool — every food you approved + "🥫 המזונות שלי" */
+const SUG_SKIP=/^(פלפל|פטריות|שעועית ירוקה|דבש|ריבה|שוקולד|חלווה|שמנת|פרמזן|בצל|שום|רסק|קמח|סוכר|חלב|חמאה|קורנפלקס|תירס|פלאפל|שניצל|גבינה צהובה|זרעי|חטיף|פסטרמה|ירקות|מלפפון|עגבני|ברוקולי|כרובית|גבינה לבנה|יוגורט$|חומוס$|זיתים|משקה)/;
+const UNIT_SUG=/^(ביצה|לחם|פיתה|לחמניה|טורטיה|דפי אורז|פריכית|קרקר|מעדן|יוגורט חלבון|טונה|תמר|בננה|תפוח עץ|תפוז|אפרסק|אגס|שזיף|קיווי|קוטג|אבקת חלבון)/;
+function sugPool(){const seen=new Set(),L=[];
+  [...FOODS.map(([al,p,c,f,u])=>({names:al.split('|'),p,c,f,u})),...myFoods()].forEach(x=>{const k=x.names[0];if(seen.has(k)||SUG_SKIP.test(k))return;seen.add(k);
+    const kcal=x.p*4+x.c*4+x.f*9;if(kcal<30)return;const cat=catOf(k,{p:x.p,c:x.c,f:x.f,kcal});if(!cat||cat==='ירקות')return;L.push({...x,k,kcal,cat})});return L}
+const SUG_LIGHT=/^(ביצה|חלבון ביצה|קוטג|גבינ|לבנה|יוגורט|יווני|מעדן|משקה|אבקת חלבון|צהובה|בולגרית|לחם|פיתה|לחמני|טורטיה|דפי אורז|פריכית|קרקר|שיבולת|גרנולה)/,SUG_ANY=/^(טונה|טופו|אדממה)/;
+const sugKind=k=>SUG_ANY.test(k)?'any':SUG_LIGHT.test(k)?'light':'main';
+const fmtN=n=>n===.5?'1/2':String(n);
+function sugText(fd,kcal){
+  if(UNIT_SUG.test(fd.k)){const uk=fd.kcal*fd.u/100;let n=Math.round(kcal/uk*2)/2;if(/^ביצה/.test(fd.k))n=Math.round(kcal/uk);if(n<.5||n>6||Math.abs(n*uk-kcal)/kcal>.2)return null;
+    const N=fmtN(n);
+    if(/^לחם/.test(fd.k))return {t:`${N} ${n>1?'פרוסות':'פרוסת'} ${fd.k}`,kcal:n*uk};
+    if(/^אבקת חלבון/.test(fd.k))return {t:`${N} סקופ אבקת חלבון`,kcal:n*uk};
+    if(/^קוטג/.test(fd.k))return {t:`${N} גביע ${fd.k}`,kcal:n*uk};
+    if(n<=1)return {t:`${N} ${fd.k}`,kcal:n*uk};
+    const pl=fd.names.find(a=>a!==fd.k&&/(ים|ות)$/.test(a)&&a.slice(0,2)===fd.k.slice(0,2)&&a.length<=fd.k.length+3);
+    return {t:pl?`${N} ${pl}`:`${N} יחידות ${fd.k}`,kcal:n*uk};}
+  let g=kcal/fd.kcal*100;g=g<30?Math.round(g):g<100?Math.round(g/5)*5:Math.round(g/10)*10;if(g<5||g>600)return null;
+  return {t:`${g} גרם ${fd.k}`,kcal:g*fd.kcal/100};
+}
+function suggestFor(lineText,cat,base,max=6){
+  const x=curExcl(),t=stripParen(lineText);
+  const bp=base.p*4/base.kcal,bf=base.f*9/base.kcal;
+  const bf0=findFood(parseQty(stripParen(clean(splitTop(lineText,OPT_SEP)[0]))).name),bk=bf0?bf0.k:'',kind=bk&&(cat==='חלבון'||cat==='פחמימה')?sugKind(bk):'any';
+  return sugPool().filter(fd=>fd.cat===cat&&(kind==='any'||sugKind(fd.k)==='any'||sugKind(fd.k)===kind)&&!(bk&&(fd.k.startsWith(bk+' ')||bk.startsWith(fd.k+' ')))&&!fd.names.some(a=>a.length>2&&t.includes(a))&&!t.includes(fd.k)&&!exclOf(fd.names.join(' '),x))
+    .map(fd=>({fd,d:Math.abs(fd.p*4/fd.kcal-bp)+Math.abs(fd.f*9/fd.kcal-bf)}))
+    .sort((a,b)=>a.d-b.d).map(o=>sugText(o.fd,base.kcal)).filter(Boolean).slice(0,max);
+}
+/* lines of the menu that can take alternatives */
+function altLines(){const data=parseMenu($('#src').value);const out=[];
+  data.sections.forEach(s=>s.items.forEach(it=>{if(it.li<0||!(it.kind==='group'||it.kind==='item'))return;
+    const first=it.kind==='group'?(it.opts.find(o=>o.m)||{}):it;if(!first.m||!first.m.kcal)return;
+    const ft=it.kind==='group'?first.text:it.raw;const fp=splitTop(ft,PLUS_SEP);if(fp.length>1&&!(it.kind==='group'&&it.cat))return; // combo without a category: by hand
+    const cat=it.kind==='group'&&it.cat?it.cat:catOf(parseQty(stripParen(clean(fp[0]))).name,first.m);if(!cat||cat==='ירקות')return;
+    out.push({meal:s.name,li:it.li,text:it.kind==='group'?it.opts.map(o=>o.text).join(' או '):it.raw,first:ft,cat,base:first.m})}));
+  return out}
+let altMeal=null;
+function openAlts(meal){altMeal=meal;$('#altDlg').hidden=false;drawAlts()}
+function drawAlts(){
+  const L=altLines().filter(l=>altMeal==null||l.meal===altMeal),ex=exclText();
+  let last='';
+  $('#altBody').innerHTML=(ex?`<div class="alt-ex">🚫 מסנן לפי ${escH($('#client').value.trim())}: ${escH(ex)}</div>`:'')+(L.length?L.map((l,i)=>{const sg=suggestFor(l.text,l.cat,l.base);
+    const hd=l.meal!==last?`<div class="cd-h">${escH(l.meal)}</div>`:'';last=l.meal;
+    return hd+`<div class="alt-row"><div class="alt-l"><b>${escH(l.cat)}</b> · ${escH(l.first)} <small>${r0(l.base.kcal)} קק״ל</small></div><div class="alt-s">${sg.length?sg.map(s=>`<button class="chip-btn" data-li="${l.li}" data-t="${escH(s.t)}">＋ ${escH(s.t)}</button>`).join(''):'<small class="help">אין עוד חלופות מתאימות</small>'}</div></div>`}).join(''):'<div class="help">אין שורות עם כמות מזוהה בארוחה הזו.</div>');
+  $('#altBody').querySelectorAll('[data-li]').forEach(b=>b.onclick=()=>{
+    const lines=$('#src').value.split('\n'),li=+b.dataset.li;lines[li]=lines[li].replace(/\s+$/,'')+' או '+b.dataset.t;
+    $('#src').value=lines.join('\n');mnLast=null;render().then(drawAlts);toast('נוסף: '+b.dataset.t)});
+}
+document.body.insertAdjacentHTML('beforeend',`<div class="drawer" id="altDlg" hidden><div class="dr-bg"></div><div class="dr-panel">
+  <div class="dr-head"><b>➕ הצעת חלופות</b><button class="chip-btn" id="altClose">✕</button></div>
+  <div class="help">לכל שורה — מזונות מאותה קטגוריה, כבר בכמות של אותן קלוריות. לחיצה מוסיפה "או …" לשורה.</div>
+  <div id="altBody" style="display:flex;flex-direction:column;gap:8px"></div></div></div>`);
+$('#altClose').onclick=()=>$('#altDlg').hidden=true;$('#altDlg .dr-bg').onclick=()=>$('#altDlg').hidden=true;
+document.head.insertAdjacentHTML('beforeend',`<style>
+.alt-row{display:flex;flex-direction:column;gap:5px;padding:8px 0;border-bottom:1px solid var(--line)}
+.alt-l{font-size:.84rem}.alt-l small{color:var(--text3,#888);margin-right:4px}
+.alt-s{display:flex;flex-wrap:wrap;gap:5px}.alt-s .chip-btn{height:28px;font-size:.76rem}
+.alt-ex{font-size:.8rem;background:rgba(160,60,40,.08);border:1px solid rgba(160,60,40,.25);border-radius:10px;padding:6px 10px}
+.ex-tags{display:flex;flex-wrap:wrap;gap:5px}.ex-tags .chip-btn.on{background:var(--accent);border-color:var(--accent);color:#fff}
+</style>`);
+
+/* 🔁 variety — the same food as the main choice in 3+ meals */
+function varietyWarn(data){const by={};
+  data.sections.forEach(s=>s.items.forEach(it=>{if(!counted(it))return;const t=it.kind==='group'?(it.opts[0]||{}).text||'':it.raw;
+    splitTop(t,PLUS_SEP).forEach(p=>{const fd=findFood(stripParen(clean(parseQty(stripParen(clean(p))).name)));if(!fd||/ירקות|מלפפון|עגבני|שמן|פלפל|בצל|שום|ברוקולי|כרובית/.test(fd.k))return;(by[fd.k]=by[fd.k]||new Set()).add(s.name)})}));
+  return Object.entries(by).filter(([k,v])=>v.size>=3).map(([k,v])=>`${k} — ב-${v.size} ארוחות (${[...v].join(', ')})`)}
+function menuExtras(){const data=parseMenu($('#src').value);let out='';
+  const x=curExcl();if(x.tags.length||x.words.length){const hits=[];
+    data.sections.forEach(s=>s.items.forEach(it=>{const os=it.kind==='group'?it.opts.map(o=>o.text):it.kind==='item'?[it.raw]:[];os.forEach(o=>{const w=exclOf(o,x);if(w)hits.push(`${s.name}: ״${o}״ (${w})`)})}));
+    if(hits.length)out+=`<br><span class="warn">🚫 ${escH($('#client').value.trim())} לא אוכל:</span> <button class="unk pick exrm">🚫 הסר מהתפריט</button><br>${hits.map(h=>'• '+escH(h)).join('<br>')}`;}
+  const v=varietyWarn(data);if(v.length)out+=`<br><span class="warn">🔁 חוזר הרבה:</span> <button class="unk pick altall">➕ הצע חלופות</button><br>${v.map(h=>'• '+escH(h)).join('<br>')}`;
+  return out}
+$('#stats').addEventListener('click',e=>{const b=e.target.closest('.unk');if(!b)return;
+  if(b.classList.contains('exrm')){const r=stripExcl($('#src').value);if(!r.n)return toast('אין "או" להסיר — החלף ידנית או עם ➕ חלופות');fitUndo=$('#src').value;$('#undoFit').hidden=false;$('#src').value=r.text;mnLast=null;render().then(()=>autoFit(true));toast(`🚫 הוסרו ${r.n} אפשרויות`)}
+  if(b.classList.contains('altall'))openAlts(null)});
+$('#altBtn').onclick=()=>openAlts(null);
+HELP_TX.unshift(['#altBtn','➕ לכל שורה בתפריט — מזונות חלופיים מאותה קטגוריה (חלבון / פחמימה / שומן / פרי) עם כמות שכבר מחושבת לאותן קלוריות. לחיצה מוסיפה "או …". מדלג על מה שהלקוח לא אוכל.']);
+
 setType('workout',true);
 </script>
 </body>
