@@ -562,6 +562,7 @@ body.helpmode .side button,body.helpmode .side input,body.helpmode .side textare
 .tgt.ok{background:rgba(91,107,47,.1);color:#3f6b2f}
 .tgt.far{background:#fff4ea;border:1px solid #e2b48d;color:#7a3c12}
 .tgt .fitnow{display:block;margin-top:6px;width:100%;padding:6px;font-weight:800;font-size:.82rem}
+.ai-steps{background:rgba(91,107,47,.08);border:1px solid rgba(91,107,47,.25);border-radius:10px;padding:8px 10px;line-height:1.7;color:var(--text)}
 </style>
 </head>
 <body>
@@ -601,7 +602,7 @@ body.helpmode .side button,body.helpmode .side input,body.helpmode .side textare
       <div class="tpls" id="aiChips" style="margin-top:6px"></div>
       <div style="display:flex;gap:8px;margin-top:8px;align-items:center"><button class="btn main" id="aiGo" style="height:44px">🤖 שלח ל-Gemini</button><button class="chip-btn" id="aiUndo" hidden>↩ בטל</button></div>
       <div class="help" id="aiStatus" style="margin-top:6px"></div>
-      <div id="aiPasteBox" hidden style="margin-top:8px"><textarea id="aiPaste" class="small" spellcheck="false" placeholder="הדבק כאן את התשובה של Gemini"></textarea><button class="btn main" id="aiPasteGo" style="height:42px;width:100%;margin-top:6px">⬇ הכנס לאתר</button></div>
+      <div id="aiPasteBox" hidden style="margin-top:8px"><button class="btn main" id="aiClip" style="height:46px;width:100%;margin-bottom:6px">📋 הכנס את התשובה שהעתקתי מ-Gemini</button><div class="help" style="text-align:center;margin-bottom:6px">או הדבק ידנית:</div><textarea id="aiPaste" class="small" spellcheck="false" placeholder="הדבק כאן את התשובה של Gemini"></textarea><button class="btn main" id="aiPasteGo" style="height:42px;width:100%;margin-top:6px">⬇ הכנס לאתר</button></div>
     </div>
     <div class="row2">
       <label class="f">שם הלקוח<input class="inp" id="client" placeholder="לדוגמה: אלמוג"></label>
@@ -2269,10 +2270,10 @@ async function runAI(){
   if(!GM.key){ // free mode: copy a ready prompt → paste into the Gemini app → paste the answer back
     const ctx=aiContext();const gem=gemUrl();
     const prompt=gem?`${ctx?ctx+'\n\n':''}הבקשה: ${ask}\n(לפי ההוראות שלך — הכל בתוך בלוק קוד אחד)`:`${aiSystem(false,ask+'\n'+ctx)}\n\n${ctx?ctx+'\n\n':''}הבקשה של אביאל: ${ask}`;
-    let copied=true;try{await navigator.clipboard.writeText(prompt)}catch(e){copied=false}
+    let copied=true;aiPrompt=prompt;try{await navigator.clipboard.writeText(prompt)}catch(e){copied=false}
     window.open(gem||'https://gemini.google.com/app','_blank','noopener');
     $('#aiPasteBox').hidden=false;
-    $('#aiStatus').innerHTML=copied?`📋 הועתק${gem?' (רק הבקשה — ה-Gem כבר יודע את הכללים)':''} — הדבק ב-Gemini, לחץ על כפתור ההעתקה של בלוק הקוד בתשובה, והדבק כאן למטה 👇`:`<span class="warn">ההעתקה האוטומטית נחסמה — העתק ידנית מהתיבה:</span><textarea class="small" readonly style="margin-top:6px">${escH(prompt)}</textarea>`;
+    $('#aiStatus').innerHTML=copied?`<div class="ai-steps"><b>3 צעדים ב-Gemini:</b><div>1. הדבק (Cmd+V / הדבק) ושלח</div><div>2. בתשובה — לחץ על כפתור ההעתקה של הבלוק 📋</div><div>3. חזור לכאן — התשובה תיכנס לבד (או לחץ על הכפתור למטה)</div></div><div class="help">💡 עם מפתח API חינמי (⚙️) הכל קורה לבד בלחיצה אחת, בלי לעבור ל-Gemini.</div>`:`<span class="warn">ההעתקה האוטומטית נחסמה — העתק ידנית מהתיבה:</span><textarea class="small" readonly style="margin-top:6px">${escH(prompt)}</textarea>`;
     return;
   }
   const btn=$('#aiGo');btn.disabled=true;btn.textContent='Gemini חושב…';$('#aiStatus').textContent='';
@@ -2296,6 +2297,16 @@ function drawAI(){
   if(!GM.key&&gemUrl()){$('#aiKeyState').textContent='💎 Gem מחובר';$('#aiKeyState').className='ok'}
 }
 $('#aiGo').onclick=runAI;
+// copy-paste mode: read Gemini's answer straight from the clipboard (one tap), and offer it when coming back to the tab
+let aiPrompt='';
+const looksLikeAnswer=t=>t&&t.trim().length>20&&t.trim()!==aiPrompt.trim()&&!t.includes('אתה העוזר של אביאל')&&/[:\n]/.test(t);
+async function fromClipboard(auto){
+  let t='';try{t=await navigator.clipboard.readText()}catch(e){if(!auto)toast('הדפדפן לא נתן לקרוא את הלוח — הדבק ידנית בתיבה');return}
+  if(!looksLikeAnswer(t)){if(!auto)toast('בלוח עוד אין תשובה מ-Gemini — העתק אותה שם (כפתור ההעתקה של הבלוק)');return}
+  await applyAI(t);$('#aiPaste').value='';$('#aiPasteBox').hidden=true;toast('✨ התשובה של Gemini נכנסה');
+}
+$('#aiClip').onclick=()=>fromClipboard(false);
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&!$('#aiPasteBox').hidden&&!GM.key)setTimeout(()=>fromClipboard(true),400)});
 const gemUrl=()=>{const u=(store.get('pdfs2_gem_'+TYPE)||'').trim();return /^https:\/\/(gemini\.google\.com|g\.co)\//.test(u)?u:''};
 document.querySelectorAll('[data-gemurl]').forEach(el=>{el.value=store.get('pdfs2_gem_'+el.dataset.gemurl)||'';el.oninput=()=>{store.set('pdfs2_gem_'+el.dataset.gemurl,el.value.trim());drawAI()}});
 document.querySelectorAll('[data-gem]').forEach(b=>b.onclick=async()=>{
