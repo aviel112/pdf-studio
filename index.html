@@ -563,6 +563,16 @@ body.helpmode .side button,body.helpmode .side input,body.helpmode .side textare
 .tgt.far{background:#fff4ea;border:1px solid #e2b48d;color:#7a3c12}
 .tgt .fitnow{display:block;margin-top:6px;width:100%;padding:6px;font-weight:800;font-size:.82rem}
 .ai-steps{background:rgba(91,107,47,.08);border:1px solid rgba(91,107,47,.25);border-radius:10px;padding:8px 10px;line-height:1.7;color:var(--text)}
+
+.top .chip-btn{white-space:nowrap}
+.gd{display:flex;flex-direction:column;gap:8px;font-size:.86rem;line-height:1.7}
+.gd details{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:8px 12px}
+.gd summary{cursor:pointer;font-weight:800;font-size:.93rem;padding:2px 0}
+.gd ul,.gd ol{margin:6px 0 2px;padding-right:20px}.gd li{margin:3px 0}
+.gd code{background:rgba(91,107,47,.1);padding:1px 6px;border-radius:5px;font-size:.8rem;color:var(--text)}
+.gd-tip{background:rgba(91,107,47,.1);border:1px solid rgba(91,107,47,.3);border-radius:10px;padding:8px 12px}
+.gd-note{font-size:.76rem;color:var(--text3)}
+@media (max-width:900px){.top .lbl{display:none}.top .chip-btn{min-width:36px;padding:0 9px;height:34px;font-size:.95rem}.logo{font-size:.8rem;letter-spacing:3px}.mic-btn{width:46px;height:46px;font-size:1.15rem}}
 </style>
 </head>
 <body>
@@ -570,9 +580,10 @@ body.helpmode .side button,body.helpmode .side input,body.helpmode .side textare
   <div class="logo">PDF <b>STUDIO</b></div>
   <small>תפריטים ותוכניות אימון — מטקסט ל-PDF מעוצב</small>
   <button class="chip-btn top-btn" id="homeBtn" title="מסך פתיחה">🏠</button>
-  <button class="chip-btn top-btn2" id="quickBtn">⚡ לקוח חדש</button>
-  <button class="chip-btn top-btn2" id="clientsBtn">👥 הלקוחות שלי</button>
-  <button class="chip-btn help-btn" id="helpBtn">❓ הסבר</button>
+  <button class="chip-btn top-btn2" id="quickBtn" title="לקוח חדש">⚡<span class="lbl"> לקוח חדש</span></button>
+  <button class="chip-btn top-btn2" id="clientsBtn" title="הלקוחות שלי">👥<span class="lbl"> הלקוחות שלי</span></button>
+  <button class="chip-btn top-btn2" id="guideBtn" title="מדריך">📖<span class="lbl"> מדריך</span></button>
+  <button class="chip-btn help-btn" id="helpBtn" title="מצב הסבר">❓<span class="lbl"> הסבר</span></button>
 </header>
 
 <div class="app">
@@ -685,6 +696,56 @@ body.helpmode .side button,body.helpmode .side input,body.helpmode .side textare
   <div class="help">הכל נשמר על המכשיר הזה בלבד. להעביר בין המחשב לטלפון: גיבוי במכשיר אחד ← שחזור בשני.</div>
 </div></div>
 <div class="toast" id="toast"></div>
+<div class="drawer home guide" id="guideDlg" hidden><div class="dr-bg"></div><div class="dr-panel">
+  <div class="dr-head"><b>📖 מדריך מקוצר</b><button class="chip-btn" id="gdClose">✕</button></div>
+  <div class="gd">
+    <div class="gd-tip">💡 לא בטוח מה כפתור עושה? לוחצים <b>❓</b> למעלה ואז על הכפתור — יופיע הסבר במקום שהוא יפעל.</div>
+
+    <details open><summary>⚡ התחלה מהירה — לקוח חדש בדקה</summary>
+      <ol><li><b>⚡ לקוח חדש</b> → שם, מין, גיל, משקל, גובה, מטרה, כמה ארוחות ופורמט.</li>
+      <li>האתר בונה תפריט שכבר מותאם ליעד. עוברים על הארוחות ומשנים לטעם של הלקוח.</li>
+      <li><b>⬇ הורד PDF</b> או <b>📲 שלח</b> — נשמר לבד ב"👥 הלקוחות שלי".</li></ol></details>
+
+    <details><summary>🍽️ תפריט</summary>
+      <ul><li><b>כמה ארוחות</b> (2–7) → כרטיס לכל ארוחה. אפשר לשנות גם באמצע.</li>
+      <li><b>כתיבה:</b> <code>חלבון: 150 גרם חזה עוף או 200 גרם אמנון</code> · "או" = החלפה · <code>+</code> = שילוב · <code>3 ירקות לבחירה</code> · <code>עד 120 קלוריות</code> · <code>אופציה 1 / אופציה 2</code>.</li>
+      <li><b>🎯 יעד</b> — ממלאים נתונים (או יעד ידני) והתפריט <b>מותאם אוטומטית</b>. רחוק מהיעד? מופיע "🎯 התאם עכשיו".</li>
+      <li><b>⚖️ אזן החלפות</b> — כל "או" (וכל אופציה) יוצאים שווים בקלוריות.</li>
+      <li><b>📄 ייבוא מקובץ</b> — PDF / Word / צילום מסך של תפריט קיים → מתחלק לארוחות לבד.</li>
+      <li><b>תבניות</b> — הפורמטים שלך + תבניות לפי קלוריות. <b>🍱 הארוחות שלי</b> — ארוחה ששמרת, לכל לקוח.</li>
+      <li><b>📏 מדדים</b> ו<b>דרישות יומיות</b> (+ 📝 משפטים מוכנים) נכנסים ל-PDF. <b>🛒 רשימת קניות</b> — עמוד נוסף.</li></ul></details>
+
+    <details><summary>🏋️ תוכנית אימון</summary>
+      <ul><li><b>כמה ימים</b> → כרטיס לכל יום. יום שחוזר — <b>"שכפל את יום X"</b>.</li>
+      <li><b>שורה לתרגיל:</b> <code>סקוואט 3x8-10 מנוחה 2 דקות - הערה</code> · <code>+</code> בתחילת שורה = סופר סט.</li>
+      <li>מתחילים להקליד → האתר <b>מציע תרגילים</b> שכבר כתבת. קבוצת שריר מזוהה לבד.</li>
+      <li><b>תבניות:</b> פול באדי, עליון/תחתון, PPL. <b>📄 ייבוא:</b> PDF של תוכנית קיימת.</li></ul></details>
+
+    <details><summary>🔄 החלפת ארוחה (מתכון שלקוח שלח)</summary>
+      <ol><li><b>📄 העלה את התפריט של הלקוח</b> → מסמנים אילו ארוחות המתכון מחליף.</li>
+      <li><b>📷 העלה מתכון</b> — צילום מסך / קובץ / הדבקה.</li>
+      <li>האתר אומר <b>כמה לאכול מכל מצרך</b> כדי לצאת בדיוק בערכים. חסר חלבון? משלים לבד.</li></ol>
+      <div class="gd-note">מתמונה — כדאי לעבור על הכמויות (זיהוי טקסט לא מושלם).</div></details>
+
+    <details><summary>👥 לקוחות</summary>
+      <ul><li>כל הורדה / שמירה נשמרת תחת שם הלקוח. לוחצים כדי לפתוח, <b>⧉</b> לשכפל ללקוח אחר.</li>
+      <li><b>📊 כרטיס</b> — טלפון, מטרה, הערות פנימיות, <b>גרף משקל</b> והיסטוריה.</li>
+      <li><b>⏰ מחכים לעדכון</b> — מי לא קיבל עדכון 14+ יום (מספר כתום על הכפתור).</li>
+      <li><b>📈 עדכון שבועי</b> — משקל חדש → הצעת תיקון קלוריות → גרסה חדשה.</li>
+      <li><b>🔍 מה השתנה</b> — בצד מופיע מה שינית מהגרסה הקודמת (לא ב-PDF).</li></ul></details>
+
+    <details><summary>🤖 Gemini · 🎤 הכתבה · ☁️ סנכרון</summary>
+      <ul><li><b>🤖 Gemini</b> — כותבים במילים מה רוצים. עם <b>מפתח API חינמי</b> (⚙️) הכל קורה לבד; בלי מפתח — מעתיק, פותח את ה-Gem, ובחזרה לוחצים "📋 הכנס את התשובה". התשובה מתאזנת ומותאמת ליעד לבד.</li>
+      <li><b>🎤</b> — לוחצים על שדה, ואז על המיקרופון ומדברים: "שורה חדשה", "נקודתיים", "פלוס".</li>
+      <li><b>☁️</b> — הכל זהה בטלפון ובמחשב. מכשיר חדש: "👥 הלקוחות שלי" → קוד חיבור.</li></ul></details>
+
+    <details><summary>⚖️ כללי ערכים</summary>
+      <ul><li>כל המשקלים <b>אחרי בישול</b> — חוץ משיבולת שועל (יבשה). טחינה = <b>גולמית</b>.</li>
+      <li>מזון כתום = לא מזוהה → לוחצים עליו ומוסיפים ערכים מהתווית (<b>🔍</b> = חיפוש ב-FoodsDictionary). נשמר ב"🥫 המזונות שלי".</li>
+      <li>הערכים = הערכה לפי הטבלה שאישרת.</li></ul></details>
+  </div>
+</div></div>
+
 <button class="mic-btn" id="micBtn" title="הכתבה בקול">🎤</button><div class="mic-live" id="micLive" hidden></div>
 <div class="drawer home" id="homeDlg" hidden><div class="dr-bg"></div><div class="dr-panel">
   <div class="dr-head"><b>🏠 PDF Studio</b><button class="chip-btn" id="hmClose">✕</button></div>
@@ -2884,7 +2945,7 @@ async function swImport(kind,file){
       const t=menuTextFrom(raw);const mf=mealsFromText(t);
       sw.menuMeals=mf.meals.filter(m=>m.text.trim());sw.sel=[];saveSw();drawSwMenu();
       const tl=t.split('\n').find(l=>/^תפריט\s+/.test(l));const cm=tl&&tl.match(/^תפריט\s+([^\d\s][^\d]*?)\s*\d/);if(cm&&!$('#client').value.trim())$('#client').value=cm[1].replace(/^_+/,'').trim();
-      st.innerHTML=`✓ נמצאו <b>${sw.menuMeals.length}</b> ארוחות — סמן אילו המתכון מחליף`;
+      st.innerHTML=`✓ נמצאו <b>${sw.menuMeals.length}</b> ארוחות`;
     }else{
       const ls=tidyImported(raw).split('\n').filter(Boolean);
       // a recipe screenshot often starts with the dish name; if the first line looks like an ingredient — leave the name empty
@@ -3076,6 +3137,9 @@ HELP_TX.unshift(
  ['#homeBtn','🏠 מסך פתיחה: מי מחכה לעדכון, המסמכים האחרונים, ופעולות מהירות.'],
  ['#logoBox','🖼 הלוגו שלך — יופיע בראש כל PDF במקום הטקסט AVIEL AMIRA.']);
 
+/* ---- 📖 guide ---- */
+$('#guideBtn').onclick=()=>{$('#guideDlg').hidden=false};$('#gdClose').onclick=()=>$('#guideDlg').hidden=true;$('#guideDlg .dr-bg').onclick=()=>$('#guideDlg').hidden=true;
+HELP_TX.unshift(['#guideBtn','📖 מדריך מקוצר — כל מה שהאתר יודע לעשות, בעמוד אחד.']);
 setType('workout',true);
 </script>
 </body>
