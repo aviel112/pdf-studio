@@ -445,6 +445,75 @@ label.f{font-size:.72rem;color:var(--text3);font-weight:700}
 .dr-row{background:var(--surface)}
 .first-tip{background:rgba(255,107,53,.08)}
 .mt-res{background:rgba(255,107,53,.07)}
+
+/* ================= THEME: olive & cream (app UI) ================= */
+:root{--bg:#f3efe4;--panel:#faf7ef;--surface:#ffffff;--line:rgba(70,64,40,.13);--text:#2b2a20;--text2:#5f5d4c;--text3:#8f8c76;--accent:#5b6b2f;--accent-soft:rgba(91,107,47,.12)}
+html,body{background:var(--bg);color:var(--text)}
+.top{background:rgba(250,247,239,.92);border-bottom-color:var(--line)}
+.logo{color:var(--text)}.logo b{color:var(--accent)}
+.side{background:var(--panel);border-color:var(--line)}
+.seg,.seg2{background:#ebe6d8;border-color:transparent}
+.seg button,.seg2 button{color:var(--text2)}
+.seg button.on{background:var(--accent);color:#fff}
+.seg2 button.on{background:var(--surface);color:var(--text);box-shadow:0 1px 3px rgba(60,55,30,.15)}
+.sect{background:var(--surface);border-color:var(--line);box-shadow:0 1px 2px rgba(60,55,30,.05)}
+.sect[open]{border-color:rgba(91,107,47,.35)}
+.sect>summary:hover{background:rgba(91,107,47,.04)}
+.s-ic{background:var(--accent-soft)}
+.s-info{color:var(--text2);border-right-color:var(--accent)}
+.inp,textarea{background:#fdfcf8;border-color:rgba(70,64,40,.18);color:var(--text)}
+.inp::placeholder,textarea::placeholder{color:#aaa690}
+.inp:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(91,107,47,.15)}
+select.inp{background:#fdfcf8}
+.step{background:#f7f4ea;border-color:var(--line)}
+.step-t span{background:var(--accent-soft);color:var(--accent)}
+.day{background:var(--surface);border-color:var(--line)}
+.day-h b{background:var(--accent-soft);color:var(--accent)}
+.days-pick button{background:var(--surface);border-color:rgba(70,64,40,.15);color:var(--text)}
+.days-pick button small{color:var(--text3)}
+.days-pick button.on{background:var(--accent);border-color:var(--accent);color:#fff;box-shadow:0 4px 12px rgba(91,107,47,.3)}
+.chip-btn{background:var(--surface);border-color:rgba(70,64,40,.16);color:var(--text2)}
+.chip-btn:hover{background:rgba(91,107,47,.08);border-color:var(--accent);color:var(--text)}
+.chip-btn.hot{border-color:var(--accent);color:var(--accent)}
+.tog{color:var(--text2)}
+.stats{background:var(--surface);border-color:var(--line);color:var(--text2)}
+.stats b{color:var(--text)}
+.stats .warn,.warn{color:#b0561c}
+.unk{background:#fff4ea;border-color:#e2b48d;color:#a3501a}
+.unk.pick{color:#2b2a20;background:#fff}
+.help{color:var(--text3)}.help code{background:rgba(70,64,40,.08);color:var(--text2)}
+.btn.main{background:var(--accent);color:#fff;box-shadow:0 6px 16px rgba(91,107,47,.28)}
+.btn.sec{background:var(--surface);color:var(--text);border:1px solid rgba(70,64,40,.18)}
+.actions{background:linear-gradient(rgba(250,247,239,0),var(--panel) 30%)}
+.preview{background:#e7e2d3}
+.pv-wrap{box-shadow:0 1px 2px rgba(60,55,30,.15),0 16px 36px rgba(60,55,30,.18)}
+.pv-label,.empty{color:#7d7a66}
+.mt-res{background:rgba(91,107,47,.08);border-color:rgba(91,107,47,.25)}.mt-res b{color:var(--text)}
+.first-tip{background:rgba(91,107,47,.08);border-color:rgba(91,107,47,.3);color:var(--text)}
+.sugg button{background:rgba(91,107,47,.07);border-color:rgba(91,107,47,.3);color:var(--text)}
+.sugg button:hover{background:rgba(91,107,47,.15)}
+.dup-note{color:#3f6b2f;background:rgba(91,107,47,.08);border-color:rgba(91,107,47,.3)}
+.gem-box{background:rgba(91,107,47,.06);border-color:rgba(91,107,47,.3)}
+.ai .step-t small.ok{color:#3f6b2f}
+.dr-bg{background:rgba(40,38,25,.35)}
+.dr-panel{background:var(--panel);border-color:var(--line)}
+.dr-row{background:var(--surface);border-color:var(--line)}
+.sync-box,.wu-hist>div{background:#f7f4ea;border-color:var(--line)}
+.toast{background:#2b2a20;color:#fff}
+.sw{box-shadow:inset 0 0 0 2px var(--panel)}.sw.on{border-color:var(--text)}
+.help-btn.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.help-bar{background:var(--accent)}
+body.helpmode .side button,body.helpmode .side input,body.helpmode .side textarea,body.helpmode .side select,body.helpmode .side .tog,body.helpmode #stats,body.helpmode .top .chip-btn{outline-color:rgba(176,86,28,.7)}
+.swm-list{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.swm{display:flex;flex-direction:column;align-items:flex-start;gap:1px;border:1.5px solid rgba(70,64,40,.18);background:var(--surface);border-radius:10px;padding:7px 11px;cursor:pointer;font-family:inherit;color:var(--text);text-align:right}
+.swm small{font-size:.68rem;color:var(--text3)}
+.swm.on{border-color:var(--accent);background:rgba(91,107,47,.1);box-shadow:inset 0 0 0 1px var(--accent)}
+.swm.on b:before{content:'✓ ';color:var(--accent)}
+.imp-box{display:flex;flex-direction:column;gap:6px}
+.imp-btn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;border:1.5px dashed rgba(91,107,47,.5);border-radius:12px;padding:14px;cursor:pointer;font-weight:800;color:var(--accent);background:rgba(91,107,47,.05);transition:.15s}
+.imp-btn:hover{background:rgba(91,107,47,.1)}
+.imp-btn small{font-weight:500;color:var(--text3);font-size:.72rem}
+.side.drop{outline:3px dashed var(--accent);outline-offset:-8px}
 </style>
 </head>
 <body>
@@ -491,6 +560,7 @@ label.f{font-size:.72rem;color:var(--text3);font-weight:700}
     </div>
     <label class="f">כותרת<input class="inp" id="title"></label>
     <label class="f">שורת הסבר מתחת לכותרת (לא חובה)<input class="inp" id="subtitle" placeholder="לדוגמה: יש להקפיד על יום מנוחה אחד לפחות בין האימונים"></label>
+    <div class="imp-box" id="impBox"><label class="imp-btn"><input type="file" id="impFile" accept=".pdf,.docx,.txt,image/*" hidden>📄 ייבוא מקובץ<small>PDF · Word · תמונה · טקסט — או לגרור לכאן</small></label><div class="help" id="impState"></div></div>
     <div class="seg2" id="wkMode"><button data-m="wizard" class="on">שלב אחר שלב</button><button data-m="free">הדבקה חופשית</button></div>
     <div id="wiz">
       <div class="step"><div class="step-t"><span>1</span>לכמה ימים לחלק את השבוע?</div><div class="days-pick" id="daysPick"></div><div class="tpls" id="tpls"></div></div>
@@ -498,9 +568,12 @@ label.f{font-size:.72rem;color:var(--text3);font-weight:700}
       <div class="step"><div class="step-t"><span>3</span>דגשים לתוכנית (לא חובה)</div><textarea id="wkNotes" class="small" spellcheck="false" placeholder="להעלות משקל כשמגיעים לטווח העליון&#10;5 דק׳ חימום לפני כל אימון"></textarea></div>
     </div>
     <div id="swap">
-      <div class="step"><div class="step-t"><span>1</span>כמה ארוחות המתכון מחליף?</div><div class="days-pick" id="swN"></div><div id="swMeals" style="display:flex;flex-direction:column;gap:10px;margin-top:10px"></div>
+      <div class="step"><div class="step-t"><span>1</span>מה המתכון מחליף?</div>
+        <div id="swMenuBox"><label class="imp-btn"><input type="file" id="swMenuFile" accept=".pdf,.docx,.txt,image/*" hidden>📄 העלה את התפריט של הלקוח<small>PDF · Word · צילום מסך — ואז מסמנים ארוחות</small></label><div class="help" id="swMenuState"></div><div id="swMenuMeals" class="swm-list"></div></div>
+        <div class="help" style="margin:10px 0 6px">או ידנית — כמה ארוחות, ומדביקים אותן:</div><div class="days-pick" id="swN"></div><div id="swMeals" style="display:flex;flex-direction:column;gap:10px;margin-top:10px"></div>
         <div class="row2" style="margin-top:10px"><label class="f">יעד קלוריות ידני (לא חובה)<input class="inp" id="swTk" inputmode="numeric" placeholder="לפי הארוחות"></label><label class="f">יעד חלבון ידני (לא חובה)<input class="inp" id="swTp" inputmode="numeric" placeholder="לפי הארוחות"></label></div></div>
-      <div class="step"><div class="step-t"><span>2</span>המתכון (מטיקטוק / אינסטגרם)</div><input class="inp" id="swRecName" placeholder="שם המנה — למשל: פסטה קרמית עם עוף" style="width:100%;margin-bottom:8px"><textarea id="swRecipe" spellcheck="false" placeholder="מצרכים&#10;250 גרם פסטה&#10;400 גרם חזה עוף&#10;כוס שמנת לבישול&#10;אופן הכנה&#10;מבשלים את הפסטה…"></textarea></div>
+      <div class="step"><div class="step-t"><span>2</span>המתכון (מטיקטוק / אינסטגרם)</div>
+        <div id="swRecBox" style="margin-bottom:8px"><label class="imp-btn"><input type="file" id="swRecFile" accept=".pdf,.docx,.txt,image/*" hidden>📷 העלה מתכון<small>צילום מסך · PDF · טקסט — או מדביקים למטה</small></label><div class="help" id="swRecState"></div></div><input class="inp" id="swRecName" placeholder="שם המנה — למשל: פסטה קרמית עם עוף" style="width:100%;margin-bottom:8px"><textarea id="swRecipe" spellcheck="false" placeholder="מצרכים&#10;250 גרם פסטה&#10;400 גרם חזה עוף&#10;כוס שמנת לבישול&#10;אופן הכנה&#10;מבשלים את הפסטה…"></textarea></div>
       <div class="step"><div class="step-t"><span>3</span>אם חסר חלבון — במה להשלים?</div><select class="inp" id="swBoost"></select></div>
     </div>
     <div class="seg2" id="mnMode"><button data-m="wizard" class="on">שלב אחר שלב</button><button data-m="free">הדבקה חופשית</button></div>
@@ -766,7 +839,7 @@ function macrosFor(name,q){
 /* ================= PARSERS ================= */
 const clean=l=>l.replace(/^\s*(?:[-•*·▪●]+|\d+[.)](?!\d))\s*/,'').trim();
 const NOTES_RE=/^(הערות|הערה|דגשים|דגש|טיפים|הנחיות|חשוב|דרישות)(\s*:?\s*$|[^\d:]{1,30}:\s*$)/;
-const TIME_RE=/(\d{1,2}:\d{2})/;
+const TIME_RE=/(\d{1,2}:\d{2}(?:\s*[-–]\s*\d{1,2}:\d{2})?)/;
 const MEAL_RE=/^(ארוחה|ארוחת|בוקר|צהריים|צהרים|ערב|ביניים|נשנוש|לפני אימון|אחרי אימון|לפני השינה|לילה|מנת|meal|snack)/i;
 
 /* split at top level only (ignores separators inside parentheses) */
@@ -825,6 +898,7 @@ function parseMenu(text){
       mode='meal';
       let name=noTime,inline='';
       if(colon>-1){name=noTime.slice(0,colon).trim();inline=noTime.slice(colon+1).trim()}
+      if(/^ארוחה\s*\d+$/.test(name)&&inline&&!/\d/.test(inline)){name=inline;inline=''}
       cur={name:name||'ארוחה',time:tm?tm[1]:'',items:[],optN:0,hli:li,inline};sections.push(cur);nextAlt=false;
       if(inline) inline.split(/\s*,\s*/).filter(Boolean).forEach(x=>addItem(x,-1));
       return;
@@ -940,8 +1014,10 @@ function fromCells(cells,map){
     return {muscle:muscle||p.muscle,name:p.name,sets:c[1]||p.sets,reps:c[2]||p.reps,rest:c[3]||p.rest,notes:c.slice(4).filter(Boolean).join(' · ')||p.notes};
   }
   const g=i=>i==null?'':(cells[i]||'');
-  const name=g(map.name);
-  return {muscle:g(map.muscle)||inferMuscle(name),name,sets:g(map.sets),reps:g(map.reps),rest:g(map.rest),notes:(map.notes||[]).map(g).filter(Boolean).join(' · ')};
+  let name=g(map.name),mus=g(map.muscle);
+  // a wrapped word that slid into the muscle column ("כתפיים במכונה") goes back to the end of the exercise name
+  if(mus&&!MUSCLES.includes(mus)){const m=MUSCLES.slice().sort((a,b)=>b.length-a.length).find(x=>mus.startsWith(x+' '));if(m){name=(name+' '+mus.slice(m.length)).replace(/\s+/g,' ').trim();mus=m}}
+  return {muscle:mus||inferMuscle(name),name,sets:g(map.sets),reps:g(map.reps),rest:g(map.rest),notes:(map.notes||[]).map(g).filter(Boolean).join(' · ')};
 }
 function parseExercise(line){
   let muscle='';
@@ -1103,7 +1179,7 @@ function paginate(stage,blocks,o){
 }
 
 /* ================= APP ================= */
-const COLORS=[{n:'כחול',a:'#1a6fe0',soft:'#eef4fd'},{n:'שחור',a:'#16181f',soft:'#f1f2f4'},{n:'כתום',a:'#f2622e',soft:'#fff1eb'},{n:'ירוק',a:'#0f9b74',soft:'#e9f7f2'},{n:'סגול',a:'#6d4bd8',soft:'#f2eefd'}];
+const COLORS=[{n:'זית',a:'#5b6b2f',soft:'#eef1e2'},{n:'כחול',a:'#1a6fe0',soft:'#eef4fd'},{n:'שחור',a:'#16181f',soft:'#f1f2f4'},{n:'כתום',a:'#f2622e',soft:'#fff1eb'},{n:'ירוק',a:'#0f9b74',soft:'#e9f7f2'},{n:'סגול',a:'#6d4bd8',soft:'#f2eefd'}];
 const SAMPLES={
 menu:`ארוחת בוקר 08:00
 3 ביצים
@@ -1431,7 +1507,7 @@ function buildSwapBlocks(c,o){
   return {blocks};
 }
 function drawSwap(){
-  $('#swN').innerHTML=[1,2].map(n=>`<button data-n="${n}" class="${sw.n===n?'on':''}">${n}<small>${n===1?'ארוחה':'ארוחות'}</small></button>`).join('');
+  $('#swN').innerHTML=[1,2,3].map(n=>`<button data-n="${n}" class="${sw.n===n?'on':''}">${n}<small>${n===1?'ארוחה':'ארוחות'}</small></button>`).join('');
   $('#swN').querySelectorAll('button').forEach(b=>b.onclick=()=>{sw.n=+b.dataset.n;saveSw();drawSwap();render()});
   const box=$('#swMeals');box.innerHTML='';
   for(let i=0;i<sw.n;i++){
@@ -2216,7 +2292,7 @@ document.querySelectorAll('#mnMode button').forEach(b=>b.onclick=()=>setMnMode(b
 const SECT=[
  {id:'sClient',ic:'👤',t:'פרטי הלקוח',info:'מי הלקוח ומה הכותרת — מופיע בראש ה-PDF.',nodes:()=>[$('#client').closest('.row2'),$('#title').closest('label'),$('#subtitle').closest('label')],open:true},
  {id:'sTarget',ic:'🎯',t:'יעד ללקוח',info:'מכניסים מין, גיל, משקל, גובה ומטרה — ומקבלים יעד קלוריות וחלבון. אחר כך "🎯 התאם כמויות ליעד" בכלים.',nodes:()=>[$('#mtBox')],only:'menu'},
- {id:'sBuild',ic:'🍽️',t:'בניית התפריט',info:'',nodes:()=>[$('#menuTpls'),$('#mnMode'),$('#mnWiz'),$('#wkMode'),$('#wiz'),$('#swap'),$('#src')],open:true},
+ {id:'sBuild',ic:'🍽️',t:'בניית התפריט',info:'',nodes:()=>[$('#impBox'),$('#menuTpls'),$('#mnMode'),$('#mnWiz'),$('#wkMode'),$('#wiz'),$('#swap'),$('#src')],open:true},
  {id:'sTools',ic:'🛠',t:'כלים',info:'פעולות חכמות על מה שכתבת — לחץ ❓ למעלה ואז על כפתור כדי לראות מה הוא עושה.',nodes:()=>[document.querySelector('.side .tools')]},
  {id:'sAI',ic:'🤖',t:'Gemini',info:'מבקשים במילים — Gemini כותב, והאתר בודק ומאזן את המספרים לפי הערכים שלך.',nodes:()=>[$('#aiBox')]},
  {id:'sDesign',ic:'🎨',t:'עיצוב',info:'צבע ההדגשות ב-PDF.',nodes:()=>[$('#colors')]},
@@ -2243,6 +2319,7 @@ function updSect(){
   const t=TYPE,[ic,tt,info]=BUILD_T[t];const b=$('#sBuild');
   b.querySelector('.s-ic').textContent=ic;b.querySelector('.s-t').textContent=tt;b.querySelector('.s-info').textContent=info;
   $('#sTarget').style.display=t==='menu'?'':'none';
+  $('#impBox').style.display=t==='swap'?'none':'';
   const sum=(id,txt)=>{const el=$('#'+id+' .s-sum');if(el)el.textContent=txt||''};
   sum('sClient',$('#client').value.trim()||'לא הוזן שם');
   if(t==='menu'){const T=calcTarget().t;sum('sTarget',T?`${T.kcal.toLocaleString()} קק״ל · ${T.p} חלבון`:'לא חובה')}
@@ -2506,6 +2583,202 @@ $('#syncCopy').onclick=async()=>{try{await navigator.clipboard.writeText(pairCod
 $('#syncOff2').onclick=()=>{if(!confirm('לנתק את המכשיר הזה מהסנכרון? (הנתונים נשארים)'))return;SY.url='';SY.key='';store.set('pdfs2_sync_url','');store.set('pdfs2_sync_key','');drawSync()};
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')syncNow(true)});
 drawSync();if(SY.url&&SY.key)setTimeout(()=>syncNow(true),800);
+
+/* ================= IMPORT FROM FILE (PDF / Word / image / text) ================= */
+const LIBS={
+ pdf:['https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js',()=>window.pdfjsLib],
+ docx:['https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js',()=>window.mammoth],
+ ocr:['https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js',()=>window.Tesseract]};
+const loadLib=k=>new Promise((res,rej)=>{const [src,get]=LIBS[k];if(get())return res(get());const s=document.createElement('script');s.src=src;s.onload=()=>res(get());s.onerror=()=>rej(new Error('לא הצלחתי לטעון את הכלי לקריאת הקובץ — בדוק אינטרנט'));document.head.appendChild(s)});
+const BIDI=/[​-‏‪-‮⁦-⁩﻿ֿ]/g;
+const BUL=/^[\s\t]*[●•▪◦]/;
+// PDFs: a long item wraps onto the next line. Lines that start with a bullet are new items; a bullet-less line right after an item is its continuation.
+function joinBullets(t){
+  const L=t.split('\n');if(L.filter(l=>BUL.test(l)).length<3)return t;
+  const out=[];let inItem=false;
+  L.forEach(l=>{const s=l.trim();
+    if(!s){out.push(l);inItem=false;return}
+    if(BUL.test(l)){out.push(l);inItem=true;return}
+    const prev=out[out.length-1]||'';const open=(prev.match(/\(/g)||[]).length>(prev.match(/\)/g)||[]).length;
+    const head=(MEAL_RE.test(s)&&s.length<45&&!/[()]/.test(s))||/:\s*$/.test(s)||NOTES_RE.test(s.replace(/[\s:]+$/,''))||MEAS_RE.test(s);
+    if(inItem&&(open||(!head&&!CAT_RE.test(s)))){out[out.length-1]+=' '+s;return}
+    if(CAT_RE.test(s)){out.push(l);inItem=true;return}
+    out.push(l);inItem=false});
+  return out.join('\n');
+}
+function splitGluedHeaders(t){
+  return t.replace(/(?<![\u0590-\u05FF])(ארוחת\s+(?:בוקר|ביניים(?:\s+[אב]['׳])?|צהריים|צהרים|ערב|לילה)|לפני אימון|אחרי אימון|לפני השינה)(\s*\d{1,2}:\d{2}(?:\s*[-–]\s*\d{1,2}:\d{2})?)?(?=\s*(?:\d|$|\n|\s*\d{1,2}:\d{2}))/gm,(m,h,tm)=>`\n${h}${tm||''}:\n`);
+}
+const mirrorParens=t=>t.replace(/[()]/g,c=>c==='('?')':'(');
+async function pdfLines(buf){
+  const lib=await loadLib('pdf');lib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+  const doc=await lib.getDocument({data:buf}).promise;const out=[];
+  for(let p=1;p<=doc.numPages;p++){
+    const page=await doc.getPage(p);const tc=await page.getTextContent();
+    const items=tc.items.filter(i=>i.str&&i.str.replace(BIDI,'').trim()).map(i=>({s:i.str.replace(BIDI,''),x:i.transform[4],y:i.transform[5],w:i.width||0,fs:Math.abs(i.transform[0])||10}));
+    const lines=[];items.sort((a,b)=>b.y-a.y).forEach(it=>{const L=lines.find(l=>Math.abs(l.y-it.y)<3.5);if(L)L.items.push(it);else lines.push({y:it.y,items:[it]})});
+    lines.sort((a,b)=>b.y-a.y).forEach(L=>{L.items.sort((a,b)=>(b.x+b.w)-(a.x+a.w));out.push(L.items)});
+    out.push(null);
+  }
+  return out;
+}
+// items of one line → cells (a big horizontal gap = new cell), right → left
+function lineCells(items){
+  const cells=[];let cur=null,prev=null;
+  items.forEach(it=>{const gap=prev?prev.x-(it.x+it.w):0;
+    if(!cur||gap>it.fs*1.3){cur={s:'',x0:it.x,x1:it.x+it.w};cells.push(cur)}
+    else if(gap>it.fs*.12&&!/\s$/.test(cur.s)&&!/^\s/.test(it.s))cur.s+=' ';
+    cur.s+=it.s;cur.x0=Math.min(cur.x0,it.x);prev=it});
+  cells.forEach(c=>{c.s=c.s.replace(/[ ]{2,}/g,' ').trim();c.c=(c.x0+c.x1)/2});return cells;
+}
+async function pdfText(buf){
+  return (await pdfLines(buf)).map(L=>L?lineCells(L).map(c=>c.s).join('\t'):'').join('\n');
+}
+// workout tables: use the header row's column positions; a line without sets/reps is a wrapped cell → glue it to the row above, per column
+async function pdfWorkoutText(buf){
+  const lines=await pdfLines(buf);const isNum=t=>/^\d+(?:[.,]\d+)?(?:\s*[-–]\s*\d+(?:[.,]\d+)?)?$/.test(t.trim());
+  let cols=null,page=0;const ents=[];
+  lines.forEach(L=>{
+    if(!L){page++;return}
+    const cells=lineCells(L),joined=cells.map(c=>c.s).join(' '),y=L[0].y;
+    if(/תרגיל/.test(joined)&&/(סט|חזר)/.test(joined)&&cells.length>=3){cols=cells.map(c=>({label:c.s,c:c.c}));ents.push({k:'header',page,y,text:cols.map(c=>c.label).join('\t')});return}
+    const title=cells.length<=2&&!cells.some(c=>isNum(c.s))&&(WK_HEAD_RE.test(joined)||/^[A-H]\s*[-–:]/.test(joined));
+    if(!cols||title){ents.push({k:'text',page,y,text:joined});return}
+    const byCenter=c=>{let bi=0,bd=1e9;cols.forEach((k,i)=>{const d=Math.abs(k.c-c.c);if(d<bd){bd=d;bi=i}});return bi};
+    const row=cols.map(()=>''),xr=cols.map(()=>null);cells.forEach(c=>{const bi=byCenter(c);row[bi]=(row[bi]?row[bi]+' ':'')+c.s;xr[bi]=Math.max(xr[bi]??-1e9,c.x1)});
+    if(!row.some(isNum)){ents.push({k:'cont',page,y,cells,row});return}
+    ents.push({k:'row',page,y,row,xr});return;
+
+  });
+  // attach each wrapped piece to the nearest real row on the same page, without crossing a title/header
+  ents.forEach((e,i)=>{if(e.k!=='cont')return;let best=null,bd=1e9;
+    for(const dir of [-1,1])for(let j=i+dir;j>=0&&j<ents.length;j+=dir){const f=ents[j];if(f.page!==e.page||f.k==='header'||f.k==='text')break;if(f.k==='row'){const d=Math.abs(f.y-e.y);if(d<bd){bd=d;best=f}break}}
+    if(!best){e.k='text';e.text=e.row.filter(Boolean).join(' ');return}
+    // wrapped text is right-aligned like the row's cell above/below it → match by right edge
+    const r=cols.map(()=>'');e.cells.forEach(c=>{let bi=-1,bd=1e9;best.xr.forEach((x,i)=>{if(x==null)return;const d=Math.abs(x-c.x1);if(d<bd){bd=d;bi=i}});if(bi<0||bd>40){let bc=0,dd=1e9;cols.forEach((k,i)=>{const d=Math.abs(k.c-c.c);if(d<dd){dd=d;bc=i}});bi=bc}r[bi]=(r[bi]?r[bi]+' ':'')+c.s});
+    e.row=r;(best.parts=best.parts||[]).push(e)});
+  const out=[];let hdrDone=false;
+  ents.forEach(e=>{
+    if(e.k==='header'){if(!hdrDone){out.push(e.text);hdrDone=true}return}
+    if(e.k==='text'){out.push(e.text);return}
+    if(e.k!=='row')return;
+    const all=[e,...(e.parts||[])].sort((a,b)=>b.y-a.y); // top → bottom
+    out.push(e.row.map((_,ci)=>all.map(x=>x.row[ci]).filter(Boolean).join(' ')).join('\t'));
+  });
+  return out.join('\n');
+}
+async function docxText(buf){const m=await loadLib('docx');return (await m.extractRawText({arrayBuffer:buf})).value}
+// Hebrew OCR drops digits of numbers ("200 גרם" → "0 גרם"). A second, English pass reads the digits right —
+// so we take each line's numbers from the English pass (right-most first = Hebrew reading order).
+async function imgText(file,onp){
+  const T=await loadLib('ocr');
+  const lg=(base,span)=>({logger:m=>{if(m.status==='recognizing text'&&onp)onp(Math.round(base+m.progress*span))}});
+  const h=(await T.recognize(file,'heb',lg(0,70))).data;
+  let e=null;try{e=(await T.recognize(file,'eng',lg(70,30))).data}catch(err){}
+  const NUM=/\d+(?:[.,]\d+)?/g;
+  return h.lines.map(l=>{
+    let t=l.text.trim();if(!e||!NUM.test(t))return t;NUM.lastIndex=0;
+    const cy=(l.bbox.y0+l.bbox.y1)/2,hh=(l.bbox.y1-l.bbox.y0)||20;
+    const el=e.lines.find(x=>Math.abs((x.bbox.y0+x.bbox.y1)/2-cy)<hh*.6);if(!el)return t;
+    const en=el.text.trim().split(/\s+/).filter(w=>/^\d+(?:[.,]\d+)?%?$/.test(w)).map(w=>w.replace('%','')).reverse();
+    // only the first number in the line (the quantity) — later numbers like "5%" stay as Hebrew OCR read them
+    let done=false;return en.length?t.replace(NUM,m=>{if(done)return m;done=true;return en[0]}):t;
+  }).join('\n');
+}
+function tidyImported(t){
+  return t.replace(BIDI,'').replace(/\r/g,'')
+    .split('\n').map(l=>l.replace(/^[\s\t]*[●•▪◦·\-–*+]+\s*/,'').replace(/\s+([:.,])/g,'$1').replace(/[ ]{2,}/g,' ').trim())
+    .reduce((a,l)=>{if(!l&&!a[a.length-1])return a;a.push(l);return a},[]) // collapse blank runs
+    .join('\n').trim();
+}
+// a continuation line (e.g. "1 קופסת טונה במים" that wrapped in the PDF) belongs to the line above when that line ended with "או"
+function joinWraps(t){
+  const L=t.split('\n'),out=[];
+  L.forEach(l=>{const p=out[out.length-1];if(p!=null&&l&&(/(\sאו|\/|\+|,)$/.test(p)||/^(או|\/|\+)\s/.test(l)||(/^[^\d:]{1,22}$/.test(l)&&!MEAL_RE.test(l)&&!NOTES_RE.test(l)&&/\d/.test(p)&&!/:$/.test(p)&&!/^(\d+\s)?ירקות/.test(l))))out[out.length-1]=p+' '+l;else out.push(l)});
+  return out.join('\n');
+}
+function fixRanges(t){return t.replace(/(\d+(?:[.,]\d+)?)\s*[–-]\s*(\d+(?:[.,]\d+)?)/g,(m,a,b)=>+a>+b?`${b}–${a}`:m)}
+async function importFile(file){
+  const name=file.name.toLowerCase();const st=$('#impState');st.textContent='⏳ קורא את הקובץ…';
+  try{
+    let raw='';const buf=await file.arrayBuffer();
+    if(name.endsWith('.pdf'))raw=TYPE==='workout'?mirrorParens(await pdfWorkoutText(buf)):joinBullets(mirrorParens(await pdfText(buf)));
+    else if(name.endsWith('.docx'))raw=joinBullets(await docxText(buf));
+    else if(/\.(png|jpe?g|webp|heic|gif)$/.test(name)||file.type.startsWith('image/'))raw=await imgText(file,p=>st.textContent=`⏳ מזהה טקסט בתמונה… ${p}%`);
+    else raw=new TextDecoder().decode(buf);
+    let t=tidyImported(raw);
+    if(TYPE==='swap'){await swImport('menu',file);st.textContent='';return}
+    if(TYPE==='workout'){t=fixRanges(t);
+      const tl=t.split('\n').find(l=>/^תוכנית(\s+אימון)?\s*[-–]\s*/.test(l)&&!/\t/.test(l));
+      if(tl){const m=tl.match(/[-–]\s*([^\d\s][^\d]*?)\s*(\d{1,2}[./]\d{1,2}(?:[./]\d{2,4})?)?\s*$/);if(m){if(m[1]&&!$('#client').value.trim())$('#client').value=m[1].trim();if(m[2])$('#date').value=m[2]}t=t.split('\n').filter(l=>l!==tl).join('\n')}wk.mode='free';saveWk();applyPanels();$('#src').value=t;await render();
+      st.textContent=`✓ יובא: ${parseWorkout(t).sections.length} אימונים`;}
+    else if(TYPE==='swap'){const ls=t.split('\n').filter(Boolean);sw.recipeName=ls[0]||'';sw.recipe=ls.slice(1).join('\n');saveSw();drawSwap();await render();st.textContent='✓ המתכון יובא — בדוק את המצרכים';}
+    else{
+      t=joinWraps(tidyImported(splitGluedHeaders(t)));
+      // title line "תפריט אודליה 6.10 עד 20.10" → client + date
+      const tl=t.split('\n').find(l=>/^תפריט\s+/.test(l));
+      if(tl){const m=tl.match(/^תפריט\s+([^\d\s][^\d]*?)\s*(\d{1,2}[./]\d{1,2}(?:[./]\d{2,4})?(?:\s*(?:עד|-|–)\s*\d{1,2}[./]\d{1,2}(?:[./]\d{2,4})?)?)?\s*$/);
+        if(m){if(m[1]&&!$('#client').value.trim())$('#client').value=m[1].replace(/^_+/,'').trim();if(m[2])$('#date').value=m[2].replace(/\s*עד\s*/,' – ')}
+        t=t.split('\n').filter(l=>l!==tl).join('\n')}
+      const was=$('#src').value;if(was.trim()&&!confirm('להחליף את התפריט שכתוב עכשיו בתפריט מהקובץ?')){st.textContent='בוטל';return}
+      fitUndo=was;$('#undoFit').hidden=false;$('#src').value=t;mnLast=null;await render();
+      const d=parseMenu(t);st.innerHTML=`✓ יובאו <b>${d.sections.length}</b> ארוחות`+(d.meas.length?` · ${d.meas.length} מדדים`:'')+(d.notes&&d.notes.length?` · ${d.notes.length} דרישות`:'')+' — עבור על הכרטיסים ובדוק';
+    }
+    toast('📄 הקובץ יובא ✓');
+  }catch(e){st.innerHTML=`<span class="warn">לא הצלחתי לקרוא את הקובץ: ${escH(e.message)}</span>`}
+}
+$('#impFile').onchange=e=>{const f=e.target.files[0];if(f)importFile(f);e.target.value=''};
+const side=$('.side');
+['dragover','dragenter'].forEach(ev=>side.addEventListener(ev,e=>{if([...e.dataTransfer.types].includes('Files')){e.preventDefault();side.classList.add('drop')}}));
+['dragleave','drop'].forEach(ev=>side.addEventListener(ev,e=>{if(ev==='drop'){e.preventDefault();const f=e.dataTransfer.files[0];if(f)importFile(f)}side.classList.remove('drop')}));
+HELP_TX.unshift(['#impBox','📄 ייבוא מקובץ — בוחרים (או גוררים לכאן) PDF, Word, תמונה או טקסט של תפריט / תוכנית / מתכון. האתר קורא אותו ומחלק לבד לארוחות. אחר כך רק עוברים ובודקים.']);
+
+/* ================= SWAP: pick meals from the client's menu file + recipe from file/screenshot ================= */
+async function fileToText(file,onp){
+  const name=file.name.toLowerCase();const buf=await file.arrayBuffer();
+  if(name.endsWith('.pdf'))return joinBullets(mirrorParens(await pdfText(buf)));
+  if(name.endsWith('.docx'))return joinBullets(await docxText(buf));
+  if(/\.(png|jpe?g|webp|heic|gif)$/.test(name)||file.type.startsWith('image/'))return await imgText(file,onp);
+  return new TextDecoder().decode(buf);
+}
+const menuTextFrom=raw=>joinWraps(tidyImported(splitGluedHeaders(tidyImported(raw))));
+function drawSwMenu(){
+  const L=sw.menuMeals||[],box=$('#swMenuMeals');
+  if(!L.length){box.innerHTML='';return}
+  const sel=sw.sel||[];
+  box.innerHTML=`<div class="help" style="margin-bottom:6px">✓ סמן את הארוחות שהמתכון מחליף:</div>`+L.map((m,i)=>`<button class="swm${sel.includes(i)?' on':''}" data-i="${i}"><b>${escH(m.name)}</b><small>${r0(menuTotals(`${m.name}:\n${m.text}`).kcal)} קק״ל</small></button>`).join('');
+  box.querySelectorAll('.swm').forEach(b=>b.onclick=()=>{
+    const i=+b.dataset.i;let s=(sw.sel||[]).slice();s=s.includes(i)?s.filter(x=>x!==i):[...s,i].sort((a,b)=>a-b);sw.sel=s;
+    if(s.length){sw.meals=s.map(j=>({name:L[j].name,text:L[j].text}));sw.n=s.length}
+    saveSw();drawSwap();render();
+  });
+}
+async function swImport(kind,file){
+  const st=kind==='menu'?$('#swMenuState'):$('#swRecState');st.textContent='⏳ קורא את הקובץ…';
+  try{
+    const raw=await fileToText(file,p=>st.textContent=`⏳ מזהה טקסט בתמונה… ${p}%`);
+    if(kind==='menu'){
+      const t=menuTextFrom(raw);const mf=mealsFromText(t);
+      sw.menuMeals=mf.meals.filter(m=>m.text.trim());sw.sel=[];saveSw();drawSwMenu();
+      const tl=t.split('\n').find(l=>/^תפריט\s+/.test(l));const cm=tl&&tl.match(/^תפריט\s+([^\d\s][^\d]*?)\s*\d/);if(cm&&!$('#client').value.trim())$('#client').value=cm[1].replace(/^_+/,'').trim();
+      st.innerHTML=`✓ נמצאו <b>${sw.menuMeals.length}</b> ארוחות — סמן אילו המתכון מחליף`;
+    }else{
+      const ls=tidyImported(raw).split('\n').filter(Boolean);
+      // a recipe screenshot often starts with the dish name; if the first line looks like an ingredient — leave the name empty
+      const first=ls[0]||'';const isIng=/\d/.test(first)&&parseQty(first).q;
+      sw.recipeName=isIng?'':first;sw.recipe=(isIng?ls:ls.slice(1)).join('\n');saveSw();drawSwap();
+      st.textContent='✓ המתכון יובא — בדוק שהמצרכים והכמויות נכונים';
+    }
+    await render();
+  }catch(e){st.innerHTML=`<span class="warn">לא הצלחתי לקרוא: ${escH(e.message)}</span>`}
+}
+$('#swMenuFile').onchange=e=>{const f=e.target.files[0];if(f)swImport('menu',f);e.target.value=''};
+$('#swRecFile').onchange=e=>{const f=e.target.files[0];if(f)swImport('recipe',f);e.target.value=''};
+drawSwMenu();
+HELP_TX.unshift(
+ ['#swMenuBox','📄 מעלים את קובץ התפריט של הלקוח (PDF / Word / צילום מסך) — ואז מסמנים אילו ארוחות המתכון מחליף. הערכים שלהן הופכים ליעד של המתכון.'],
+ ['#swRecBox','📷 מעלים את המתכון שהלקוח שלח — צילום מסך מטיקטוק/אינסטגרם, PDF או טקסט. האתר קורא את המצרכים ומחשב כמה הוא יכול לאכול.'],
+ ['.swm','לוחצים כדי לסמן / לבטל ארוחה שהמתכון מחליף.']);
 
 setType('workout',true);
 </script>
