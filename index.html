@@ -1018,6 +1018,8 @@ function catOf(name,m){
   if(!m||!m.kcal)return '';
   if(m.p*4/m.kcal>=.32)return 'חלבון';if(m.f*9/m.kcal>=.5)return 'שומן';return 'פחמימה';
 }
+// foods counted by the piece — never inherit grams from the option before ("130 גרם כוסמת או פיתה")
+const INH_SKIP=/^(ביצה|לחם|פיתה|לחמני|טורטיה|דפי אורז|פריכית|קרקר|מעדן|יוגורט|משקה|טונה|תמר|בננה|תפוח עץ|תפוז|אפרסק|אגס|שזיף|קיווי|קוטג|אבקת חלבון|חטיף)/;
 const counted=it=>(it.kind==='item'||it.kind==='group')&&!it.alt&&!(it.optN>1);
 
 function parseMenu(text){
@@ -1064,7 +1066,7 @@ function parseMenu(text){
     const base={alt,li,optN:s.optN,raw:line};
     if(opts.length>=2||cat){
       let lastQ=null;
-      const os=opts.map(o=>{const pq=parseQty(stripParen(clean(o)));const inh=(!pq.q&&lastQ&&/^(g|kg)$/.test(lastQ.kind))?lastQ:null;if(pq.q)lastQ=pq.q;return {text:o,amt:pq.amt,name:pq.name,m:optMacros(o,inh)}});
+      const os=opts.map(o=>{const pq=parseQty(stripParen(clean(o)));const fdI=findFood(stripParen(pq.name));const inh=(!pq.q&&lastQ&&/^(g|kg)$/.test(lastQ.kind)&&!(fdI&&INH_SKIP.test(fdI.k)))?lastQ:null;if(pq.q)lastQ=pq.q;return {text:o,amt:pq.amt,name:pq.name,m:optMacros(o,inh)}});
       const first=os.find(o=>o.m);
       const g={...base,kind:'group',cat:cat||catOf(os[0].name,first&&first.m),catLabel:cm?cm[0]:'',opts:os,m:first?first.m:null,name:os.map(o=>o.text).join(' או '),amt:''};
       s.items.push(g);return;
