@@ -2767,7 +2767,7 @@ async function syncNow(silent){
     setSyncState(`✓ מסונכרן · ${M.docs.length} מסמכים · ${new Date().toLocaleTimeString('he-IL',{hour:'2-digit',minute:'2-digit'})}`);
     if(!silent)toast('☁️ מסונכרן ✓');
     if(!$('#drawer').hidden)drawDrawer();if(typeof updWaitBadge==='function'){updWaitBadge();drawSnips()}if(typeof drawLogoBox==='function')drawLogoBox();
-  }catch(e){SY.quiet=false;setSyncState('⚠️ '+e.message);if(e.message==='מפתח שגוי'&&typeof showLogin==='function'){SY.key='';_rawSet('pdfs2_sync_key','');showLogin('הסיסמה השתנתה — היכנס שוב');return}if(!silent)toast('הסנכרון נכשל: '+e.message)}
+  }catch(e){SY.quiet=false;setSyncState('⚠️ '+e.message);if(!silent)toast('הסנכרון נכשל: '+e.message)}
   finally{SY.busy=false;if(SY.again){SY.again=false;schedPush()}}
 }
 function schedPush(){if(!SY.url||!SY.key)return;clearTimeout(SY.timer);SY.timer=setTimeout(()=>syncNow(true),2500)}
@@ -3463,6 +3463,7 @@ document.body.insertAdjacentHTML('beforeend',`<div class="login" id="loginDlg" h
   <button class="lg-go" type="submit">כניסה</button><div class="lg-err" id="lgErr"></div>
 </form></div>`);
 document.head.insertAdjacentHTML('beforeend',`<style>
+.login[hidden]{display:none!important}
 .login{position:fixed;inset:0;z-index:200;background:var(--bg,#f6f4ec);display:flex;align-items:center;justify-content:center;padding:16px}
 .lg-box{width:min(340px,100%);display:flex;flex-direction:column;gap:12px;text-align:center;align-items:stretch}
 .lg-logo{width:92px;height:auto;margin:0 auto}.lg-logo[src=""]{display:none}.lg-t{font-size:1.25rem;letter-spacing:.18em;font-weight:500}.lg-t b{color:var(--accent)}
@@ -3487,7 +3488,6 @@ function logout(){if(!confirm('לצאת מהחשבון? הנתונים יימח�
 function drawWho(){const box=$('#syncBox');if(!box)return;let w=$('#whoBar');if(!w){w=h('div','who-bar');w.id='whoBar';box.prepend(w)}
   w.innerHTML=`<span>👤 מחובר: <b>${escH(store.get('pdfs2_user')||'אביאל')}</b>${isStaff()?' · עובד':''}</span><button class="chip-btn" id="logoutBtn">יציאה</button>`;$('#logoutBtn').onclick=logout}
 if(SY.url&&SY.key)drawWho();
-$('#syncOff').insertAdjacentHTML('beforeend','<button class="chip-btn" id="lgOpen" style="margin-top:6px">🔐 כניסה עם סיסמה</button>');$('#lgOpen').onclick=()=>showLogin();
 $('#loginDlg').addEventListener('click',e=>{if(e.target.id==='loginDlg')$('#loginDlg').hidden=true});
 
 setType('workout',true);
