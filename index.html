@@ -662,7 +662,7 @@ body.helpmode .side button,body.helpmode .side input,body.helpmode .side textare
       <div class="mt-res" id="mtRes"></div>
       <div class="row2"><label class="f">או יעד ידני: קלוריות<input class="inp" id="mt_kcal" inputmode="numeric"></label><label class="f">חלבון (גר׳)<input class="inp" id="mt_p" inputmode="numeric"></label></div>
       <label class="tog" style="margin-top:8px"><input type="checkbox" id="mt_auto" checked>🎯 להתאים את התפריט ליעד אוטומטית</label>
-      <label class="tog" style="margin-top:4px"><input type="checkbox" id="mt_show" checked>להציג את היעד ב-PDF</label>
+      <input type="checkbox" id="mt_show" hidden>
     </div>
     <div class="tools">
       <button class="chip-btn" id="sample">טען דוגמה</button>
@@ -825,7 +825,7 @@ const FOODS = [
  ['דניס',22,0,10.2,150], // 180 קק״ל (אושר ע״י אביאל) — דג שומני יותר
  ['דג|דג לבן|לברק|מוסר|בקלה|פילה דג',26,0,2.6,150], // ~128 קק״ל (אושר ע״י אביאל)
  ['ביצה|ביצים|חביתה|חביתות|ביצה קשה|ביצים קשות|ביצה שלמה',12.6,.7,9.5,50], // 70 קק״ל ליחידה (אושר ע״י אביאל)
- ['חלבון ביצה|חלבוני ביצה|חלבונים',11,1,0,35], // 17 קק״ל ליחידה (אושר ע״י אביאל)
+ ['חלבון ביצה|חלבוני ביצה|חלבונים|לבן ביצה|לבני ביצה',11,1,0,35], // 17 קק״ל ליחידה (אושר ע״י אביאל)
  ['קוטג\' 3%|קוטג׳ 3%|קוטג 3%',11,3,2.7,250], // 80 קק״ל/100 (אושר ע״י אביאל)
  ['קוטג\' 5%|קוטג׳ 5%|קוטג 5%|קוטג|קוטג\'|קוטג׳',11,3.5,4.2,250], // 95 קק״ל/100 (אושר ע״י אביאל)
  ['גבינה לבנה|לבנה|גבינת שמנת|סקי',9,4,5,250],
@@ -994,7 +994,9 @@ function splitTop(s,re){
 const OPT_SEP=/\s+או\s+|\s+\/\s+|\s*\\\s*/g, PLUS_SEP=/\s*\+\s*/g;
 const stripParen=s=>s.replace(/\([^)]*\)/g,' ').replace(/\s+/g,' ').trim();
 const KCAL_RE=/(?:עד|כ-?|~)\s*(\d{2,4})\s*(?:קלוריות|קק["״]?ל)/;
-const CAT_RE=/^(חלבון רזה|חלבון|פחמימות|פחמימה|שומנים|שומן|ירקות|ירק|פירות|פרי)\s*[:\-–]\s*/;
+const CAT_RE=/^(חלבון רזה|חלבון|פחמימות|פחמימה|שומנים|שומן|ירקות|ירק|פירות|פרי)\s*(?:\([^)]{0,20}\))?\s*[:\-–]\s*/;
+const INFO_RE=/^(ערכי (ה)?ארוחה|ערכים\s*:|ערכי תזונה)/;
+const SUMMARY_RE=/^(סיכום ערכים|סה["״]?כ יומי|סיכום יומי)/;
 const CAT_NORM={'חלבון רזה':'חלבון','פחמימות':'פחמימה','שומנים':'שומן','ירק':'ירקות','פירות':'פרי'};
 const FRUIT_RE=/פירות|פרי|אננס|תמר|מג.הול|תפוח(?! אדמה)|בננה|אגס|אפרסק|ענבים|תפוז|מנגו|אבטיח|מלון|תות|קיווי|שזיף|נקטרינה|קלמנטינה/;
 const VEG_RE=/ירק|סלט|מלפפון|עגבני|גזר|פלפל|ברוקולי/;
@@ -1028,6 +1030,9 @@ function parseMenu(text){
   const ensure=()=>{if(!cur){cur={name:'התפריט',time:'',items:[],optN:0,hli:-1};sections.push(cur)}return cur};
   text.split('\n').forEach((raw,li)=>{
     let line=raw.trim();if(!line||/^[+\s]+$/.test(line))return;
+    if(INFO_RE.test(line)||/\|.*(קק["״]?ל|גרם)/.test(line))return; // "ערכי הארוחה: 490 קק״ל | 35 גרם חלבון" — the coach's own summary, not food
+    if(SUMMARY_RE.test(line)){mode='skip';return}
+    if(mode==='skip'&&!(MEAL_RE.test(line)||/:\s*$/.test(line)))return;
     // measurements block before the first meal
     if(!sections.length){const mm=line.replace(/[‪-‮​]/g,'').match(MEAS_RE);if(mm){const v=mm[2].replace(/[.,]$/,'');if(v)meas.push({k:mm[1],v});return}}
     if(line.startsWith('#')){line=line.replace(/^#+\s*/,'');if(NOTES_RE.test(line)){mode='notes';notes=notes||[];if(notesLi<0)notesLi=li;return}}
@@ -1041,6 +1046,7 @@ function parseMenu(text){
       mode='meal';
       let name=noTime,inline='';
       if(colon>-1){name=noTime.slice(0,colon).trim();inline=noTime.slice(colon+1).trim()}
+      name=name.replace(/\(\s*[-–]?\s*\)/g,'').trim();
       if(/^ארוחה\s*\d+$/.test(name)&&inline&&!/\d/.test(inline)){name=inline;inline=''}
       cur={name:name||'ארוחה',time:tm?tm[1]:'',items:[],optN:0,hli:li,inline};sections.push(cur);nextAlt=false;
       if(inline) inline.split(/\s*,\s*/).filter(Boolean).forEach(x=>addItem(x,-1));
@@ -1073,7 +1079,7 @@ function parseMenu(text){
     }
     const {amt,name,q}=parseQty(line);
     const m=optMacros(line);
-    if(!m&&!q&&line.split(/\s+/).length>=3&&!findFood(stripParen(name))){s.items.push({...base,kind:'note',name:line});return}
+    if(!m&&(!q||/קלוריות חופשיות/.test(line))&&line.split(/\s+/).length>=3&&!findFood(stripParen(name))){s.items.push({...base,kind:'note',name:line});return}
     s.items.push({...base,kind:'item',name,amt,m});
   }
   return {sections:sections.filter(s=>s.items.some(i=>i.kind!=='or')),all:sections,notesLi,notes:notes&&notes.filter(Boolean),meas,intro};
@@ -1221,7 +1227,7 @@ function buildMenuBlocks(data,o){
     if(counted(it)&&it.m){madd(s.mt,it.m);madd(tot,it.m);known++}
   })});
   const showM=o.macros&&known>0;
-  const T=o.target,tg=k=>T?`<div class="was">יעד: ${T[k].toLocaleString()}</div>`:'';
+  const tg=k=>''; // PDF shows only what's in the menu — never the target
   const meas=data.meas&&data.meas.length?`<div class="meas-t">מדדים נוכחיים</div><div class="meas">${data.meas.map(x=>`<div class="ms"><b>${escH(x.v)}</b><small>${escH(x.k)}</small></div>`).join('')}</div>`:'';
   const tiles=showM?`<div class="tiles">
      <div class="tile k"><div class="v">${r0(tot.kcal).toLocaleString()}<small>קק״ל</small></div><div class="l">קלוריות ליום</div>${tg('kcal')}</div>
@@ -1607,6 +1613,8 @@ function swapCompute(){
   const bm=g?{p:B.p*g/100,c:B.c*g/100,f:B.f*g/100,kcal:(B.p*4+B.c*4+B.f*9)*g/100}:null;addM(A,bm);
   return {meals,target,rec,R,f,g,B,bm,A,ready:true};
 }
+const GRAM_PREF=/^(ירקות|מלפפון|עגבני|טונה)/; // always written in grams after scaling
+const gramsTxt=g=>`${g>=40?Math.round(g/5)*5:Math.max(1,Math.round(g))} גרם`;
 function scaledAmt(it,f){
   if(it.spice) return 'לפי הטעם';
   const q=it.q;
@@ -1616,7 +1624,8 @@ function scaledAmt(it,f){
   let u=q.u,x=n;
   if(q.kind==='cup'&&x<.75){u='כף';x*=16}
   if((q.kind==='tbsp'||u==='כף')&&x<.75){u='כפית';x*=3}
-  if(!u){const v=it.food&&(it.food.u<=15||it.food.k==='ביצה'||it.food.k==='חלבון ביצה')?Math.max(1,Math.round(x)):roundHalf(x);return numTxt(v)}
+  if(it.food&&GRAM_PREF.test(it.food.k)&&q.kind!=='slice')return gramsTxt(x*(q.kind==='cup'?(it.food.cup||200):it.food.u));
+  if(!u){const v=it.food&&(it.food.u<=15||it.food.k==='ביצה'||it.food.k==='חלבון ביצה')?Math.max(1,Math.round(x)):roundHalf(x);if(v%1&&it.food&&it.food.u>=40)return gramsTxt(x*it.food.u);return numTxt(v)}
   const v=roundHalf(x);
   return `${numTxt(v)} ${unitForm(u,v)}`;
 }
@@ -1963,6 +1972,7 @@ function scalePart(part,k){
   const c=clean(part);const pq=parseQty(stripParen(c));const food=findFood(pq.name);
   if(!food)return part;
   if(!pq.q){
+    if(GRAM_PREF.test(food.k))return Math.abs(k-1)<.05?part:`${gramsTxt(food.u*k)} ${part.trim()}`;
     if(food.u>=50&&food.u<=300){const n=Math.max(1,Math.round(k));return n===1?part:`${n} ${part.trim()}`}
     return part;
   }
@@ -2901,6 +2911,11 @@ function tidyImported(t){
     .join('\n').trim();
 }
 // a continuation line (e.g. "1 קופסת טונה במים" that wrapped in the PDF) belongs to the line above when that line ended with "או"
+function joinFoodWraps(t){const L=t.split('\n');const out=[];
+  L.forEach(l=>{const prev=out[out.length-1];const w=l.trim().split(/\s+/)[0]||'';
+    if(prev&&w&&!/^\d/.test(w)&&!CAT_RE.test(l.trim())&&!MEAL_RE.test(l.trim())){const pw=prev.trim().split(/\s+/).pop()||'';const a=findFood(pw),b=findFood(pw+' '+w);
+      if(b&&(!a||b.a.length>a.a.length)&&b.a.includes(w)&&b.a.includes(pw)){out[out.length-1]=prev.replace(/\s+$/,'')+' '+l.trim();return}}
+    out.push(l)});return out.join('\n')}
 function joinWraps(t){
   const L=t.split('\n'),out=[];
   L.forEach(l=>{const p=out[out.length-1];if(p!=null&&l&&(/(\sאו|\/|\+|,)$/.test(p)||/^(או|\/|\+)\s/.test(l)||(/^[^\d:]{1,22}$/.test(l)&&!MEAL_RE.test(l)&&!NOTES_RE.test(l)&&/\d/.test(p)&&!/:$/.test(p)&&!/^(\d+\s)?ירקות/.test(l))))out[out.length-1]=p+' '+l;else out.push(l)});
@@ -2950,7 +2965,7 @@ async function fileToText(file,onp){
   if(/\.(png|jpe?g|webp|heic|gif)$/.test(name)||file.type.startsWith('image/'))return await imgText(file,onp);
   return new TextDecoder().decode(buf);
 }
-const menuTextFrom=raw=>joinWraps(tidyImported(splitGluedHeaders(tidyImported(raw))));
+const menuTextFrom=raw=>joinFoodWraps(joinWraps(tidyImported(splitGluedHeaders(tidyImported(raw)))));
 function drawSwMenu(){
   const L=sw.menuMeals||[],box=$('#swMenuMeals');
   if(!L.length){box.innerHTML='';return}
