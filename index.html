@@ -127,6 +127,14 @@ textarea.small{min-height:80px;flex:none;width:100%}
 #mnMeas{grid-template-columns:repeat(4,1fr);row-gap:8px}
 .tpls{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:10px;font-size:.72rem;color:var(--text3)}
 .tpls .chip-btn{height:28px;font-size:.74rem}
+.tpls{flex-direction:column;align-items:stretch;gap:12px}
+.tp-sec{display:flex;flex-direction:column;gap:7px}.tp-h{font-size:.8rem;font-weight:800;color:var(--text)}
+.tp-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:6px}
+.tp-card,.tp-k{display:flex;flex-direction:column;align-items:center;gap:1px;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:7px 6px;cursor:pointer;font-family:inherit;color:var(--text)}
+.tp-card b,.tp-k b{font-size:.8rem}.tp-card small,.tp-k small{font-size:.66rem;color:var(--text3)}
+.tp-card:hover,.tp-k:hover{border-color:var(--accent)}.tp-k.hot{border-color:var(--accent);background:rgba(91,107,47,.08)}
+.tp-ks{display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));gap:6px}
+.tp-now{font-size:.78rem;color:var(--text2)}
 #swap{display:flex;flex-direction:column;gap:14px}
 #swap .days-pick{grid-template-columns:1fr 1fr}
 #swRecipe{min-height:220px;flex:none;width:100%}
@@ -1733,6 +1741,7 @@ async function render(){
   else{res=buildWorkoutBlocks(wiz?wdata:parseWorkout(src),o);const s=res.stats;
     $('#stats').innerHTML=`זוהו <b>${s.count}</b> טבלאות · <b>${s.items}</b> תרגילים`+(o.muscles&&s.noMus.length?`<br><span class="warn">בלי קבוצת שריר: ${s.noMus.map(escH).join(', ')} — אפשר לכתוב "חזה - …" בתחילת השורה</span>`:'')+(typeof changesNote==='function'?changesNote():'');}
   pages=paginate($('#stage'),res.blocks,o);drawPreview(pv);
+  if(TYPE==='menu'&&typeof drawMenuTpls==='function')drawMenuTpls();
 }
 function drawPreview(pv){
   const w=Math.min(pv.clientWidth-(innerWidth<900?32:56),680),sc=w/794;
@@ -2247,15 +2256,22 @@ const COACH_TPLS=[
 לשתות לפחות 3 ליטר מים ביום`}];
 
 function drawMenuTpls(){
-  const T=calcTarget().t;
-  $('#menuTpls').innerHTML='<span>הפורמטים שלך:</span>'+COACH_TPLS.map((t,i)=>`<button class="chip-btn" data-c="${i}">${t.n}</button>`).join('')+'<br><span>תבנית לפי קלוריות:</span>'+(T?`<button class="chip-btn hot" data-t="target">🎯 לפי היעד (${T.kcal.toLocaleString()})</button>`:'')+MENU_TPLS.map((t,i)=>`<button class="chip-btn" data-i="${i}">${t.n} קק״ל</button>`).join('');
-  $('#menuTpls').querySelectorAll('button').forEach(b=>b.onclick=()=>{
-    if($('#src').value.trim()&&!confirm('להחליף את התפריט שכתבת בתבנית?'))return;
-    if(b.dataset.c!=null){let tt=COACH_TPLS[+b.dataset.c].t;if(hasOptions(tt))tt=convertMenuToCats(tt).text;$('#src').value=tt;fitUndo=null;$('#undoFit').hidden=true;mnLast=null;render().then(()=>{const bb=balanceText($('#src').value);if(bb.n){$('#src').value=bb.text;mnLast=null}const xs=stripExcl($('#src').value);if(xs.n){$('#src').value=xs.text;mnLast=null}autoFit(true)});toast('נטען — עכשיו ממלאים ומתאימים ללקוח');return}
-    const T2=b.dataset.t==='target'?calcTarget().t:MENU_TPLS[+b.dataset.i];
-    $('#src').value=stripExcl(MENU_BASE).text;doFit(T2,true);fitUndo=null;$('#undoFit').hidden=true;
-    toast(`תבנית ${T2.kcal.toLocaleString()} קק״ל נטענה — עכשיו מתאימים ללקוח`);
-  });
+  const T=calcTarget().t,src=$('#src').value,cur=src.trim()?menuTotals(src):null,K=cur&&cur.kcal>300?r0(cur.kcal):0;
+  const fmt=n=>n.toLocaleString();
+  const coach=COACH_TPLS.map((t,i)=>{const d=parseMenu(t.t);return `<button class="tp-card" data-c="${i}"><b>${escH(t.n.replace(/^📋\s*/,''))}</b><small>${/ארוחות/.test(t.n)?'':d.sections.length+' ארוחות · '}~${fmt(Math.round(menuTotals(t.t).kcal/50)*50)} קק״ל · מתאים את עצמו ליעד</small></button>`}).join('');
+  let kc;
+  if(K){const steps=[-300,-200,-100,100,200,300].map(d=>{const v=Math.round((K+d)/50)*50;return `<button class="tp-k" data-k="${v}"><b>${fmt(v)}</b><small class="ltr">${d>0?'+':''}${d}</small></button>`}).join('');
+    kc=`<div class="tp-now">התפריט עכשיו: <b>${fmt(K)}</b> קק״ל · <b>${r0(cur.p)}</b> חלבון</div><div class="tp-ks">${steps}</div>${T&&Math.abs(T.kcal-K)>40?`<button class="tp-k hot" data-k="${T.kcal}" data-tp="${T.p}"><b>🎯 ליעד של הלקוח — ${fmt(T.kcal)}</b><small>${T.p} חלבון</small></button>`:''}<div class="help">לחיצה מגדילה או מקטינה את הכמויות בתפריט הנוכחי. ↩️ ביטול מחזיר.</div>`}
+  else{const base=T?[T.kcal-200,T.kcal,T.kcal+200].map(v=>Math.round(v/50)*50):MENU_TPLS.map(t=>t.kcal);
+    kc=`<div class="tp-now">אין עדיין תפריט — בחר נקודת התחלה:</div><div class="tp-ks">${base.map(v=>`<button class="tp-k${T&&v===Math.round(T.kcal/50)*50?' hot':''}" data-b="${v}"><b>${fmt(v)}</b><small>קק״ל</small></button>`).join('')}</div>`}
+  $('#menuTpls').innerHTML=`<div class="tp-sec"><div class="tp-h">📋 הפורמטים שלך</div><div class="tp-cards">${coach}</div></div><div class="tp-sec"><div class="tp-h">🎯 כמה קלוריות?</div>${kc}</div>`;
+  $('#menuTpls').querySelectorAll('[data-c]').forEach(b=>b.onclick=()=>{
+    if($('#src').value.trim()&&!confirm('להחליף את התפריט שכתבת בפורמט הזה?'))return;
+    let tt=COACH_TPLS[+b.dataset.c].t;if(hasOptions(tt))tt=convertMenuToCats(tt).text;$('#src').value=tt;fitUndo=null;$('#undoFit').hidden=true;mnLast=null;render().then(()=>{const bb=balanceText($('#src').value);if(bb.n){$('#src').value=bb.text;mnLast=null}const xs=stripExcl($('#src').value);if(xs.n){$('#src').value=xs.text;mnLast=null}autoFit(true)});toast('נטען — עכשיו ממלאים ומתאימים ללקוח')});
+  $('#menuTpls').querySelectorAll('[data-k]').forEach(b=>b.onclick=()=>{const k=+b.dataset.k,c=menuTotals($('#src').value);const p=b.dataset.tp?+b.dataset.tp:Math.min(r0(c.p),Math.round(k*.35/4));
+    mnLast=null;if(doFit({kcal:k,p},false)){mnLast=null;toast(`🎯 התפריט הותאם ל-${fmt(k)} קק״ל`)}});
+  $('#menuTpls').querySelectorAll('[data-b]').forEach(b=>b.onclick=()=>{const k=+b.dataset.b,P=T?T.p:(MENU_TPLS.find(t=>t.kcal===k)||{p:Math.round(k*.075)}).p;
+    $('#src').value=stripExcl(MENU_BASE).text;mnLast=null;doFit({kcal:k,p:P},true);fitUndo=null;$('#undoFit').hidden=true;toast(`תפריט בסיס ${fmt(k)} קק״ל נטען — עכשיו מתאימים ללקוח`)});
 }
 ['sex','age','w','h','act','goal','kcal','p'].forEach(k=>{const el=$('#mt_'+k);el.addEventListener(el.tagName==='SELECT'?'change':'input',drawMenuTpls)});
 drawMenuTpls();
