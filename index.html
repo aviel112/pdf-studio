@@ -135,6 +135,8 @@ textarea.small{min-height:80px;flex:none;width:100%}
 .tp-card:hover,.tp-k:hover{border-color:var(--accent)}.tp-k.hot{border-color:var(--accent);background:rgba(91,107,47,.08)}
 .tp-ks{display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));gap:6px}
 .tp-now{font-size:.78rem;color:var(--text2)}
+.tp-go{height:40px;border:0;border-radius:10px;background:var(--accent);color:#fff;font:inherit;font-weight:800;font-size:.82rem;cursor:pointer}
+.tp-warn{font-size:.76rem;background:rgba(217,164,65,.12);border:1px solid #d9a441;border-radius:9px;padding:6px 9px;color:var(--text)}
 #swap{display:flex;flex-direction:column;gap:14px}
 #swap .days-pick{grid-template-columns:1fr 1fr}
 #swRecipe{min-height:220px;flex:none;width:100%}
@@ -734,7 +736,7 @@ body.helpmode .side button,body.helpmode .side input,body.helpmode .side textare
       <li><b>➕ חלופות</b> — לכל שורה מוצעים מזונות מאותה קטגוריה, בכמות של אותן קלוריות. לחיצה = "או …".</li>
       <li><b>🔁 גיוון</b> — מזון שחוזר ב-3+ ארוחות מסומן בצד.</li>
       <li><b>📄 ייבוא מקובץ</b> — PDF / Word / צילום מסך של תפריט קיים → מתחלק לארוחות לבד.</li>
-      <li><b>תבניות</b> — הפורמטים שלך + תבניות לפי קלוריות. <b>🍱 הארוחות שלי</b> — ארוחה ששמרת, לכל לקוח.</li>
+      <li><b>🎯 התאמה ליעד</b> — כפתור אחד שבונה או מתאים את התפריט ליעד של הלקוח. <b>🍱 הארוחות שלי</b> — ארוחה ששמרת, לכל לקוח.</li>
       <li><b>📏 מדדים</b> ו<b>דרישות יומיות</b> (+ 📝 משפטים מוכנים) נכנסים ל-PDF. <b>🛒 רשימת קניות</b> — עמוד נוסף.</li></ul></details>
 
     <details><summary>🏋️ תוכנית אימון</summary>
@@ -1718,6 +1720,7 @@ function setType(t,init){
 let pages=[],timer;
 function opts(){return{client:$('#client').value.trim(),date:$('#date').value.trim(),title:$('#title').value.trim()||DEF_TITLE[TYPE],subs:[$('#subtitle').value.trim()],macros:$('#macros').checked,muscles:$('#muscles').checked,color:COLORS[colorIdx],shop:TYPE==='menu'&&$('#shop').checked,target:(TYPE==='menu'&&mt.show)?calcTarget().t:null}}
 async function render(){
+  if(TYPE==='menu'&&typeof drawMenuTpls==='function')try{drawMenuTpls()}catch(e){}
   await document.fonts.ready;
   if($('#sBuild'))updSect();
   const o=opts(),src=$('#src').value;
@@ -1732,7 +1735,7 @@ async function render(){
     pages=paginate($('#stage'),res.blocks,o);drawPreview(pv);return;
   }
   if(TYPE==='menu'&&mnMode==='wizard')mnSync();
-  if(TYPE==='menu'&&src.trim()&&!parseMenu(src).sections.length){pv.innerHTML=`<div class="empty">${mnMode==='wizard'?'כתוב מה אוכלים בכל ארוחה —<br>והתפריט יופיע פה.':'לא זיהיתי פריטים בתפריט.'}<br><br>רוצה להתחיל מהר? בחר <b>תבנית</b> למטה.</div>`;$('#stats').innerHTML='מחכה לפריטים בארוחות…';pages=[];return}
+  if(TYPE==='menu'&&src.trim()&&!parseMenu(src).sections.length){pv.innerHTML=`<div class="empty">${mnMode==='wizard'?'כתוב מה אוכלים בכל ארוחה —<br>והתפריט יופיע פה.':'לא זיהיתי פריטים בתפריט.'}<br><br>יש יעד ללקוח? לחץ <b>🎯 בנה תפריט ליעד</b> למטה.</div>`;$('#stats').innerHTML='מחכה לפריטים בארוחות…';pages=[];return}
   const wiz=TYPE==='workout'&&wk.mode==='wizard';const wdata=wiz?buildWizardData():null;
   if(wiz?!wdata.sections.length:!src.trim()){pv.innerHTML=wiz?`<div class="empty">בחר לכמה ימים לחלק את השבוע,<br>וכתוב את התרגילים של כל יום.<br><br>רוצה לראות איך זה נראה? לחץ <b>טען דוגמה</b>.</div>`:`<div class="empty">הדבק כאן ${TYPE==='menu'?'תפריט':'תוכנית אימון'} כרשימה פשוטה<br>והוא יהפוך ל-PDF מעוצב.<br><br>לא בטוח בפורמט? לחץ <b>טען דוגמה</b>.</div>`;$('#stats').innerHTML='מחכה לטקסט…';pages=[];return}
   let res;
@@ -1741,7 +1744,6 @@ async function render(){
   else{res=buildWorkoutBlocks(wiz?wdata:parseWorkout(src),o);const s=res.stats;
     $('#stats').innerHTML=`זוהו <b>${s.count}</b> טבלאות · <b>${s.items}</b> תרגילים`+(o.muscles&&s.noMus.length?`<br><span class="warn">בלי קבוצת שריר: ${s.noMus.map(escH).join(', ')} — אפשר לכתוב "חזה - …" בתחילת השורה</span>`:'')+(typeof changesNote==='function'?changesNote():'');}
   pages=paginate($('#stage'),res.blocks,o);drawPreview(pv);
-  if(TYPE==='menu'&&typeof drawMenuTpls==='function')drawMenuTpls();
 }
 function drawPreview(pv){
   const w=Math.min(pv.clientWidth-(innerWidth<900?32:56),680),sc=w/794;
@@ -2260,17 +2262,21 @@ function drawMenuTpls(){
   const fmt=n=>n.toLocaleString();
   const coach=COACH_TPLS.map((t,i)=>{const d=parseMenu(t.t);return `<button class="tp-card" data-c="${i}"><b>${escH(t.n.replace(/^📋\s*/,''))}</b><small>${/ארוחות/.test(t.n)?'':d.sections.length+' ארוחות · '}~${fmt(Math.round(menuTotals(t.t).kcal/50)*50)} קק״ל · מתאים את עצמו ליעד</small></button>`}).join('');
   let kc;
-  if(K){const steps=[-300,-200,-100,100,200,300].map(d=>{const v=Math.round((K+d)/50)*50;return `<button class="tp-k" data-k="${v}"><b>${fmt(v)}</b><small class="ltr">${d>0?'+':''}${d}</small></button>`}).join('');
-    kc=`<div class="tp-now">התפריט עכשיו: <b>${fmt(K)}</b> קק״ל · <b>${r0(cur.p)}</b> חלבון</div><div class="tp-ks">${steps}</div>${T&&Math.abs(T.kcal-K)>40?`<button class="tp-k hot" data-k="${T.kcal}" data-tp="${T.p}"><b>🎯 ליעד של הלקוח — ${fmt(T.kcal)}</b><small>${T.p} חלבון</small></button>`:''}<div class="help">לחיצה מגדילה או מקטינה את הכמויות בתפריט הנוכחי. ↩️ ביטול מחזיר.</div>`}
-  else{const base=T?[T.kcal-200,T.kcal,T.kcal+200].map(v=>Math.round(v/50)*50):MENU_TPLS.map(t=>t.kcal);
-    kc=`<div class="tp-now">אין עדיין תפריט — בחר נקודת התחלה:</div><div class="tp-ks">${base.map(v=>`<button class="tp-k${T&&v===Math.round(T.kcal/50)*50?' hot':''}" data-b="${v}"><b>${fmt(v)}</b><small>קק״ל</small></button>`).join('')}</div>`}
-  $('#menuTpls').innerHTML=`<div class="tp-sec"><div class="tp-h">📋 הפורמטים שלך</div><div class="tp-cards">${coach}</div></div><div class="tp-sec"><div class="tp-h">🎯 כמה קלוריות?</div>${kc}</div>`;
+  const near=v=>Math.round(v/50)*50;
+  if(T){ // the client's own target drives everything
+    const diff=K?K-T.kcal:0,ok=K&&Math.abs(diff)<=T.kcal*.03&&Math.abs(cur.p-T.p)<=10;
+    const steps=[-200,-100,100,200].map(d=>`<button class="tp-k" data-k="${near(T.kcal+d)}" data-tp="${T.p}"><b>${fmt(near(T.kcal+d))}</b><small class="ltr">יעד ${d>0?'+':''}${d}</small></button>`).join('');
+    kc=`<div class="tp-now">יעד ${escH($('#client').value.trim()||'הלקוח')}: <b>${fmt(T.kcal)}</b> קק״ל · <b>${T.p}</b> חלבון${K?` · התפריט עכשיו <b>${fmt(K)}</b> / <b>${r0(cur.p)}</b> חלבון ${ok?'✅':`<span class="ltr">(${diff>0?'+':''}${fmt(r0(diff))})</span>`}`:''}</div>
+      ${K?(ok?'':`<button class="tp-go" data-k="${T.kcal}" data-tp="${T.p}">🎯 התאם את התפריט ליעד — ${fmt(T.kcal)} קק״ל · ${T.p} חלבון</button>`):`<button class="tp-go" data-b="${T.kcal}" data-bp="${T.p}">🎯 בנה תפריט ליעד — ${fmt(T.kcal)} קק״ל · ${T.p} חלבון</button>`}
+      ${K&&!ok?`<div class="help">↩️ ביטול מחזיר את התפריט הקודם.</div>`:''}`}
+  else kc=`<div class="tp-warn">⚠️ אין יעד ללקוח — מלא מין, גיל, משקל וגובה ב"🎯 יעד ללקוח", ואז יופיע כאן כפתור שמתאים את התפריט אליו.</div>`;
+  $('#menuTpls').innerHTML=`<div class="tp-sec"><div class="tp-h">🎯 התאמה ליעד</div>${kc}</div>`;
   $('#menuTpls').querySelectorAll('[data-c]').forEach(b=>b.onclick=()=>{
     if($('#src').value.trim()&&!confirm('להחליף את התפריט שכתבת בפורמט הזה?'))return;
-    let tt=COACH_TPLS[+b.dataset.c].t;if(hasOptions(tt))tt=convertMenuToCats(tt).text;$('#src').value=tt;fitUndo=null;$('#undoFit').hidden=true;mnLast=null;render().then(()=>{const bb=balanceText($('#src').value);if(bb.n){$('#src').value=bb.text;mnLast=null}const xs=stripExcl($('#src').value);if(xs.n){$('#src').value=xs.text;mnLast=null}autoFit(true)});toast('נטען — עכשיו ממלאים ומתאימים ללקוח')});
+    let tt=COACH_TPLS[+b.dataset.c].t;if(hasOptions(tt))tt=convertMenuToCats(tt).text;$('#src').value=tt;fitUndo=null;$('#undoFit').hidden=true;mnLast=null;render().then(()=>{const bb=balanceText($('#src').value);if(bb.n){$('#src').value=bb.text;mnLast=null}const xs=stripExcl($('#src').value);if(xs.n){$('#src').value=xs.text;mnLast=null}const TT=calcTarget().t;if(TT){mnLast=null;doFit(TT,true);fitUndo=null;$('#undoFit').hidden=true}else autoFit(true)});toast(calcTarget().t?`נטען ומותאם ליעד — ${calcTarget().t.kcal.toLocaleString()} קק״ל`:'נטען — מלא יעד ללקוח כדי שיותאם אליו')});
   $('#menuTpls').querySelectorAll('[data-k]').forEach(b=>b.onclick=()=>{const k=+b.dataset.k,c=menuTotals($('#src').value);const p=b.dataset.tp?+b.dataset.tp:Math.min(r0(c.p),Math.round(k*.35/4));
     mnLast=null;if(doFit({kcal:k,p},false)){mnLast=null;toast(`🎯 התפריט הותאם ל-${fmt(k)} קק״ל`)}});
-  $('#menuTpls').querySelectorAll('[data-b]').forEach(b=>b.onclick=()=>{const k=+b.dataset.b,P=T?T.p:(MENU_TPLS.find(t=>t.kcal===k)||{p:Math.round(k*.075)}).p;
+  $('#menuTpls').querySelectorAll('[data-b]').forEach(b=>b.onclick=()=>{const k=+b.dataset.b,P=+b.dataset.bp||Math.round(k*.075);
     $('#src').value=stripExcl(MENU_BASE).text;mnLast=null;doFit({kcal:k,p:P},true);fitUndo=null;$('#undoFit').hidden=true;toast(`תפריט בסיס ${fmt(k)} קק״ל נטען — עכשיו מתאימים ללקוח`)});
 }
 ['sex','age','w','h','act','goal','kcal','p'].forEach(k=>{const el=$('#mt_'+k);el.addEventListener(el.tagName==='SELECT'?'change':'input',drawMenuTpls)});
@@ -2527,7 +2533,7 @@ const SECT=[
  {id:'sAI',ic:'🤖',t:'Gemini',info:'מבקשים במילים — Gemini כותב, והאתר בודק ומאזן את המספרים לפי הערכים שלך.',nodes:()=>[$('#aiBox')]},
  {id:'sDesign',ic:'🎨',t:'עיצוב',info:'צבע ההדגשות והלוגו ב-PDF.',nodes:()=>[$('#colors'),$('#logoBox')]},
 ];
-const BUILD_T={menu:['🍽️','בניית התפריט','בוחרים כמה ארוחות ביום וכותבים כל ארוחה — או טוענים אחד מהפורמטים שלך ומתאימים.'],
+const BUILD_T={menu:['🍽️','בניית התפריט','בוחרים כמה ארוחות ביום וכותבים כל ארוחה — ואז 🎯 מתאימים ליעד של הלקוח.'],
  workout:['🏋️','בניית התוכנית','בוחרים כמה ימי אימון בשבוע וכותבים תרגילים לכל יום — או טוענים תבנית. יום שחוזר — "שכפל".'],
  swap:['🔄','ההחלפה','מדביקים את הארוחה מהתפריט ואת המתכון — והאתר משנה את כמויות המתכון שייצא בדיוק בערכים של הארוחה.']};
 const openState=(()=>{try{return JSON.parse(store.get('pdfs2_sects'))||{}}catch(e){return {}}})();
@@ -2580,7 +2586,6 @@ const HELP_TX=[
  ['#mnMeals textarea','מה אוכלים בארוחה. שורה לכל קטגוריה: "חלבון: 150 גרם חזה עוף או 200 גרם אמנון". "או" = אפשרויות להחלפה, "+" = שילוב. הקלוריות מחושבות לבד.'],
  ['#mnMeas','מדדים נוכחיים של הלקוח — יופיעו בראש ה-PDF. רק מה שממלאים מופיע.'],
  ['#mnNotes','דרישות יומיות (צעדים, מים, שקילות) — יופיעו בסוף ה-PDF. שורה לכל דרישה.'],
- ['#menuTpls [data-c]','טוען אחד מהפורמטים שלך (מהתפריטים ששלחת) — ואז רק מתאימים ללקוח.'],
  ['#menuTpls button','טוען תפריט מוכן בקלוריות האלה. "לפי היעד" — בונה לפי היעד שחישבת.'],
  ['#src','הדבקה חופשית: כותרת ארוחה בשורה שמסתיימת ב-":", ומתחתיה שורות האוכל.'],
  ['#daysPick','כמה ימי אימון בשבוע — נפתח כרטיס לכל יום.'],
